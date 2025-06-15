@@ -15,7 +15,8 @@ namespace HMSYSTEM.Repository
 
         public List<User> GetAll()
         {
-            return _db.Users.ToList();
+            return _db.Users.ToList(); 
+            //return
         }
     }
 }
