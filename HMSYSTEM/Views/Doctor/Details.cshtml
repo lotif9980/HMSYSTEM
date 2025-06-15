@@ -1,0 +1,88 @@
+﻿@model HMSYSTEM.Models.Doctor
+
+@{
+    ViewData["Title"] = "Doctor Details";
+}
+
+<div class="container mt-5">
+    <div class="card shadow p-4 bg-light" style="max-width: 900px; margin: auto;">
+        <div class="card-header">
+            <div class="btn-group">
+               
+                <a class="btn btn-success " asp-route-id="" asp-controller="Doctor" asp-action="Save">
+                    <i class="fa fa-plus"></i>
+                    Add Doctor
+                </a>
+
+
+                <a class="btn btn-primary " asp-route-id="" asp-controller="Doctor" asp-action="Index">
+                    <i class="fa fa-list"></i>
+                    Doctor List
+                </a>
+
+              
+                <button type="button" onclick="printContent('PrintMe')" class="btn btn-danger"><i class="fa fa-print"></i></button>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Doctor Image Centered Vertically -->
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
+                <img src="~/Doctor/@Model.Picture" class="img-thumbnail rounded" alt="Doctor Image" style="max-height: 250px;" />
+            </div>
+
+            <!-- Doctor Info -->
+            <div class="col-md-8">
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Name&nbsp;&nbsp;:</div>
+                    <div>@Model.FirstName @Model.LastName</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Email&nbsp;&nbsp;:</div>
+                    <div>@Model.EmailAddress</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Phone&nbsp;&nbsp;:</div>
+                    <div>@Model.PhoneNo</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Address&nbsp;&nbsp;:</div>
+                    <div>@Model.Address</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">DOB&nbsp;&nbsp;:</div>
+                    <div>@Model.DateofBirth?.ToString("dd MMM yyyy")</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Sex&nbsp;&nbsp;:</div>
+                    <div>@Model.Sex</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Designation&nbsp;&nbsp;:</div>
+                    <div>@Model.Designation?.DesignationName</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Department&nbsp;&nbsp;:</div>
+                    <div>@Model.Department?.DepartmentName</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Specialist&nbsp;&nbsp;:</div>
+                    <div>@Model.Specialist</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Biography&nbsp;&nbsp;:</div>
+                    <div>@Model.ShortBiography</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Status&nbsp;&nbsp;:</div>
+                    <div>@(Model.Status == true ? "Active" : "Inactive")</div>
+                </div>
+
+                <div class="text-end mt-3">
+                    <a asp-action="Index" class="btn btn-secondary">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

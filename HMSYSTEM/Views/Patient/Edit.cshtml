@@ -1,0 +1,157 @@
+﻿
+@model Patient
+
+<div class="d-flex justify-content-center mt-3">
+    <div class="col-md-6">
+             
+                    <!--begin::Horizontal Form-->
+         <div class="card card-warning card-outline mb-4">
+                      <!--begin::Header-->
+                      <div class="card-header"><div class="card-title">Patient Information Edit</div></div>
+                      <!--end::Header-->
+                      <!--begin::Form-->
+           <form asp-action="Edit" method="post" enctype="multipart/form-data" >
+                        <!--begin::Body-->
+             <div class="card-body">
+
+                            <div class="row mb-3" >
+                          <label asp-for="PatientID" class="col-sm-3 col-form-label">Patient Id</label>
+                            <div class="col-sm-9">
+                            <input type="" asp-for="PatientID" class="form-control" id="patientID" readonly>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                          <label asp-for="FirstName" class="col-sm-3 col-form-label">First Name</label>
+                            <div class="col-sm-9">
+                            <input asp-for="FirstName" class="form-control" id="firstName">
+                            </div>
+                          </div>
+
+                          
+                          <div class="row mb-3">
+                          <label asp-for="LastName" class="col-sm-3 col-form-label">Last Name</label>
+                            <div class="col-sm-9">
+                            <input asp-for="LastName" class="form-control" id="lastName">
+                            </div>
+                          </div>
+
+                           <div class="row mb-3">
+                          <label asp-for="Email" class="col-sm-3 col-form-label">Email</label>
+                            <div class="col-sm-9">
+                            <input asp-for="Email" class="form-control" id="email">
+                            </div>
+                          </div>
+
+                            <div class="row mb-3">
+                                <label asp-for="Password" class="col-sm-3 col-form-label">Password</label>
+                            <div class="col-sm-9">
+                                <input asp-for="Password" class="form-control" id="password">
+                            </div>
+                          </div>
+
+                           <div class="row mb-3">
+                            <label asp-for="Phone" class="col-sm-3 col-form-label">Phone</label>
+                            <div class="col-sm-9">
+                                <input asp-for="Phone" class="form-control" id="Phone">
+                            </div>
+                          </div>
+
+                          
+                           <div class="row mb-3">
+                                <label asp-for="BloodGroup" class="col-sm-3 col-form-label">Blood Group</label>
+                                <div class="col-sm-9">
+                                    <select asp-for="BloodGroup" class="form-control form-select">
+                                        <option value="">-- Select Blood Group --</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                         <div class="row mb-3">
+                        <label asp-for="Sex" class="col-sm-3 col-form-label">Sex</label>
+                               <div class="col-sm-9">
+                                    <select asp-for="Sex" class="form-control form-select">
+                                         <option value="">-- Select Gender --</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Others">Others</option>
+                                    </select>
+                               </div>
+                         </div>
+
+                           
+                         <div class="row mb-3">
+                                <label for="dateOfBirth" class="col-sm-3 col-form-label">Date of Birth</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input type="text" id="dateOfBirth" name="DateOfBirth" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                         </div>
+
+                         
+
+                          <div class="row mb-3">
+                            <label asp-for="Address" class="col-sm-3 col-form-label">Address</label>
+                            <div class="col-sm-9">
+                                <input asp-for="Address" class="form-control" id="Address">
+                            </div>
+                          </div>
+
+
+                          <div class="row mb-3">
+                            <label asp-for="EmergencyContact" class="col-sm-3 col-form-label">EmergencyContact</label>
+                            <div class="col-sm-9">
+                                <input asp-for="EmergencyContact" class="form-control" id="EmergencyContact">
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Status</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" />
+                                        <label class="form-check-label" for="statusActive">Active</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Status" value="false" id="statusInactive" />
+                                        <label class="form-check-label" for="statusInactive">Inactive</label>
+                                    </div>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+                          </div>
+
+                          <div class="row mb-3">
+                                <label asp-for="Picture" class="col-sm-3 col-form-label">Profile Picture</label>
+                                <div class="col-sm-9">
+                                    
+                                    <input asp-for="ImageFile" type="file" class="form-control" />
+                                </div>
+                          </div>
+
+                        </div>
+                        <!--end::Body-->
+                        <!--begin::Footer-->
+                    <div class="card-footer d-flex justify-content-center">
+                            <button type="submit" class="btn btn-warning me-2">Save</button>
+                            <button type="reset" class="btn btn-danger me-2">Reset</button>
+                    </div>
+                        <!--end::Footer-->
+           </form>
+                      <!--end::Form-->
+                    </div>
+                    <!--end::Horizontal Form-->
+    </div>
+</div>

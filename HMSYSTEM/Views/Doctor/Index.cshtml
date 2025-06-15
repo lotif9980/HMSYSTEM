@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Doctor>
+
+@* @foreach(Patient patient in Model)
+{
+   @patient.Name
+} *@
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-around">
+                    <div> <h3 class="card-title">Existing Doctor List</h3></div>
+                    <div> <a class="btn btn-info" asp-controller="Doctor" asp-action="Save">Create</a></div>
+                </div>
+
+
+
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">Id</th>
+                                <th>Picture</th>
+                                <th>FirstName</th>
+                                <th>LastName</th>
+                                <th>Department</th>
+                                <th>EmailAddress</th>
+                                <th>Status</th>
+                                <th style="width:20px;text-align:center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int count = 1;
+                            }
+                            @foreach (Doctor doctor in Model)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td style="text-align:center">
+                                        <img src="~/Doctor/@doctor.Picture" alt="Doctor Image" width="65" height="65" />
+                                    </td>
+                                    <td>@doctor.FirstName</td>
+                                    <td>@doctor.LastName</td>
+                                    <td>@doctor.Department?.DepartmentName</td>
+                                    <td>@doctor.EmailAddress</td>
+                                    <td>@(doctor.Status==true?"Active": "Invactive")</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-primary ms-2" asp-route-id="@doctor.Id" asp-controller="Doctor" asp-action="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a class="btn btn-danger ms-2" asp-route-id="@doctor.Id" asp-controller="Doctor" asp-action="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+
+                                            <a class="btn btn-success ms-2" asp-route-id="@doctor.Id" asp-controller="Doctor" asp-action="Details">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                count++;
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-end">
+                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+</div>

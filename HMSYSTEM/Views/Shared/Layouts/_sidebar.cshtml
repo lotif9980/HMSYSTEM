@@ -1,0 +1,250 @@
+﻿<style>
+    .sidebarUser{
+        background-color: #042a4a;
+        color: #fff;
+    }
+</style>
+
+<!--begin::Sidebar-->
+<aside class="app-sidebar sidebarUser shadow" data-bs-theme="dark">
+    <!--begin::Sidebar Brand-->
+    <div class="sidebar-brand">
+        <!--begin::Brand Link-->
+        <a href="./index.html" class="brand-link">
+            <!--begin::Brand Image-->
+            <img src="~/assets/img/AdminLTELogo.png"
+                 alt="Hospital"
+                 class="brand-image opacity-75 shadow" />
+            <!--end::Brand Image-->
+            <!--begin::Brand Text-->
+            <span class="brand-text fw-light">Hospital Management</span>
+            <!--end::Brand Text-->
+            <!--end::Brand Text-->
+        </a>
+        <!--end::Brand Link-->
+    </div>
+    <!--end::Sidebar Brand-->
+    <!--begin::Sidebar Wrapper-->
+    <div class="sidebar-wrapper">
+        <nav class="mt-2">
+            <!--begin::Sidebar Menu-->
+            <ul class="nav sidebar-menu flex-column"
+                data-lte-toggle="treeview"
+                role="menu"
+                data-accordion="false">
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-user-md"></i> 
+                        
+                        <p>
+                            Designation
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Designation" asp-action="Save" class="nav-link">
+                                <i class="ms-3 bi bi-people-fill"></i>
+                                <p>Add Designation</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Designation" asp-action="Index" class="nav-link">
+                                <i class="ms-3 fas fa-sticky-note"></i>
+                                <p>Designation List</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-sitemap"></i>
+                        <p>
+                            Department
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+                    
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Department" asp-action="Save" class="nav-link">
+                                @* <i class="ms-3 bi bi-people-fill"></i> *@
+                                <i class="ms-3 fa-sharp-duotone fa-solid fa-house-medical"></i>
+                                <p>Add Department</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Department" asp-action="Index" class="nav-link">
+                                <i class="ms-3 bi bi-people-fill"></i>
+                                <p>Department List</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-user-md"></i>
+
+                        <p>
+                            Doctor
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Doctor" asp-action="Save" class="nav-link">
+                                <i class="ms-3 bi bi-person-plus-fill"></i>
+
+                                <p>Add Doctor</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Doctor" asp-action="Index" class="nav-link">
+                                <i class="ms-3 bi bi-people-fill"></i>
+                                <p>Doctor List</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-wheelchair"></i>
+
+                        <p>
+                            Patient
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Patient" asp-action="Save" class="nav-link">
+                                @* <i class="ms-3 bi bi-people-fill"></i> *@
+                                <i class="ms-3 bi bi-person-plus-fill"></i>
+                                <p>Add Patient</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Patient" asp-action="Index" class="nav-link">
+                                <i class="ms-3 bi bi-people-fill"></i>
+                                <p>Patient List</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon bi bi-clock"></i>
+
+                        <p>
+                            Schedule
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Schedule" asp-action="Save" class="nav-link">
+                                @* <i class="ms-3 bi bi-people-fill"></i> *@
+                                <i class="ms-3 bi bi-person-plus-fill"></i>
+                                <p>Add schedule</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="schedule" asp-action="Index" class="nav-link">
+                                <i class="ms-3 bi bi-clock"></i>
+                                <p>Schedule List</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon bi bi-clock"></i>
+
+                        <p>
+                            Appointment
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Appointment" asp-action="Save" class="nav-link">
+                                @* <i class="ms-3 bi bi-people-fill"></i> *@
+                                <i class="ms-3 bi bi-person-plus-fill"></i>
+                                <p>Add Appointment</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Appointment" asp-action="Index" class="nav-link">
+                                <i class="ms-3 bi bi-clock"></i>
+                                <p>Appointment List</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+
+            </ul>
+            <!--end::Sidebar Menu-->
+        </nav>
+    </div>
+    <!--end::Sidebar Wrapper-->
+</aside>
+<!--end::Sidebar-->
+

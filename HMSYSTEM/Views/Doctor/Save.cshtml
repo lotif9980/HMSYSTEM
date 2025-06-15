@@ -1,0 +1,233 @@
+﻿@model Doctor
+
+<div class="container-fluid mt-4">
+    <div class="row g-4">
+        <div class="col-12 d-flex justify-content-center">
+            <div class="col-md-6">
+
+                <!--begin::Horizontal Form-->
+                <div class="card card-warning card-outline mb-4">
+                    <div class="btn-group-sm">
+                        <a class="btn btn-primary" asp-route-id="" asp-controller="Doctor" asp-action="Index">
+                            <i class="fa fa-list"></i>
+                            Doctor List
+                        </a>
+                    </div>
+                    <!--begin::Header-->
+                    <div class="card-header d-flex justify-content-center  fs-1"><div class="">Doctor Information</div></div>
+                    <!--end::Header-->
+                    <!--begin::Form-->
+                    <form asp-action="Save" method="post" enctype="multipart/form-data">
+                        <!--begin::Body-->
+                        <div class="card-body">
+
+                            <div class="row mb-3">
+                                <label asp-for="FirstName" class="col-sm-3 col-form-label">FirstName</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="FirstName" class="form-control" id="firstName">
+                                </div>
+                            </div>
+
+                            
+                            <div class="row mb-3">
+                                <label asp-for="LastName" class="col-sm-3 col-form-label">LastName</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="LastName" class="form-control" id="lastName">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label asp-for="EmailAddress" class="col-sm-3 col-form-label">Email</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="EmailAddress" class="form-control" id="emailAddress">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label asp-for="Password" class="col-sm-3 col-form-label">Password</label>
+                                <div class="col-sm-9">
+                                    <div class="position-relative">
+                                        <input asp-for="Password" class="form-control pe-5" id="password" type="password">
+                                        <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor:pointer;" onclick="togglePassword()">
+                                            <i class="fa fa-eye" id="toggleIcon"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @* <div class="row mb-3">
+                                <label asp-for="DesignationId" class="col-sm-2 col-form-label">Designation</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="Designation" class="form-control" id="designation">
+                                </div>
+                            </div> *@
+
+                            <div class="row mb-3">
+                                <label for="DesignationId" class="col-sm-3 col-form-label">Designation</label>
+                                <div class="col-sm-9 position-relative">
+                                    <select name="DesignationId" id="DesignationId" class="form-control form-select">
+                                        <option value="">-- Select Designation --</option>
+                                        @foreach (var item in ViewBag.Designation)
+                                        {
+                                            <option value="@item.DesignationId">@item.DesignationName</option>
+                                        }
+                                    </select>
+                                   
+                                </div>
+                            </div>
+
+
+
+
+                            @* <div class="row mb-3">
+                                <label asp-for="DepartmentId" class="col-sm-2 col-form-label">Department</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="DepartmentId" class="form-control" id="departmentId">
+                                </div>
+                            </div> *@
+
+
+                            <div class="row mb-3">
+                                <label for="DepartmentId" class="col-sm-3 col-form-label">Department</label>
+                                <div class="col-sm-9 position-relative">
+                                    <select name="DepartmentId" id="DepartmentId" class="form-control form-select">
+                                        <option value="">-- Select Department --</option>
+                                        @foreach (var item in ViewBag.Department)
+                                        {
+                                            <option value="@item.DepartmentId">@item.DepartmentName</option>
+                                        }
+                                    </select>
+
+                                   
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label asp-for="Address" class="col-sm-3 col-form-label">Address</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="Address" class="form-control" id="address">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label asp-for="PhoneNo" class="col-sm-3 col-form-label">Phone No</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="PhoneNo" class="form-control" id="phoneNo">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label asp-for="ShortBiography" class="col-sm-3 col-form-label">Short Biography</label>
+                                <div class="col-sm-9">
+                                    <textarea asp-for="ShortBiography" class="form-control" id="shortBiography" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label asp-for="Specialist" class="col-sm-3 col-form-label">Specialist</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="Specialist" class="form-control" id="specialist">
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <label for="dateOfBirth" class="col-sm-3 col-form-label">Date of Birth</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input type="text" id="dateOfBirth" name="DateOfBirth" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Sex</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Sex" value="Male" id="male" />
+                                        <label class="form-check-label" for="male">Male</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Sex" value="Female" id="feMale" />
+                                        <label class="form-check-label" for="feMale">Female</label>
+                                    </div>
+
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Sex" value="Other" id="other" />
+                                        <label class="form-check-label" for="other">Others</label>
+                                    </div>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Status</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" />
+                                        <label class="form-check-label" for="statusActive">Active</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Status" value="false" id="statusInactive" />
+                                        <label class="form-check-label" for="statusInactive">Inactive</label>
+                                    </div>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+                            </div>
+                           
+                            <div class="row mb-3">
+                                <label asp-for="ImageFile" class="col-sm-3 col-form-label">Profile Picture</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="ImageFile" class="form-control" type="file" id="imageFile" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--end::Body-->
+                        <!--begin::Footer-->
+                        <div class="card-footer d-flex justify-content-center">
+                            <button type="submit" class="btn btn-warning me-2">Save</button>
+                            <button type="reset" class="btn btn-danger me-2">Reset</button>
+                        </div>
+                        <!--end::Footer-->
+                    </form>
+                    <!--end::Form-->
+                </div>
+                <!--end::Horizontal Form-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#dateOfBirth").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true
+        });
+
+        // Calendar icon click করলে input focus হবে
+        $(".input-group-text").click(function () {
+            $("#dateOfBirth").focus();
+        });
+    });
+
+
+
+ 
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        toggleIcon.classList.toggle('fa-eye');
+        toggleIcon.classList.toggle('fa-eye-slash');
+    }
+
+</script>
