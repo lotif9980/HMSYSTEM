@@ -16,6 +16,6 @@ namespace HMSYSTEM.Repository
         public List<Appointment> GetAllAppointments()
         {
            return  _db.Appointments.ToList();
-        }
+        } 
     }
 }
