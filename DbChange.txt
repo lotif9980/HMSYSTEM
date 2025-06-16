@@ -1,0 +1,131 @@
+USE [hmsystem]
+GO
+
+/****** Object:  Table [dbo].[Users]    Script Date: 6/16/2025 11:06:04 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Users](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NULL,
+	[MobileNo] [nvarchar](50) NULL,
+	[UserName] [nvarchar](50) NULL,
+	[Password] [nvarchar](50) NULL,
+	[Status] [bit] NULL,
+ CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+
+------------------------------------
+
+
+/****** Object:  Table [dbo].[Schedules]    Script Date: 6/16/2025 11:05:57 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Schedules](
+	[ScheduleId] [int] IDENTITY(1,1) NOT NULL,
+	[DoctorId] [int] NULL,
+	[DepartmentId] [int] NULL,
+	[DayOfWeek] [nvarchar](50) NULL,
+	[StartTime] [time](7) NULL,
+	[EndTime] [time](7) NULL,
+	[IsAvailable] [bit] NULL,
+ CONSTRAINT [PK_Schedules] PRIMARY KEY CLUSTERED 
+(
+	[ScheduleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+
+------------------------------------
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Patients](
+	[PatientID] [int] IDENTITY(1,1) NOT NULL,
+	[FirstName] [nvarchar](50) NULL,
+	[LastName] [nvarchar](50) NULL,
+	[Email] [nvarchar](50) NULL,
+	[Password] [nvarchar](50) NULL,
+	[Phone] [nvarchar](50) NULL,
+	[BloodGroup] [nvarchar](50) NULL,
+	[Sex] [nchar](10) NULL,
+	[DateOfBirth] [datetime] NULL,
+	[Address] [nvarchar](50) NULL,
+	[EmergencyContact] [nvarchar](50) NULL,
+	[Picture] [nvarchar](255) NULL,
+	[Status] [bit] NULL,
+ CONSTRAINT [PK_Patientss] PRIMARY KEY CLUSTERED 
+(
+	[PatientID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+------------------------------------
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Doctors](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[FirstName] [nvarchar](50) NULL,
+	[LastName] [nvarchar](50) NULL,
+	[EmailAddress] [nvarchar](50) NULL,
+	[Password] [nvarchar](50) NULL,
+	[DesignationId] [int] NULL,
+	[DepartmentId] [int] NULL,
+	[Address] [nvarchar](50) NULL,
+	[PhoneNo] [nvarchar](50) NULL,
+	[ShortBiography] [nvarchar](250) NULL,
+	[Specialist] [nvarchar](250) NULL,
+	[DateofBirth] [datetime] NULL,
+	[Sex] [varchar](50) NULL,
+	[Status] [bit] NULL,
+	[Picture] [nvarchar](250) NULL,
+ CONSTRAINT [PK_Doctors] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+
+
+------------------1------------------
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Designations](
+	[DesignationId] [int] IDENTITY(1,1) NOT NULL,
+	[DesignationName] [nvarchar](50) NULL,
+	[Status] [bit] NULL,
+ CONSTRAINT [PK_Designations] PRIMARY KEY CLUSTERED 
+(
+	[DesignationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
