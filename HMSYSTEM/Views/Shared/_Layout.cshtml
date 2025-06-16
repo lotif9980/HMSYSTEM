@@ -66,9 +66,16 @@
 
     <div class="app-wrapper">
         <!--begin::Header-->
-        
-        <partial name="Layouts/_navbar" />
-        <partial name="Layouts/_sidebar" />
+        @{
+            var username = Context.Session.GetString("Username");
+        }
+
+        @if (!string.IsNullOrEmpty(username))
+        {
+            <partial name="Layouts/_navbar" />
+            <partial name="Layouts/_sidebar" />
+        }
+     
         
         <main class="app-main">
             @RenderBody()

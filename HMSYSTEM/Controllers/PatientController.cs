@@ -2,10 +2,12 @@
 using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class PatientController : Controller
     {
 
@@ -20,6 +22,7 @@ namespace HMSYSTEM.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Index()
         {

@@ -1,5 +1,6 @@
 ﻿using HMSYSTEM.Data;
 using HMSYSTEM.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMSYSTEM.Repository
 {
@@ -16,7 +17,11 @@ namespace HMSYSTEM.Repository
         public List<User> GetAll()
         {  
             return _db.Users.ToList(); 
-            //return
+        }
+
+        public User GetUser(string username, string password)
+        {
+            return _db.Users.FirstOrDefault(u => u.UserName == username && u.Password == password);
         }
     }
 }

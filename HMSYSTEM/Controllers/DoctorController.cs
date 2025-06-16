@@ -1,10 +1,12 @@
 ﻿using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class DoctorController : Controller
     {
         protected readonly IUnitOfWork _unitOf;
@@ -16,6 +18,8 @@ namespace HMSYSTEM.Controllers
             _env = env;
         }
 
+
+        [Authorize]
         public IActionResult Index()
         {
             var data = _unitOf.doctorRepo.getAll();

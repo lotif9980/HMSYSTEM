@@ -48,5 +48,10 @@ namespace HMSYSTEM.Repository
             db.Dispose();
         }
 
+        public void Complete()
+        {
+            db.SaveChanges();
+        }
+
     }
 }

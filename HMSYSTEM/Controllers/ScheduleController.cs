@@ -1,9 +1,11 @@
 ﻿using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class ScheduleController : Controller
     {
         protected readonly IUnitOfWork _unitofWork;
@@ -13,6 +15,8 @@ namespace HMSYSTEM.Controllers
             this._unitofWork = unitOfWork;
 
         }
+
+        [Authorize]
         public IActionResult Index()
         {
 

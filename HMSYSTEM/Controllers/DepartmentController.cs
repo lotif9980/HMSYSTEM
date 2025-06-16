@@ -1,9 +1,11 @@
 ﻿using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         protected readonly IUnitOfWork _unitOf;
@@ -13,6 +15,7 @@ namespace HMSYSTEM.Controllers
             _unitOf = unitOf;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Index()
         {

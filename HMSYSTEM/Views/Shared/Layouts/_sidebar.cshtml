@@ -1,12 +1,14 @@
 ﻿<style>
     .sidebarUser{
-        background-color: #042a4a;
-        color: #fff;
+    background-color: #042a4a;
+    color: #fff;
     }
 </style>
 
 <!--begin::Sidebar-->
-<aside class="app-sidebar sidebarUser shadow" data-bs-theme="dark">
+@if (User.Identity.IsAuthenticated)
+{
+    <aside class="app-sidebar sidebarUser shadow" data-bs-theme="dark">
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">
         <!--begin::Brand Link-->
@@ -240,6 +242,42 @@
                 </li>
 
 
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-circle-user"></i>
+
+                        <p>
+                            User
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Appointment" asp-action="Save" class="nav-link">
+                                @* <i class="ms-3 bi bi-people-fill"></i> *@
+                                <i class="ms-3 bi bi-person-plus-fill"></i>
+                                <p>Password Change</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Account" asp-action="login" class="nav-link">
+                                <i class="ms-3 bi bi-clock"></i>
+                                <p>Logout</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
+
             </ul>
             <!--end::Sidebar Menu-->
         </nav>
@@ -248,3 +286,4 @@
 </aside>
 <!--end::Sidebar-->
 
+}

@@ -1,9 +1,11 @@
 ﻿using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class DesignationController : Controller
     {
         private readonly IUnitOfWork _unitOf;
@@ -13,6 +15,7 @@ namespace HMSYSTEM.Controllers
             _unitOf = unitOf;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             var data = _unitOf.designationRepo.getAll();
