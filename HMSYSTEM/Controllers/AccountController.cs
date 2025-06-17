@@ -26,7 +26,7 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]  
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -35,22 +35,24 @@ namespace HMSYSTEM.Controllers
             }
 
             var user = _unitOfWork.UserRepository.GetUser(model.Username, model.Password);
+
             if (user != null)
             {
-               
+                if (user.Status==false)
+                {
+                    ViewBag.Error = "Your account is inactive. Please contact admin.";
+                    return View(model);
+                }
+
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                  
-                };
+            new Claim(ClaimTypes.Name, user.UserName),
+        };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
 
-                
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-               
                 HttpContext.Session.SetString("Username", user.UserName);
 
                 return RedirectToAction("Index", "Home");
@@ -59,6 +61,7 @@ namespace HMSYSTEM.Controllers
             ViewBag.Error = "Invalid Username or Password";
             return View(model);
         }
+
 
         [Authorize] 
         public async Task<IActionResult> Logout()

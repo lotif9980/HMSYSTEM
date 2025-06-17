@@ -31,8 +31,17 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(User user)
         {
-            unitofwork.UserRepository.Save(user);
-            return RedirectToAction("Index");
+            try
+            {
+                unitofwork.UserRepository.Save(user);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                
+                ModelState.AddModelError("Same Name alreay added", ex.Message);
+                return View(user);
+            }
         }
 
     }

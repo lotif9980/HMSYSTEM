@@ -1,4 +1,5 @@
-﻿using HMSYSTEM.Models;
+﻿using HMSYSTEM.Data;
+using HMSYSTEM.Models;
 
 namespace HMSYSTEM.Repository
 {
@@ -8,6 +9,8 @@ namespace HMSYSTEM.Repository
         User GetUser(string username, string password);
 
         List<User> Save(User user);
-       
+     
+        
+
     }
 }

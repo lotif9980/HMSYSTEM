@@ -16,6 +16,16 @@
             <!--end::Header-->
             <!--begin::Form-->
             <form asp-action="Save" method="post">
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    </div>
+                }
                 <!--begin::Body-->
                 <div class="card-body">
 
@@ -38,6 +48,7 @@
                         <label asp-for="UserName" class="col-sm-3 col-form-label">UserName</label>
                         <div class="col-sm-9">
                             <input asp-for="UserName" class="form-control" id="UserName">
+                           
                         </div>
                     </div>
 
