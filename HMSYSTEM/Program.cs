@@ -5,10 +5,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews(options =>
 {
-    options.Filters.Add(new AuthorizeFilter()); // সবার জন্য authorize বাধ্যতামূলক
+    options.Filters.Add(new AuthorizeFilter());
 });
 
 builder.Services.AddDbContext<Db>(options =>
@@ -19,18 +18,18 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 
 builder.Services.AddSession();
 
-// 👉 Authentication & Authorization
+
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
     {
-        options.LoginPath = "/Account/Login"; // Login page path
+        options.LoginPath = "/Account/Login"; 
     });
 
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// 👉 Correct middleware order starts here
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -40,16 +39,15 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();           // ✅ Routing must come first
-app.UseSession();           // ✅ Session before auth
+app.UseRouting();         
+app.UseSession();       
 
-app.UseAuthentication();    // ✅ Authentication before Authorization
-app.UseAuthorization();     // ✅ Only once, and after authentication
+app.UseAuthentication();    
+app.UseAuthorization();     
 
-// 👉 Controller Route
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();     // Keep if you are using static asset mapping
-
+    .WithStaticAssets();  
 app.Run();

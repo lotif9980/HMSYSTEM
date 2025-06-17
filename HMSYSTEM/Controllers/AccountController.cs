@@ -19,14 +19,14 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]  // লগইন পেজে এ্যানোনিমাস এক্সেস দিতে হবে
+        [AllowAnonymous] 
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        [AllowAnonymous]  // লগইন পোস্টেও এ্যানোনিমাস এক্সেস দিতে হবে
+        [AllowAnonymous]  
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -37,20 +37,20 @@ namespace HMSYSTEM.Controllers
             var user = _unitOfWork.UserRepository.GetUser(model.Username, model.Password);
             if (user != null)
             {
-                // Claim তৈরি করুন
+               
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
-                    // প্রয়োজন অনুযায়ী অন্য Claim যোগ করতে পারেন
+                  
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
 
-                // Authentication Cookie সেট করুন
+                
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-                // Optional: Session এ ডাটা রাখতে পারেন
+               
                 HttpContext.Session.SetString("Username", user.UserName);
 
                 return RedirectToAction("Index", "Home");

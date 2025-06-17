@@ -6,6 +6,8 @@ namespace HMSYSTEM.Repository
     {
         List<User> GetAll();
         User GetUser(string username, string password);
+
+        List<User> Save(User user);
        
     }
 }

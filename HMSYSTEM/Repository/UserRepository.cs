@@ -23,5 +23,13 @@ namespace HMSYSTEM.Repository
         {
             return _db.Users.FirstOrDefault(u => u.UserName == username && u.Password == password);
         }
+
+        List<User> IUserRepository.Save(User user)
+        {
+            _db.Users.Add(user);
+            _db.SaveChanges();
+
+            return _db.Users.ToList();
+        }
     }
 }
