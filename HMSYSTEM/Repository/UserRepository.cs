@@ -69,6 +69,6 @@ namespace HMSYSTEM.Repository
             return _db.Users.ToList();
         }
 
-       
+        
     }
 }

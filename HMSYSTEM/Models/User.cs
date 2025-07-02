@@ -22,4 +22,6 @@ namespace HMSYSTEM.Models
         public string Password { get; set; }
       
     }
+
+   
 }

@@ -9,8 +9,8 @@ namespace HMSYSTEM.Repository
         User GetUser(string username, string password);
 
         List<User> Save(User user);
-     
-        
+
+
 
     }
 }
