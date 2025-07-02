@@ -27,25 +27,25 @@ namespace HMSYSTEM.Repository
 
         public User GetUser(string username, string password)
         {
-         
+
             var user = _db.Users.FirstOrDefault(u => u.UserName == username);
 
             if (user != null)
             {
-                
+
                 var hashedPassword = user.Password;
 
-             
+
                 bool isValid = BCrypt.Net.BCrypt.Verify(password, hashedPassword);
 
                 if (isValid)
                 {
-                   
+
                     return user;
                 }
             }
 
-         
+
             return null;
         }
 
