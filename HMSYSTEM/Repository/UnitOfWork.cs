@@ -19,6 +19,7 @@ namespace HMSYSTEM.Repository
         public IScheduleRepository scheduleRepo { get; set; }
         public IAppointmentRepository AppointmentRepository { get; set; }
         public IUserRepository UserRepository { get; set; }
+        public IRoleRepository RoleRepository { get; set; }
 
 
 
@@ -35,6 +36,7 @@ namespace HMSYSTEM.Repository
             scheduleRepo = new ScheduleRepository(db);
             AppointmentRepository = new AppointmentRepository(db);
             UserRepository = new UserRepository(db);
+            RoleRepository= new RoleRepository(db);
 
         }
 

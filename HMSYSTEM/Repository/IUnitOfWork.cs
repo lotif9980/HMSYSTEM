@@ -12,6 +12,7 @@ namespace HMSYSTEM.Repository
         IScheduleRepository scheduleRepo { get; }
         IAppointmentRepository AppointmentRepository { get; }
         IUserRepository UserRepository { get; }
+        IRoleRepository RoleRepository { get; }
         void Complete();
         Task<int> Save();
     }

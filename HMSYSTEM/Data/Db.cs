@@ -41,6 +41,7 @@ namespace HMSYSTEM.Data
             public DbSet<Schedule> Schedules { get; set; }
             public DbSet<Appointment> Appointments { get; set; }
             public DbSet<User> Users { get; set; }
+            public DbSet<Role> Roles { get; set; }
 
     }
 }
