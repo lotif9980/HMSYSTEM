@@ -1,0 +1,63 @@
+﻿@model User
+
+
+<div class="container mt-5">
+    <div class="card shadow p-4 bg-light" style="max-width: 900px; margin: auto;">
+        <div class="card-header">
+            <div class="btn-group">
+
+                <a class="btn btn-success " asp-route-id="" asp-controller="User" asp-action="Save">
+                    <i class="fa fa-plus"></i>
+                    Add User
+                </a>
+
+
+                <a class="btn btn-primary " asp-route-id="" asp-controller="User" asp-action="Index">
+                    <i class="fa fa-list"></i>
+                    User List
+                </a>
+
+
+                <button type="button" onclick="printContent('PrintMe')" class="btn btn-danger"><i class="fa fa-print"></i></button>
+            </div>
+        </div>
+        <div class="row">
+           
+          
+            <div class="col-md-8">
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Name&nbsp;&nbsp;:</div>
+                    <div>@Model.Name</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Mobile&nbsp;&nbsp;:</div>
+                    <div>@Model.MobileNo</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">User Name&nbsp;&nbsp;:</div>
+                    <div>@Model.UserName</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Status&nbsp;&nbsp;:</div>
+                    <div>@Model.Status</div>
+                </div>
+               
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Role&nbsp;&nbsp;:</div>
+                    <div>@Model.RoleId</div>
+                </div>
+                
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Status&nbsp;&nbsp;:</div>
+                    <div>@(Model.Status == true ? "Active" : "Inactive")</div>
+                </div>
+
+                <div class="text-end mt-3">
+                    <a asp-action="Index" class="btn btn-secondary">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

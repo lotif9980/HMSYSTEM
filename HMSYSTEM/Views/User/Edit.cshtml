@@ -1,4 +1,4 @@
-﻿@model User
+﻿@model User;
 
 <div class="d-flex justify-content-center mt-3">
     <div class="col-md-6">
@@ -6,69 +6,57 @@
         <!--begin::Horizontal Form-->
         <div class="card card-warning card-outline mb-4">
             <!--begin::Header-->
-            <div class="btn-group-sm">
-                <a class="btn btn-primary" asp-route-id="" asp-controller="User" asp-action="Index">
-                    <i class="fa fa-list"></i>
-                    User List
-                </a>
-            </div>
-            <div class="card-header"><div class="card-title">User Information</div></div>
+            <div class="card-header"><div class="card-title">User Information Edit</div></div>
             <!--end::Header-->
             <!--begin::Form-->
-            <form asp-action="Save" method="post">
-
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="alert alert-danger">
-                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                        {
-                            <div>@error.ErrorMessage</div>
-                        }
-                    </div>
-                }
+            <form asp-action="Update" method="post" enctype="multipart/form-data">
                 <!--begin::Body-->
                 <div class="card-body">
 
                     <div class="row mb-3">
+                        <label asp-for="Id" class="col-sm-3 col-form-label visible">Id</label>
+                        <div class="col-sm-9">
+                            <input type="" asp-for="Id" class="form-control" id="id" readonly>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
                         <label asp-for="Name" class="col-sm-3 col-form-label">Name</label>
                         <div class="col-sm-9">
-                            <input asp-for="Name" class="form-control" id="Name">
+                            <input asp-for="Name" class="form-control" id="name">
                         </div>
                     </div>
 
 
                     <div class="row mb-3">
-                        <label asp-for="MobileNo" class="col-sm-3 col-form-label">MobileNo</label>
+                        <label asp-for="MobileNo" class="col-sm-3 col-form-label">Mobile No</label>
                         <div class="col-sm-9">
-                            <input asp-for="MobileNo" class="form-control" id="MobileNo">
+                            <input asp-for="MobileNo" class="form-control" id="mobileNo">
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <label asp-for="UserName" class="col-sm-3 col-form-label">UserName</label>
+                        <label asp-for="UserName" class="col-sm-3 col-form-label">User Name</label>
                         <div class="col-sm-9">
-                            <input asp-for="UserName" class="form-control" id="UserName">
-                           
+                            <input asp-for="UserName" class="form-control" id="userName">
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <label asp-for="Password" class="col-sm-3 col-form-label">Password</label>
-                        <div class="col-sm-9">
-                            <input asp-for="Password" class="form-control" id="Password">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label asp-for="RoleId" class="col-sm-3 col-form-label">Role</label>
-                        <div class="col-sm-9">
-                            <select name="RoleId" id="RoleId" class="form-control form-select" >
-                                <option>--Select Role--</option>
-                                @foreach(var item in ViewBag.Roles)
-                                {
-                                    <option value="@item.Id">@item.Name</option>
-                                }
-                            </select>
+                        <label for="RoleId" class="col-sm-3 col-form-label">Role</label>
+                        <div class="col-sm-9 position-relative">
+                            <div class="input-group">
+                                <select name="RoleId" id="RoleId" class="form-select pe-5">
+                                    <option value="">-- Select Role --</option>
+                                    @foreach (var item in (IEnumerable<HMSYSTEM.Models.Role>)ViewBag.Role)
+                                    {
+                                        <option value="@item.Id" selected="@(item.Id == Model.RoleId ? "selected" : null)">
+                                            @item.Name
+                                        </option>
+                                    }
+                                </select>
+                                
+                            </div>
                         </div>
                     </div>
 
@@ -86,7 +74,8 @@
                             <span asp-validation-for="Status" class="text-danger"></span>
                         </div>
                     </div>
-
+                   
+                   
 
                 </div>
                 <!--end::Body-->

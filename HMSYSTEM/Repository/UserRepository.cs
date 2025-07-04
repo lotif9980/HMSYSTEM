@@ -14,6 +14,8 @@ namespace HMSYSTEM.Repository
             _db = db;
         }
 
+      
+
         public List<User> GetAll()
         {  
             return _db.Users.ToList(); 
@@ -69,6 +71,30 @@ namespace HMSYSTEM.Repository
             return _db.Users.ToList();
         }
 
-        
+
+        public void Delete(int Id)
+        {
+            var data = _db.Users.Find(Id);
+            if (data != null)
+            {
+                _db.Users.Remove(data);
+                _db.SaveChanges();
+            }
+          
+        }
+
+        public User Find(int Id)
+        {
+            return _db.Users.Find(Id);
+        }
+
+        public void Update(User user)
+        {
+            
+               _db.Update(user);
+               _db.SaveChanges(); 
+           
+        }
+
     }
 }

@@ -1,9 +1,4 @@
-﻿@model IEnumerable<User>
-
-@* @foreach(Patient patient in Model)
-{
-   @patient.Name
-} *@
+﻿@model IEnumerable<Role>
 
 <div class="container-fluid mt-3">
     <div class="row">
@@ -21,39 +16,39 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th style="width:60px">Sl No</th>
+                                <th >Sl No</th>
                                 <th>Name</th>
-                                <th>Mobile No </th>
-                                <th>User Name </th>
-                                <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @{
                                 int count = 1;
                             }
-                            @foreach (User item in Model)
+                            @foreach (Role item in Model)
                             {
                                 <tr>
                                     <td>@count</td>
 
                                     <td>@item.Name</td>
-                                    <td>@item.MobileNo</td>
-                                    <td>@item.UserName</td>
-                                    <td>@(item.Status == true ? "Active" : "Invactive")</td>
+                                
+                                   
                                     <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 
-                                            <a class="btn btn-primary ms-2" asp-route-id="@item.Id" asp-controller="User" asp-action="Edit">
+                                            <a class="btn btn-primary ms-2" asp-route-id="@item.Id" asp-controller="Doctor" asp-action="Edit">
                                                 <i class="fa fa-edit"></i>
                                             </a>
 
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="User" asp-action="Delete">
+                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Doctor" asp-action="Delete">
                                                 <i class="fa fa-trash"></i>
                                             </a>
 
-                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="User" asp-action="Details">
+                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="Doctor" asp-action="Details">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="User" asp-action="ChangePassword">
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                         </div>

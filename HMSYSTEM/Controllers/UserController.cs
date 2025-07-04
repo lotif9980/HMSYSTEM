@@ -25,6 +25,7 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public IActionResult Save()
         {
+            ViewBag.Roles=unitofwork.RoleRepository.GetRoles();
             return View();
         }
 
@@ -45,7 +46,35 @@ namespace HMSYSTEM.Controllers
         }
 
        
+        public IActionResult Delete(int Id)
+        {
+            unitofwork.UserRepository.Delete(Id);
+            return RedirectToAction("Index");
+        }
 
+        [HttpGet]
+        public IActionResult Edit(int Id)
+        {
+            var data = unitofwork.UserRepository.Find(Id);
 
+            var roles= unitofwork.RoleRepository.GetRoles();
+
+            ViewBag.Role = roles;
+            return View(data);
+        }
+
+        [HttpPost]
+        public IActionResult Update(User user)
+        {
+            unitofwork.UserRepository.Update(user);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Details(int Id)
+        {
+            var data = unitofwork.UserRepository.Find(Id);
+            return View(data);
+        }
     }
 }

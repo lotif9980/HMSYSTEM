@@ -9,8 +9,10 @@ namespace HMSYSTEM.Repository
         User GetUser(string username, string password);
 
         List<User> Save(User user);
+        void Delete(int Id);
+        User Find(int Id);
 
-
+        public void Update(User user);
 
     }
 }
