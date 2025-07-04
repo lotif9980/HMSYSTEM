@@ -16,15 +16,15 @@
                         <div class="card-body">
 
                             <div class="row mb-3">
-                                <label asp-for="Id" class="col-sm-2 col-form-label">Id</label>
-                                <div class="col-sm-10">
+                                <label asp-for="Id" class="col-sm-3 col-form-label">Id</label>
+                                <div class="col-sm-9">
                                     <input asp-for="Id" class="form-control" id="Id" readonly>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label asp-for="FirstName" class="col-sm-2 col-form-label">FirstName</label>
-                                <div class="col-sm-10">
+                                <label asp-for="FirstName" class="col-sm-3 col-form-label">FirstName</label>
+                                <div class="col-sm-9">
                                     <input asp-for="FirstName" class="form-control" id="firstName">
                                 </div>
                             </div>
@@ -33,22 +33,22 @@
 
 
                             <div class="row mb-3">
-                                <label asp-for="LastName" class="col-sm-2 col-form-label">LastName</label>
-                                <div class="col-sm-10">
+                                <label asp-for="LastName" class="col-sm-3 col-form-label">LastName</label>
+                                <div class="col-sm-9">
                                     <input asp-for="LastName" class="form-control" id="lastName">
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label asp-for="EmailAddress" class="col-sm-2 col-form-label">EmailAddress</label>
-                                <div class="col-sm-10">
+                                <label asp-for="EmailAddress" class="col-sm-3 col-form-label">EmailAddress</label>
+                                <div class="col-sm-9">
                                     <input asp-for="EmailAddress" class="form-control" id="emailAddress">
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label asp-for="Password" class="col-sm-2 col-form-label">Password</label>
-                                <div class="col-sm-10">
+                                <label asp-for="Password" class="col-sm-3 col-form-label">Password</label>
+                                <div class="col-sm-9">
                                     <div class="position-relative">
                                         <input asp-for="Password" class="form-control pe-5" id="password">
                                         <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor:pointer;" onclick="togglePassword()">
@@ -61,8 +61,8 @@
                             
 
                             <div class="row mb-3">
-                                <label for="DepartmentId" class="col-sm-2 col-form-label">Department</label>
-                                <div class="col-sm-10 position-relative">
+                                <label for="DepartmentId" class="col-sm-3 col-form-label">Department</label>
+                                <div class="col-sm-9 position-relative">
                                     <div class="input-group">
                                         <select name="DepartmentId" id="DepartmentId" class="form-select pe-5">
                                             <option value="">-- Select Department --</option>
@@ -73,16 +73,14 @@
                                                 </option>
                                             }
                                         </select>
-                                        <span class="input-group-text bg-white border-start-0">
-                                           
-                                        </span>
+                                       
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="DesignationId" class="col-sm-2 col-form-label">Designation</label>
-                                <div class="col-sm-10 position-relative">
+                                <label for="DesignationId" class="col-sm-3 col-form-label">Designation</label>
+                                <div class="col-sm-9 position-relative">
                                     <div class="input-group">
                                         <select name="DesignationId" id="DesignationId" class="form-select pe-5">
                                             <option value="">-- Select Designation --</option>
@@ -93,9 +91,7 @@
                                                 </option>
                                             }
                                         </select>
-                                        <span class="input-group-text bg-white border-start-0">
-                                            <i class=" text-muted"></i>
-                                        </span>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -105,36 +101,36 @@
 
 
                             <div class="row mb-3">
-                                <label asp-for="Address" class="col-sm-2 col-form-label">Address</label>
-                                <div class="col-sm-10">
+                                <label asp-for="Address" class="col-sm-3 col-form-label">Address</label>
+                                <div class="col-sm-9">
                                     <input asp-for="Address" class="form-control" id="address">
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label asp-for="PhoneNo" class="col-sm-2 col-form-label">Phone No</label>
-                                <div class="col-sm-10">
+                                <label asp-for="PhoneNo" class="col-sm-3 col-form-label">Phone No</label>
+                                <div class="col-sm-9">
                                     <input asp-for="PhoneNo" class="form-control" id="phoneNo">
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label asp-for="ShortBiography" class="col-sm-2 col-form-label">Short Biography</label>
-                                <div class="col-sm-10">
+                                <label asp-for="ShortBiography" class="col-sm-3 col-form-label">Short Biography</label>
+                                <div class="col-sm-9">
                                     <input asp-for="ShortBiography" class="form-control" id="shortBiography">
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label asp-for="Specialist" class="col-sm-2 col-form-label">Specialist</label>
-                                <div class="col-sm-10">
+                                <label asp-for="Specialist" class="col-sm-3 col-form-label">Specialist</label>
+                                <div class="col-sm-9">
                                     <input asp-for="Specialist" class="form-control" id="specialist">
                                 </div>
                             </div>
 
 
                             <div class="row mb-3">
-                                <label for="dateOfBirth" class="col-sm-2 col-form-label">Date of Birth</label>
-                                <div class="col-sm-10">
+                                <label for="dateOfBirth" class="col-sm-3 col-form-label">Date of Birth</label>
+                                <div class="col-sm-9">
                                     <div class="input-group">
                                         <input type="text" id="dateOfBirth" name="DateOfBirth" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
                                         <span class="input-group-text">
@@ -182,8 +178,8 @@
                             </div>
 
                             <div class="row mb-3">
-                                <label asp-for="ImageFile" class="col-sm-2 col-form-label">Profile Picture</label>
-                                <div class="col-sm-10">
+                                <label asp-for="ImageFile" class="col-sm-3 col-form-label">Profile Picture</label>
+                                <div class="col-sm-9">
                                     <input asp-for="ImageFile" class="form-control" type="file" id="imageFile" />
                                 </div>
                             </div>

@@ -74,7 +74,15 @@ namespace HMSYSTEM.Controllers
         public IActionResult Details(int Id)
         {
             var data = unitofwork.UserRepository.Find(Id);
+
+            var roles = unitofwork.RoleRepository.GetRoles();
+
+            ViewBag.Role = roles;
             return View(data);
         }
+
+      
+
+       
     }
 }

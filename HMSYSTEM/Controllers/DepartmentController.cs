@@ -33,7 +33,7 @@ namespace HMSYSTEM.Controllers
         public IActionResult Save(Department department)
         {
             _unitOf.departmentRepo.Save(department);
-            return RedirectToAction("Index");
+            return RedirectToAction("Save");
         }
 
         [HttpGet]

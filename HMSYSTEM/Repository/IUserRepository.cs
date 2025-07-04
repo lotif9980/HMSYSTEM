@@ -14,5 +14,7 @@ namespace HMSYSTEM.Repository
 
         public void Update(User user);
 
+     
+
     }
 }

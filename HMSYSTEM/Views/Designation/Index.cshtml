@@ -28,10 +28,13 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @{
+                                int count = 1;
+                            }
                             @foreach (Designation designation in Model)
                             {
                                 <tr>
-                                    <td>@designation.DesignationId</td>
+                                    <td>@count</td>
                                     <td>@designation.DesignationName</td>
                                     <td>@(designation.Status ? "Active" : "Inactive")</td>
                                     <td>
@@ -47,6 +50,7 @@
                                         </div>
                                     </td>
                                 </tr>
+                                count++;
                             }
 
                         </tbody>
