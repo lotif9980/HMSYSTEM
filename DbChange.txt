@@ -1,3 +1,42 @@
+-----------------------------------------------
+---------------06.07.2025-----------------
+-----------------------------------------------
+  ALTER TABLE Appointments
+ALTER COLUMN AppoinmentDate DATETIME NULL;
+
+-----------------------------------------------
+---------------06.07.2025-----------------
+-----------------------------------------------
+alter table Appointments
+drop column [ScheduleId]
+-----------------------------------------------
+---------------06.07.2025-----------------
+-----------------------------------------------
+/****** Object:  Table [dbo].[Appointments]    Script Date: 7/6/2025 10:34:20 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Appointments](
+	[AppointmentId] [int] IDENTITY(1,1) NOT NULL,
+	[PatientPhoneNumber] [nvarchar](50) NULL,
+	[DepartmentId] [int] NULL,
+	[ScheduleId] [int] NULL,
+	[DoctorId] [int] NULL,
+	[AppoinmentDate] [time](7) NULL,
+	[SerialNumber] [int] NULL,
+	[Problem] [nvarchar](max) NULL,
+	[Status] [bit] NULL,
+ CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED 
+(
+	[AppointmentId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
 
 -----------------------------------------------
 ---------------03.07.2025-----------------
