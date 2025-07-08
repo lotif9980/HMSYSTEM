@@ -1,4 +1,6 @@
-﻿namespace HMSYSTEM.Models
+﻿using HMSYSTEM.Enum;
+
+namespace HMSYSTEM.Models
 {
     public class Appointment
     {
@@ -9,6 +11,8 @@
         public DateTime? AppoinmentDate { get; set; }
         public int? SerialNumber { get; set; }
         public string ? Problem { get; set; }
-        public bool Status { get; set; }
+        //public bool Status { get; set; }
+
+        public AppointmentStatus Status { get; set; }
     }
 }

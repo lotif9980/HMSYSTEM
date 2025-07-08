@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Appointment>
+﻿@using HMSYSTEM.Enum
+@model IEnumerable<Appointment>
 
 
 
@@ -8,7 +9,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Appointment List</h3></div>
-                    <div> <a class="btn btn-info" asp-controller="Designation" asp-action="Save">Create</a></div>
+                    <div> <a class="btn btn-info" asp-controller="Appointment" asp-action="Save">Create</a></div>
                 </div>
 
 
@@ -44,8 +45,13 @@
                                     <td>@appointment.DepartmentId</td>
                                    
                                     <td>@appointment.DoctorId</td>
-                                    
-                                    <td>@(appointment.Status ? "Active" : "Inactive")</td>
+
+                                    <td>
+                                        @(appointment.Status == AppointmentStatus.Active ? "Active" :
+                                          appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
+                                          appointment.Status == AppointmentStatus.Completed ? "Completed" :
+                                          appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
+                                </td>
                                     <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 

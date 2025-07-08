@@ -1,4 +1,12 @@
 ﻿@model Appointment
+<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 
 <div class="container-fluid mt-4">
@@ -70,7 +78,7 @@
                                 <label for="AppoinmentDate" class="col-sm-3 col-form-label">Appoinment Date</label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
-                                        <input type="text" id="AppoinmentDate" name="AppoinmentDate" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+                                        <input type="text" id="AppoinmentDate" name="AppoinmentDate" class="form-control" />
                                         <span class="input-group-text">
                                             <i class="fa fa-calendar"></i>
                                         </span>
@@ -78,13 +86,16 @@
                                 </div>
                             </div>
 
-
+                           @*  <div class="input-group">
+                                <input type="text" id="AppoinmentDate" class="form-control" />
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div> *@
                             
 
                             <div class="row mb-3">
                                 <label asp-for="SerialNumber" class="col-sm-3 col-form-label">Serial Number</label>
                                 <div class="col-sm-9">
-                                    <input asp-for="SerialNumber" class="form-control" id="SerialNumber" value="@ViewBag.NextSerial" />
+                                    <input asp-for="SerialNumber" class="form-control" id="SerialNumber" value="@ViewBag.NextSerial" readonly />
                                 </div>
                             </div>
 
@@ -134,13 +145,13 @@
 
 <script>
     $(function () {
-        $("#AppoinmentDate").datepicker({
+        $("#AppoinmentDate").datetimepicker({
             dateFormat: "dd-mm-yy",
+            timeFormat: "HH:mm",
             changeMonth: true,
             changeYear: true
         });
 
-        // Calendar icon click করলে input focus হবে
         $(".input-group-text").click(function () {
             $("#AppoinmentDate").focus();
         });
@@ -170,4 +181,24 @@
         });
     });
 
+
+  
+
+
 </script>
+
+<!-- jQuery UI CSS -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+<!-- Timepicker Addon CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- jQuery UI -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<!-- Timepicker Addon JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+

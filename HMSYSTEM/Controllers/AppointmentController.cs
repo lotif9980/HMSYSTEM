@@ -1,4 +1,5 @@
-﻿using HMSYSTEM.Repository;
+﻿using HMSYSTEM.Models;
+using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,10 +47,6 @@ namespace HMSYSTEM.Controllers
             return View();
         }
 
-
-
-
-
         [HttpGet]
         public IActionResult GetPatientNameByPhone(string phoneNumber)
         {
@@ -64,5 +61,18 @@ namespace HMSYSTEM.Controllers
             return Json(new { success = false });
         }
 
+        [HttpPost]
+        public IActionResult Save(Appointment appointment)
+        {
+            _unitofWork.AppointmentRepository.Save(appointment);
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Delete(int Id)
+        {
+            _unitofWork.AppointmentRepository.Delete(Id);
+            return RedirectToAction("Index");
+        }
     }
 }

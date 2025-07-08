@@ -1,12 +1,12 @@
 ﻿namespace HMSYSTEM.Enum
 {
-    public class EnumClass
-    {
-        enum Appointmentctr
+    
+        public enum AppointmentStatus
         {
-            pending=1,
-            progress=2,
-            close=3
+            Active = 1,
+            InProgress = 2,
+            Completed = 3,
+            Deleted = 9
         }
-    }
+    
 }
