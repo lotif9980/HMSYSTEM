@@ -14,7 +14,8 @@
                         <a class="btn btn-info" asp-controller="Appointment" asp-action="GetComplete">Complete</a>
                         <a class="btn btn-info" asp-controller="Appointment" asp-action="GetDeleteList">Delete</a>
                     </div>
-                    <div> <h3 class="card-title bg-dark-subtle border border-danger-subtle">Existing Appointment List</h3></div>
+
+                    <div> <h3 class="card-title bg-dark-subtle border border-danger-subtle">Appointment Complete List</h3></div>
                     <div> <a class="btn btn-info" asp-controller="Appointment" asp-action="Save">Create</a></div>
                 </div>
 
@@ -33,7 +34,7 @@
                                 <th>Department</th>
                                 <th>Doctor</th>
                                 <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                               
                             </tr>
                         </thead>
                         <tbody>
@@ -49,42 +50,16 @@
                                     <td>@appointment.SerialNumber</td>
                                     <td>@appointment.PatientPhoneNumber</td>
                                     <td>@appointment.DepartmentId</td>
-                                   
+
                                     <td>@appointment.DoctorId</td>
 
                                     <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button"                                  id="statusDropdown_@appointment.AppointmentId" data-bs-toggle="dropdown" 
-                                                aria-expanded="false">
-                                                @(appointment.Status == AppointmentStatus.Active ? "Active" :
-                                                    appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
-                                                    appointment.Status == AppointmentStatus.Completed ? "Completed" :
-                                                    appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="statusDropdown_@appointment.AppointmentId">
-                                                <li>
-                                                    <a class="dropdown-item" asp-controller="Appointment" asp-action="ChangeStatus" asp-route-id="@appointment.AppointmentId" asp-route-status="2">
-                                                        In Progress
-                                                    </a>
-
-                                                </li>
-                                                
-                                            </ul>
-                                        </div>
+                                        @(appointment.Status == AppointmentStatus.Active ? "Active" :
+                                            appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
+                                            appointment.Status == AppointmentStatus.Completed ? "Completed" :
+                                            appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
                                     </td>
-
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" asp-route-id="@appointment.AppointmentId" asp-                          controller="Appointment" asp-action="Edit">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@appointment.AppointmentId" asp-controller="Appointment" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
+                                    
                                 </tr>
                                 count++;
                             }

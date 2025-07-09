@@ -1,0 +1,84 @@
+﻿@using HMSYSTEM.Enum
+@model IEnumerable<Appointment>
+
+
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-around">
+                    <div>
+                        <a class="btn btn-info" asp-controller="Appointment" asp-action="Index">Open List</a>
+                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetProgress">Progress</a>
+                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetComplete">Complete</a>
+                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetDeleteList">Delete</a>
+                    </div>
+
+                    <div> <h3 class="card-title bg-dark-subtle border border-danger-subtle">Appointment Delete List</h3></div>
+                    <div> <a class="btn btn-info" asp-controller="Appointment" asp-action="Save">Create</a></div>
+                </div>
+
+
+
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">Sl</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Siral Number</th>
+                                <th>Phone</th>
+                                <th>Department</th>
+                                <th>Doctor</th>
+                                <th>Status</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int count = 1;
+                            }
+                            @foreach (Appointment appointment in Model)
+                            {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@(appointment.AppoinmentDate?.ToString("dd-MM-yyyy"))</td>
+                                        <td>@(appointment.AppoinmentDate?.ToString("HH:mm:ss"))</td>
+                                        <td>@appointment.SerialNumber</td>
+                                        <td>@appointment.PatientPhoneNumber</td>
+                                        <td>@appointment.DepartmentId</td>
+
+                                        <td>@appointment.DoctorId</td>
+
+                                        <td>
+                                        @(appointment.Status == AppointmentStatus.Active ? "Active" :
+                                              appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
+                                              appointment.Status == AppointmentStatus.Completed ? "Completed" :
+                                              appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
+                                    </td>
+                                        
+                                    </tr>
+                                count++;
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-end">
+                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+</div>

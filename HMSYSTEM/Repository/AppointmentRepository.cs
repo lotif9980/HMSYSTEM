@@ -4,6 +4,7 @@ using System;
 using System.Reflection.Metadata;
 using HMSYSTEM.Enum;
 
+
 namespace HMSYSTEM.Repository
 {
     public class AppointmentRepository : IAppointmentRepository
@@ -21,6 +22,8 @@ namespace HMSYSTEM.Repository
 
         }
 
+
+
         public void Save(Appointment appointment)
         {
        
@@ -36,5 +39,36 @@ namespace HMSYSTEM.Repository
             _db.SaveChanges();
 
         }
+
+        public List<Appointment> GetDeleteAppointments()
+        {
+            return _db.Appointments.Where(p => p.Status == AppointmentStatus.Deleted).ToList();
+        }
+        public List<Appointment> GetProgress()
+        {
+            return _db.Appointments.Where(p=>p.Status==AppointmentStatus.InProgress).ToList();
+        }
+
+        public List<Appointment> GetComplete()
+        {
+            return _db.Appointments.Where(p => p.Status == AppointmentStatus.Completed).ToList();
+        }
+
+
+        public void UpdateStatus(int id, AppointmentStatus status)
+        {
+            var appointment = _db.Appointments.Find(id);
+            if (appointment != null)
+            {
+                appointment.Status = status;
+                _db.SaveChanges();
+            }
+        }
+
+        public List<Appointment> GetSerial()
+        {
+            return _db.Appointments.Where(p=>p.Status != AppointmentStatus.Deleted).ToList();
+        }
     }
+
 }

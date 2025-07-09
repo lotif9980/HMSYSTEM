@@ -1,4 +1,5 @@
-﻿using HMSYSTEM.Models;
+﻿using HMSYSTEM.Enum;
+using HMSYSTEM.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMSYSTEM.Repository
@@ -8,6 +9,11 @@ namespace HMSYSTEM.Repository
         List<Appointment> GetAllAppointments();
         public void Save(Appointment appointment);
         public void Delete(int Id);
-        
+        List<Appointment> GetDeleteAppointments();
+        List<Appointment> GetProgress();
+        List<Appointment> GetComplete();
+        public void UpdateStatus(int id, AppointmentStatus status);
+        List<Appointment> GetSerial();
+
     }
 }

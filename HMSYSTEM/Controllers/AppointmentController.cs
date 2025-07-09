@@ -1,4 +1,5 @@
-﻿using HMSYSTEM.Models;
+﻿using HMSYSTEM.Enum;
+using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ namespace HMSYSTEM.Controllers
             ViewBag.Doctor = doctor;
 
 
-            var lastSerial = _unitofWork.AppointmentRepository.GetAllAppointments()
+            var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
             .OrderByDescending(a => a.SerialNumber)
             .Select(a => a.SerialNumber)
             .FirstOrDefault();
@@ -72,6 +73,33 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int Id)
         {
             _unitofWork.AppointmentRepository.Delete(Id);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult GetDeleteList()
+        {
+            var data = _unitofWork.AppointmentRepository.GetDeleteAppointments();
+            return View(data);
+        }
+
+        [HttpGet]
+        public IActionResult GetProgress()
+        {
+            var data =_unitofWork.AppointmentRepository.GetProgress();
+            return View(data);
+        }
+
+        [HttpGet]
+        public IActionResult GetComplete()
+        {
+            var data = _unitofWork.AppointmentRepository.GetComplete();
+            return View(data);
+        }
+
+        public IActionResult ChangeStatus(int id, int status)
+        {
+            _unitofWork.AppointmentRepository.UpdateStatus(id, (AppointmentStatus)status);
             return RedirectToAction("Index");
         }
     }
