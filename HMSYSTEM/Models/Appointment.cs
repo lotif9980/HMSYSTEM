@@ -13,6 +13,8 @@ namespace HMSYSTEM.Models
         public string ? Problem { get; set; }
         //public bool Status { get; set; }
 
+        public Department? Department { get; set; }
+        public Doctor? Doctor { get; set; }
         public AppointmentStatus Status { get; set; }
     }
 }

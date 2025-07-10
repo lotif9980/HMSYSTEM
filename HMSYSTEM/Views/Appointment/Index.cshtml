@@ -15,7 +15,7 @@
                         <a class="btn btn-info" asp-controller="Appointment" asp-action="GetDeleteList">Delete</a>
                     </div>
                     <div> <h3 class="card-title bg-dark-subtle border border-danger-subtle">Existing Appointment List</h3></div>
-                    <div> <a class="btn btn-info" asp-controller="Appointment" asp-action="Save">Create</a></div>
+                    @* <div> <a class="btn btn-info" asp-controller="Appointment" asp-action="Save">Create</a></div> *@
                 </div>
 
 
@@ -48,9 +48,9 @@
                                     <td>@(appointment.AppoinmentDate?.ToString("HH:mm:ss"))</td>
                                     <td>@appointment.SerialNumber</td>
                                     <td>@appointment.PatientPhoneNumber</td>
-                                    <td>@appointment.DepartmentId</td>
+                                    <td>@appointment.Department?.DepartmentName</td>
                                    
-                                    <td>@appointment.DoctorId</td>
+                                    <td>@appointment.Doctor?.FirstName</td>
 
                                     <td>
                                         <div class="dropdown">

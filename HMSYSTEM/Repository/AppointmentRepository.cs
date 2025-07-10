@@ -3,6 +3,7 @@ using HMSYSTEM.Models;
 using System;
 using System.Reflection.Metadata;
 using HMSYSTEM.Enum;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace HMSYSTEM.Repository
@@ -18,7 +19,8 @@ namespace HMSYSTEM.Repository
 
         public List<Appointment> GetAllAppointments()
         {
-           return  _db.Appointments.Where(p => p.Status == AppointmentStatus.Active).ToList();
+           return  _db.Appointments.Include(d=>d.Department)
+                .Include(d=>d.Doctor). Where(p => p.Status == AppointmentStatus.Active).ToList();
 
         }
 
