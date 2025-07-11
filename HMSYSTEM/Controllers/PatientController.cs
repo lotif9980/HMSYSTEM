@@ -128,12 +128,6 @@ namespace HMSYSTEM.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        public IActionResult AddDocument()
-        {
-            return View();
-            
-        }
 
 
     }
