@@ -44,16 +44,22 @@ namespace HMSYSTEM.Repository
 
         public List<Appointment> GetDeleteAppointments()
         {
-            return _db.Appointments.Where(p => p.Status == AppointmentStatus.Deleted).ToList();
+            return _db.Appointments
+                .Include(x=> x.Doctor)
+                .Include(x=>x.Department).Where(p => p.Status == AppointmentStatus.Deleted).ToList();
         }
         public List<Appointment> GetProgress()
         {
-            return _db.Appointments.Where(p=>p.Status==AppointmentStatus.InProgress).ToList();
+            return _db.Appointments
+                .Include(x=>x.Doctor)
+                .Include(x=>x.Department).Where(p=>p.Status==AppointmentStatus.InProgress).ToList();
         }
 
         public List<Appointment> GetComplete()
         {
-            return _db.Appointments.Where(p => p.Status == AppointmentStatus.Completed).ToList();
+            return _db.Appointments
+                 .Include(x => x.Doctor)
+                 .Include(x => x.Department).Where(p => p.Status == AppointmentStatus.Completed).ToList();
         }
 
 

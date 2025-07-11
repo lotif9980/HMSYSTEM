@@ -49,9 +49,9 @@
                                         <td>@(appointment.AppoinmentDate?.ToString("HH:mm:ss"))</td>
                                         <td>@appointment.SerialNumber</td>
                                         <td>@appointment.PatientPhoneNumber</td>
-                                        <td>@appointment.DepartmentId</td>
+                                        <td>@appointment.Department.DepartmentName</td>
 
-                                        <td>@appointment.DoctorId</td>
+                                        <td>@appointment.Doctor.FirstName</td>
 
                                         <td>
                                         @(appointment.Status == AppointmentStatus.Active ? "Active" :

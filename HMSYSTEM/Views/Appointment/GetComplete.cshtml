@@ -49,19 +49,30 @@
                                     <td>@(appointment.AppoinmentDate?.ToString("HH:mm:ss"))</td>
                                     <td>@appointment.SerialNumber</td>
                                     <td>@appointment.PatientPhoneNumber</td>
-                                    <td>@appointment.DepartmentId</td>
-
-                                    <td>@appointment.DoctorId</td>
+                                    <td>@appointment.Department.DepartmentName</td>
+                                    <td>@appointment.Doctor?.FirstName</td>
 
                                     <td>
-                                        @(appointment.Status == AppointmentStatus.Active ? "Active" :
-                                            appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
-                                            appointment.Status == AppointmentStatus.Completed ? "Completed" :
-                                            appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
-                                    </td>
-                                    
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="statusDropdown_@appointment.AppointmentId" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                @(appointment.Status == AppointmentStatus.Active ? "Active" :
+                                                                                            appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
+                                                                                            appointment.Status == AppointmentStatus.Completed ? "Completed" :
+                                                                                            appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="statusDropdown_@appointment.AppointmentId">
+                                            <li>
+                                                <a class="dropdown-item" asp-controller="Appointment" asp-action="ChangeStatus" asp-route-id="@appointment.AppointmentId" asp-route-status="3">
+                                                    Completed
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+
                                 </tr>
-                                count++;
+                                                        count++;
                             }
 
                         </tbody>

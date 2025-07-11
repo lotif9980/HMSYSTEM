@@ -48,9 +48,8 @@
                                     <td>@(appointment.AppoinmentDate?.ToString("HH:mm:ss"))</td>
                                     <td>@appointment.SerialNumber</td>
                                     <td>@appointment.PatientPhoneNumber</td>
-                                    <td>@appointment.DepartmentId</td>
-
-                                    <td>@appointment.DoctorId</td>
+                                    <td>@appointment.Department.DepartmentName</td>
+                                    <td>@appointment.Doctor.FirstName  @appointment.Doctor.LastName</td>
 
                                     <td>
                                         <div class="dropdown">
