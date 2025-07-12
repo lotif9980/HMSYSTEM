@@ -20,6 +20,7 @@ namespace HMSYSTEM.Repository
         public List<Appointment> GetAllAppointments()
         {
            return  _db.Appointments.Include(d=>d.Department)
+                .Include(x=>x.Patient)
                 .Include(d=>d.Doctor). Where(p => p.Status == AppointmentStatus.Active).ToList();
 
         }
@@ -46,20 +47,23 @@ namespace HMSYSTEM.Repository
         {
             return _db.Appointments
                 .Include(x=> x.Doctor)
-                .Include(x=>x.Department).Where(p => p.Status == AppointmentStatus.Deleted).ToList();
+                .Include(x=>x.Department)
+                .Include(x=>x.Patient).Where(p => p.Status == AppointmentStatus.Deleted).ToList();
         }
         public List<Appointment> GetProgress()
         {
             return _db.Appointments
                 .Include(x=>x.Doctor)
-                .Include(x=>x.Department).Where(p=>p.Status==AppointmentStatus.InProgress).ToList();
+                .Include(x=>x.Department)
+                .Include(x=>x.Patient).Where(p=>p.Status==AppointmentStatus.InProgress).ToList();
         }
 
         public List<Appointment> GetComplete()
         {
             return _db.Appointments
                  .Include(x => x.Doctor)
-                 .Include(x => x.Department).Where(p => p.Status == AppointmentStatus.Completed).ToList();
+                 .Include(x => x.Department)
+                 .Include(x=>x.Patient).Where(p => p.Status == AppointmentStatus.Completed).ToList();
         }
 
 

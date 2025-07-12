@@ -16,5 +16,8 @@ namespace HMSYSTEM.Models
         public Department? Department { get; set; }
         public Doctor? Doctor { get; set; }
         public AppointmentStatus Status { get; set; }
+
+        public int PatientID { get; set; }
+        public Patient? Patient { get; set; }
     }
 }

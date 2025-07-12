@@ -23,6 +23,8 @@
                         <!--begin::Body-->
                         <div class="card-body">
 
+                            <input type="hidden" name="PatientId" id="patientId" value="<!--patient id here-->" />
+
                             <div class="row mb-3">
                                 <label asp-for="PatientPhoneNumber" class="col-sm-3 col-form-label">P. Phone Number</label>
                                 <div class="col-sm-9">
@@ -161,8 +163,10 @@
                     .then(data => {
                         if (data.success) {
                             document.getElementById("patientName").value = data.name;
+                            document.getElementById('patientId').value = data.id;
                         } else {
                             document.getElementById("patientName").value = "";
+                            document.getElementById("patientId").value = "";
                             // alert("No patient found with this number.");
                         }
                     })

@@ -30,6 +30,7 @@
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Siral Number</th>
+                                <th>Patient Name</th>
                                 <th>Phone</th>
                                 <th>Department</th>
                                 <th>Doctor</th>
@@ -47,6 +48,7 @@
                                     <td>@(appointment.AppoinmentDate?.ToString("dd-MM-yyyy"))</td>
                                     <td>@(appointment.AppoinmentDate?.ToString("HH:mm:ss"))</td>
                                     <td>@appointment.SerialNumber</td>
+                                    <td>@appointment.Patient.FirstName @appointment.Patient.LastName</td>
                                     <td>@appointment.PatientPhoneNumber</td>
                                     <td>@appointment.Department.DepartmentName</td>
                                     <td>@appointment.Doctor.FirstName  @appointment.Doctor.LastName</td>

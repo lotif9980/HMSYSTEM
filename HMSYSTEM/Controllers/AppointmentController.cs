@@ -56,7 +56,10 @@ namespace HMSYSTEM.Controllers
 
             if (patient != null)
             {
-                return Json(new { success = true, name = patient.FirstName+" " + patient.LastName });
+                return Json(new { success = true, 
+                    name = patient.FirstName+" " + patient.LastName ,
+                    id=patient.PatientID
+                });
             }
 
             return Json(new { success = false });
