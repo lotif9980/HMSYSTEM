@@ -1,3 +1,35 @@
+
+
+-----------------------------------------------
+---------------13.07.2025-----------------
+-----------------------------------------------
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Prescriptions](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Date] [date] NULL,
+	[PatientId] [int] NOT NULL,
+	[DoctorId] [int] NOT NULL,
+	[DepartmentId] [int] NULL,
+	[Status] [int] NULL,
+ CONSTRAINT [PK_Prescriptions] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Prescriptions] ADD  CONSTRAINT [DF_Prescriptions_PatientId]  DEFAULT ((0)) FOR [PatientId]
+GO
+
+ALTER TABLE [dbo].[Prescriptions] ADD  CONSTRAINT [DF_Prescriptions_DoctorId]  DEFAULT ((0)) FOR [DoctorId]
+GO
+
+
 -----------------------------------------------
 ---------------11.07.2025-----------------
 -----------------------------------------------
