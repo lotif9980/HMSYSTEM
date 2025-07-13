@@ -20,6 +20,7 @@ namespace HMSYSTEM.Repository
         public IAppointmentRepository AppointmentRepository { get; set; }
         public IUserRepository UserRepository { get; set; }
         public IRoleRepository RoleRepository { get; set; }
+        public IPatientHistoryRepository PatienHistoryRepo { get; set; }
 
 
 
@@ -37,6 +38,9 @@ namespace HMSYSTEM.Repository
             AppointmentRepository = new AppointmentRepository(db);
             UserRepository = new UserRepository(db);
             RoleRepository= new RoleRepository(db);
+            PatienHistoryRepo = new PatientHistoryRepository(db);
+
+
 
         }
 

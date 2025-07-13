@@ -13,6 +13,7 @@ namespace HMSYSTEM.Repository
         IAppointmentRepository AppointmentRepository { get; }
         IUserRepository UserRepository { get; }
         IRoleRepository RoleRepository { get; }
+        IPatientHistoryRepository PatienHistoryRepo { get; }
         void Complete();
         Task<int> Save();
     }

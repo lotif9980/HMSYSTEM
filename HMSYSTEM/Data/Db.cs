@@ -42,6 +42,7 @@ namespace HMSYSTEM.Data
             public DbSet<Appointment> Appointments { get; set; }
             public DbSet<User> Users { get; set; }
             public DbSet<Role> Roles { get; set; }
+            public DbSet<PatientHistory> PatientHistories { get; set; }
 
     }
 }
