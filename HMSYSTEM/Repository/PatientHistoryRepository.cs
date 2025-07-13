@@ -1,5 +1,6 @@
 ﻿using HMSYSTEM.Data;
 using HMSYSTEM.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMSYSTEM.Repository
 {
@@ -14,7 +15,16 @@ namespace HMSYSTEM.Repository
 
         public List<PatientHistory> GetAll()
         {
-          return _db.PatientHistories.ToList();
+
+          return _db.PatientHistorys
+                .Include(x=>x.Patient)
+                .Include(x=>x.Doctor).ToList();
+        }
+
+        public void Save(PatientHistory pHistory)
+        {
+            _db.Add(pHistory);
+            _db.SaveChanges();
         }
     }
 }

@@ -6,6 +6,8 @@ namespace HMSYSTEM.Repository
     {
 
         public List<PatientHistory> GetAll();
+        public void Save(PatientHistory pHistory);
+
       
     }
 }
