@@ -21,5 +21,11 @@ namespace HMSYSTEM.Repository
                 .Include(d=>d.Department)
                 .Include(p=>p.Patient).ToList();
         }
+
+        public void Save(Prescription prescription)
+        {
+            _db.Prescriptions.Add(prescription);
+            _db.SaveChanges();
+        }
     }
 }

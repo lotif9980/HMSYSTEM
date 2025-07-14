@@ -1,0 +1,126 @@
+﻿@model HMSYSTEM.ViewModels.PrescriptionViewModel
+@{
+    var medicineList = ViewBag.Medicine as List<HMSYSTEM.Models.Medicine>;
+}
+
+<form asp-action="Save" method="post" enctype="multipart/form-data">
+
+    <!-- Prescription Info Card -->
+    <div class="card shadow p-4 mb-5 m-4">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="Date" class="form-label">Date</label>
+                <div class="input-group">
+                    <input type="text" id="dateOfBirth" name="dateOfBirth" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="PatientID" class="form-label">Patient</label>
+                <select name="PatientID" id="PatientID" class="form-select">
+                    <option value="">-- Select Patient --</option>
+                    @foreach (var item in ViewBag.Patient)
+                    {
+                        <option value="@item.PatientID">@item.FirstName @item.LastName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="DoctorId" class="form-label">Doctor</label>
+                <select name="DoctorId" id="DoctorId" class="form-select">
+                    <option value="">-- Select Doctor --</option>
+                    @foreach (var item in ViewBag.Doctor)
+                    {
+                        <option value="@item.Id">@item.FirstName @item.LastName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="DepartmentId" class="form-label">Department</label>
+                <select name="DepartmentId" id="DepartmentId" class="form-select">
+                    <option value="">-- Select Department --</option>
+                    @foreach (var item in ViewBag.Department)
+                    {
+                        <option value="@item.DepartmentId">@item.DepartmentName</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Prescription Details Card -->
+    <div class="card shadow p-4 m-4">
+        <div class="mb-3">
+            <!-- Hidden medicine dropdown template -->
+            <select id="medicineTemplate" class="form-select d-none">
+                <option value="">-- Select Medicine --</option>
+                @foreach (var med in medicineList)
+                {
+                    <option value="@med.Id">@med.Name</option>
+                }
+            </select>
+
+            <table class="table" id="detailsTable">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Dose</th>
+                        <th>Duration</th>
+                        <th>Instructions</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be appended here dynamically -->
+                </tbody>
+            </table>
+
+            <button type="button" id="addRowBtn" class="btn btn-primary">Add Row</button>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-center">
+            <button type="submit" class="btn btn-warning me-2">Save</button>
+            <button type="reset" class="btn btn-danger me-2">Reset</button>
+        </div>
+    </div>
+
+    <!-- Submit and Reset Buttons -->
+    
+
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let rowIndex = 0;
+
+    function createRow(index) {
+        let medicineDropdown = $("#medicineTemplate").html();
+
+        return `<tr>
+            <td>
+                <select name="PrescriptionDetails[${index}].MedicineId" class="form-select">
+                    ${medicineDropdown}
+                </select>
+            </td>
+            <td><input type="text" name="PrescriptionDetails[${index}].Dose" class="form-control" /></td>
+            <td><input type="text" name="PrescriptionDetails[${index}].Duration" class="form-control" /></td>
+            <td><input type="checkbox" name="PrescriptionDetails[${index}].Instructions" value="true" /></td>
+            <td><button type="button" class="btn btn-danger removeRowBtn">Remove</button></td>
+        </tr>`;
+    }
+
+    $(document).ready(function () {
+        // প্রথম রো ডিফল্ট অ্যাড করো
+        $("#detailsTable tbody").append(createRow(rowIndex));
+        rowIndex++;
+    });
+
+    $("#addRowBtn").click(function () {
+        $("#detailsTable tbody").append(createRow(rowIndex));
+        rowIndex++;
+    });
+
+    $("#detailsTable").on("click", ".removeRowBtn", function () {
+        $(this).closest("tr").remove();
+    });
+</script>

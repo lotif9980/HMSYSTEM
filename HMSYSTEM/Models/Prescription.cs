@@ -1,4 +1,5 @@
-﻿namespace HMSYSTEM.Models
+﻿
+namespace HMSYSTEM.Models
 {
     public class Prescription
     {
@@ -12,5 +13,6 @@
         public Doctor? Doctor { get; set; } 
         public Patient? Patient { get; set; }
         public Department? Department { get; set; }
+        public List<PrescriptionDetail> PrescriptionDetails { get; internal set; }
     }
 }

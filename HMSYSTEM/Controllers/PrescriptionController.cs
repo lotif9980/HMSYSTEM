@@ -1,4 +1,6 @@
-﻿using HMSYSTEM.Repository;
+﻿using HMSYSTEM.Models;
+using HMSYSTEM.Repository;
+using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMSYSTEM.Controllers
@@ -15,6 +17,72 @@ namespace HMSYSTEM.Controllers
         {
            var data=  _unitOfWork.PrescriptioRepository.GetAll();
             return View(data);
+        }
+
+        [HttpGet]
+        public IActionResult Save()
+        {
+            var department = _unitOfWork.departmentRepo.getAll()
+                .Where(c => c.Status == true)
+                .ToList();
+            var doctor = _unitOfWork.doctorRepo.getAll().
+                Where(c => c.Status == true)
+                .ToList();
+            var patient = _unitOfWork.PatienRepo.getAll().ToList();
+
+            var medicine = _unitOfWork.MedicineRepo.GetAllMedicines().ToList();
+
+            ViewBag.Department = department;
+            ViewBag.Doctor = doctor;
+            ViewBag.Patient = patient;
+            ViewBag.Medicine = medicine;
+
+
+            var model = new PrescriptionViewModel();
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public IActionResult Save(PrescriptionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // আবার View তে ফিরিয়ে দিতে হবে, ViewBag refill করতে হবে
+                ViewBag.Patient = _unitOfWork.PatienRepo.getAll();
+                ViewBag.Doctor = _unitOfWork.doctorRepo.getAll();
+                ViewBag.Department = _unitOfWork.departmentRepo.getAll();
+                ViewBag.Medicine = _unitOfWork.MedicineRepo.GetAllMedicines();
+                return View(model);
+            }
+
+            // Prescription Entity তৈরি করো ViewModel থেকে
+            var prescription = new Prescription
+            {
+                Date = model.Date ,
+                PatientId = model.PatientId,
+                DoctorId = model.DoctorId,
+                DepartmentId = model.DepartmentId,
+                Status = model.Status
+            };
+
+            // Child List Map করা
+            if (model.PrescriptionDetails != null && model.PrescriptionDetails.Count > 0)
+            {
+                prescription.PrescriptionDetails = model.PrescriptionDetails.Select(d => new PrescriptionDetail
+                {
+                    MedicineId = d.MedicineId,
+                    Dose = d.Dose,
+                    Duration = d.Duration,
+                    Instructions = d.Instructions ?? false
+                }).ToList();
+            }
+
+            // Save prescription (with details) রেপোজিটরিতে
+            _unitOfWork.PrescriptioRepository.Save(prescription);
+          
+
+            return RedirectToAction("Index"); // অথবা যেই পেজে যেতে চাও
         }
     }
 }

@@ -22,7 +22,7 @@ builder.Services.AddSession();
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
     {
-        options.LoginPath = "/Account/Login"; 
+        options.LoginPath = "/Account/Login";
     });
 
 builder.Services.AddAuthorization();
