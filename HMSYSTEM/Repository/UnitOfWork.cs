@@ -1,7 +1,4 @@
 ﻿
-
-
-
 using HMSYSTEM.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +18,7 @@ namespace HMSYSTEM.Repository
         public IUserRepository UserRepository { get; set; }
         public IRoleRepository RoleRepository { get; set; }
         public IPatientHistoryRepository PatienHistoryRepo { get; set; }
+        public IPrescriptionRepository PrescriptioRepository { get; set; }
 
 
 
@@ -39,6 +37,7 @@ namespace HMSYSTEM.Repository
             UserRepository = new UserRepository(db);
             RoleRepository= new RoleRepository(db);
             PatienHistoryRepo = new PatientHistoryRepository(db);
+            PrescriptioRepository = new PrescriptionRepository(db);
 
 
 

@@ -29,7 +29,7 @@ namespace HMSYSTEM.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+          
         }
 
        
@@ -43,6 +43,9 @@ namespace HMSYSTEM.Data
             public DbSet<User> Users { get; set; }
             public DbSet<Role> Roles { get; set; }
             public DbSet<PatientHistory> PatientHistorys { get; set; }
+            public DbSet<Prescription> Prescriptions { get; set; }
+            public DbSet<PrescriptionDetail>PrescriptionDetails { get; set; }
+
 
     }
 }
