@@ -37,7 +37,7 @@
                             {
                                 <tr>
                                     <td>@count</td>
-                                    <td>@item.Date</td>
+                                    <td>@(item.Date?.ToString("dd-MM-yyyy"))</td>
                                     <td>@item.Patient.FirstName @item.Patient.LastName</td>
                                     <td>@item.Doctor.FirstName @item.Doctor.LastName</td>
                                     <td>@item.Department.DepartmentName</td>
