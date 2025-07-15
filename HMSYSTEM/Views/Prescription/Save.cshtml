@@ -11,7 +11,7 @@
             <div class="col-md-6">
                 <label for="Date" class="form-label">Date</label>
                 <div class="input-group">
-                    <input type="text" id="dateOfBirth" name="dateOfBirth" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+                    <input type="text" id="date" name="date" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
@@ -75,7 +75,9 @@
                 </tbody>
             </table>
 
-            <button type="button" id="addRowBtn" class="btn btn-primary">Add Row</button>
+           <div class="d-flex justify-content-end">
+                <button type="button" id="addRowBtn" class="btn btn-primary btn-sm">+</button>
+           </div>
         </div>
 
         <div class="mt-4 d-flex justify-content-center">
@@ -105,7 +107,7 @@
             <td><input type="text" name="PrescriptionDetails[${index}].Dose" class="form-control" /></td>
             <td><input type="text" name="PrescriptionDetails[${index}].Duration" class="form-control" /></td>
             <td><input type="checkbox" name="PrescriptionDetails[${index}].Instructions" value="true" /></td>
-            <td><button type="button" class="btn btn-danger removeRowBtn">Remove</button></td>
+            <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
         </tr>`;
     }
 

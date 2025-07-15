@@ -249,6 +249,40 @@
                 </li>
 
 
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon bi bi-clock"></i>
+
+                        <p>
+                            Prescription
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Prescription" asp-action="Save" class="nav-link">
+                                @* <i class="ms-3 bi bi-people-fill"></i> *@
+                                <i class="ms-3 bi bi-person-plus-fill"></i>
+                                <p>Add Prescription</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Prescription" asp-action="Index" class="nav-link">
+                                <i class="ms-3 bi bi-clock"></i>
+                                    <p>Prescription List</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </li>
+
 
                 <li class="nav-item">
                     <a href="#" class="nav-link">
