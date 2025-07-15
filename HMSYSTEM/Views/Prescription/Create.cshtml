@@ -1,0 +1,194 @@
+﻿@using System.Text
+@{
+    var medicineOptions = new StringBuilder();
+    foreach (SelectListItem opt in ViewBag.Medicine)
+    {
+        medicineOptions.Append($"<option value=\"{opt.Value}\">{opt.Text}</option>");
+    }
+    var medicineOptionHtml = medicineOptions.ToString();
+}
+
+<form asp-action="Save" method="post" enctype="multipart/form-data">
+    <!-- Prescription Info Card -->
+    <div class="card shadow p-4 mb-5 m-4">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="Date" class="form-label">Date</label>
+                <div class="input-group">
+                    <input type="text" id="dateOfBirth" name="dateOfBirth" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="PatientID" class="form-label">Patient</label>
+                <select name="PatientID" id="PatientID" class="form-select">
+                    <option value="">-- Select Patient --</option>
+                    @foreach (var item in ViewBag.Patient)
+                    {
+                        <option value="@item.PatientID">@item.FirstName @item.LastName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="DoctorId" class="form-label">Doctor</label>
+                <select name="DoctorId" id="DoctorId" class="form-select">
+                    <option value="">-- Select Doctor --</option>
+                    @foreach (var item in ViewBag.Doctor)
+                    {
+                        <option value="@item.Id">@item.FirstName @item.LastName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="DepartmentId" class="form-label">Department</label>
+                <select name="DepartmentId" id="DepartmentId" class="form-select">
+                    <option value="">-- Select Department --</option>
+                    @foreach (var item in ViewBag.Department)
+                    {
+                        <option value="@item.DepartmentId">@item.DepartmentName</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Medicines Table Card -->
+    <div class="card mb-5 m-4">
+        <div class="table-responsive">
+            <div class="data"></div>
+        </div>
+    </div>
+
+    <div class="card mb-5 m-4">
+        <div class="mt-4 d-flex justify-content-center">
+            <button type="submit" class="btn btn-warning me-2">Save</button>
+            <button type="reset" class="btn btn-danger me-2">Reset</button>
+        </div>
+    </div>
+</form>
+
+<style>
+    /* পুরো পেজে টেবিল সুন্দর দেখানোর জন্য */
+    .table {
+        width: 100% !important;
+        min-width: 700px; /* প্রয়োজনমতো বাড়াতে পারেন */
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+
+        .table thead th {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            padding: 0.5rem;
+        }
+    /* ইনপুট ও সিলেক্ট বক্সের ভিতর টেক্সট মাঝে রাখা */
+    .form-control, .form-select {
+        height: calc(1.5em + 0.75rem + 2px);
+        font-size: 0.95rem;
+    }
+</style>
+
+<script>
+          let optionHtml = `@Html.Raw(medicineOptionHtml)`;
+    let cart = []; // ডেটা স্টোরেজ, প্রথমে ফাঁকা
+
+    // DOM থেকে ইনপুট ভ্যালু গুলো নিয়ে cart আপডেট করার ফাংশন
+    function syncCartFromInputs() {
+      const rows = document.querySelectorAll(".data tbody tr");
+      cart = []; // নতুন করে ভ্যালু ভরবো
+
+      rows.forEach((row, idx) => {
+        const medicineId = row.querySelector(`select[name="medicine[${idx}][id]"]`)?.value || "";
+        const dose = row.querySelector(`input[name="medicine[${idx}][dose]"]`)?.value || "";
+        const duration = row.querySelector(`input[name="medicine[${idx}][duration]"]`)?.value || "";
+        const instructions = row.querySelector(`input[name="medicine[${idx}][instructions]"]`)?.value || "";
+
+        cart.push({
+          ID: medicineId,
+          DOSE: dose,
+          DURATION: duration,
+          INSTRUCTIONS: instructions
+        });
+      });
+    }
+
+    // নতুন রো যোগ করার ফাংশন
+    function addRow() {
+      syncCartFromInputs(); // আগের ডেটা ধরে রাখার জন্য সিঙ্ক করি
+      cart.push({ ID: "", DOSE: "", DURATION: "", INSTRUCTIONS: "" }); // নতুন খালি রো যুক্ত করি
+      loadTable(); // টেবিল রেন্ডার করি
+    }
+
+    // টেবিল লোড করার ফাংশন (রেন্ডার)
+    function loadTable() {
+      const list = document.querySelector(".data");
+
+      let html = `
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th style="width:5%">Sl</th>
+              <th style="width:30%">Medicine</th>
+              <th style="width:15%">Dose</th>
+              <th style="width:15%">Duration</th>
+              <th style="width:25%">Instructions</th>
+              <th style="width:10%"><button type="button" class="btn btn-sm btn-success" onclick="addRow()" title="Add New Row">+</button></th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      if (cart.length === 0) {
+        cart.push({ ID: "", DOSE: "", DURATION: "", INSTRUCTIONS: "" });
+      }
+
+      cart.forEach((item, sl) => {
+        html += `
+          <tr>
+            <td class="text-center">${sl + 1}</td>
+            <td>
+                <select name="medicine[${sl}][id]" class="form-select" required>
+                  ${optionHtml}
+                </select>
+            </td>
+            <td><input type="text" name="medicine[${sl}][dose]" value="${item.DOSE}" class="form-control" /></td>
+            <td><input type="text" name="medicine[${sl}][duration]" value="${item.DURATION}" class="form-control" /></td>
+            <td><input type="text" name="medicine[${sl}][instructions]" value="${item.INSTRUCTIONS}" class="form-control" /></td>
+            <td class="text-center">
+              <button type="button" class="btn btn-sm btn-danger" onclick="removeRow(${sl})" title="Remove Row">−</button>
+            </td>
+          </tr>`;
+      });
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      list.innerHTML = html;
+
+      // সিলেক্ট ফিল্ডগুলোর মান সঠিকভাবে বসানো হচ্ছে
+      cart.forEach((item, index) => {
+        const selectEl = document.querySelector(`select[name="medicine[${index}][id]"]`);
+        if (selectEl) {
+          selectEl.value = item.ID;
+        }
+      });
+    }
+
+    // রো মুছে ফেলার ফাংশন
+    function removeRow(index) {
+      syncCartFromInputs(); // ডেটা আপডেট করি মুছে ফেলার আগে
+      cart.splice(index, 1); // নির্দিষ্ট রো মুছে ফেলি
+      loadTable(); // টেবিল রেন্ডার করি
+    }
+
+    // প্রথমবার পেজ লোড হওয়ার সময় টেবিল তৈরি করি
+    document.addEventListener("DOMContentLoaded", () => {
+      loadTable();
+    });
+</script>

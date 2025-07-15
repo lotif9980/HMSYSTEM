@@ -2,6 +2,7 @@
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HMSYSTEM.Controllers
 {
@@ -84,5 +85,34 @@ namespace HMSYSTEM.Controllers
 
             return RedirectToAction("Index"); // অথবা যেই পেজে যেতে চাও
         }
+
+
+        [HttpGet]
+        public IActionResult Create(PrescriptionViewModel model)
+        {
+
+            var department = _unitOfWork.departmentRepo.getAll()
+                .Where(c => c.Status == true)
+                .ToList();
+            var doctor = _unitOfWork.doctorRepo.getAll().
+                Where(c => c.Status == true)
+                .ToList();
+            var patient = _unitOfWork.PatienRepo.getAll().ToList();
+
+            var medicine = _unitOfWork.MedicineRepo.GetAllMedicines().ToList();
+
+            ViewBag.Department = department;
+            ViewBag.Doctor = doctor;
+            ViewBag.Patient = patient;
+            ViewBag.Medicine = medicine
+                .Select(m => new SelectListItem
+                {
+                    Value = m.Id.ToString(),  
+                    Text = m.Name           
+                })
+                .ToList();
+            return View(model);
+        }
+    
     }
 }
