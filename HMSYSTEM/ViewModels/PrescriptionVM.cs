@@ -11,6 +11,8 @@ namespace HMSYSTEM.ViewModels
         public int DoctorId { get; set; }
         public int? DepartmentId { get; set; }
         public int? Status { get; set; }
+        public string ? Note { get; set; }
+        public DateTime? NextFlowUp { get; set; }
 
         public Doctor? Doctor { get; set; }
         public Patient? Patient { get; set; }

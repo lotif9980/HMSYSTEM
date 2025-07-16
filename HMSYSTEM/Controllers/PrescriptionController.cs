@@ -64,7 +64,11 @@ namespace HMSYSTEM.Controllers
                 PatientId = model.PatientId,
                 DoctorId = model.DoctorId,
                 DepartmentId = model.DepartmentId,
-                Status = model.Status
+                Status = model.Status,
+                Note=model.Note,
+                NextFlowUp=model.NextFlowUp
+
+
             };
 
             // Child List Map করা
