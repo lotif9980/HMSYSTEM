@@ -118,5 +118,11 @@ namespace HMSYSTEM.Controllers
             return View(model);
         }
     
+
+        public IActionResult Delete(int id)
+        {
+            _unitOfWork.PrescriptioRepository.Delete(id);
+            return RedirectToAction("Index");
+        }
     }
 }

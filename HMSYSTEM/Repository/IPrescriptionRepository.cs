@@ -6,5 +6,7 @@ namespace HMSYSTEM.Repository
     {
         List<Prescription> GetAll();
         public void Save(Prescription prescription);
+
+        public void Delete(int id);
     }
 }
