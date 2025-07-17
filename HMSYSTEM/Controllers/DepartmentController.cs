@@ -33,6 +33,8 @@ namespace HMSYSTEM.Controllers
         public IActionResult Save(Department department)
         {
             _unitOf.departmentRepo.Save(department);
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
             return RedirectToAction("Save");
         }
 
@@ -52,6 +54,8 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int Id)
         {
             _unitOf.departmentRepo.Delete(Id);
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
             return RedirectToAction("Index");
         }
 

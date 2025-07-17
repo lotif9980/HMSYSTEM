@@ -69,6 +69,9 @@ namespace HMSYSTEM.Controllers
         public IActionResult Save(Appointment appointment)
         {
             _unitofWork.AppointmentRepository.Save(appointment);
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+
 
             return RedirectToAction("Index");
         }
@@ -76,6 +79,8 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int Id)
         {
             _unitofWork.AppointmentRepository.Delete(Id);
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
             return RedirectToAction("Index");
         }
 

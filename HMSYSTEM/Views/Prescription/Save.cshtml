@@ -2,6 +2,18 @@
 @{
     var medicineList = ViewBag.Medicine as List<HMSYSTEM.Models.Medicine>;
 }
+<div class="position-fixed top-0 end-0 m-3" style="z-index: 9999; width:350px">
+    <div class="alert alert-success alert-dismissible d-none" role="alert" id="alertMessage">
+        ✅ Successfully added!
+    </div>
+</div>
+
+<div class="position-fixed top-0 end-0 m-3" style="z-index: 9999; width:350px" ">
+    <div class="alert alert-danger alert-dismissible d-none" role="alert" id="removedMessage">
+        ✅ Successfully Delete!
+    </div>
+</div>
+
 
 <form asp-action="Save" method="post" enctype="multipart/form-data">
 
@@ -117,7 +129,7 @@
   
 
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
     let rowIndex = 0;
 
@@ -143,12 +155,29 @@
         rowIndex++;
     });
 
+  
+
     $("#addRowBtn").click(function () {
         $("#detailsTable tbody").append(createRow(rowIndex));
         rowIndex++;
+
+        $("#alertMessage").removeClass("d-none").fadeIn();
+        setTimeout(() => {
+            $("#alertMessage").fadeOut();
+        }, 2000);
     });
+  
 
     $("#detailsTable").on("click", ".removeRowBtn", function () {
         $(this).closest("tr").remove();
+
+        $("#removedMessage").removeClass("d-none").fadeIn();
+        setTimeout(() => {
+            $("#removedMessage").fadeOut();
+        }, 2000);
     });
+
+    
+
+
 </script>

@@ -66,6 +66,7 @@
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
 <!--end::Head-->
@@ -82,13 +83,16 @@
         {
             <partial name="Layouts/_navbar" />
             <partial name="Layouts/_sidebar" />
+            <partial name="Layouts/_AlertMessage" />
+           
+
         }
      
         
         <main class="app-main">
             @RenderBody()
         </main>
-
+  
         <footer class="app-footer">
         <!--begin::To the end-->
         <div class="float-end d-none d-sm-inline">Anything you want</div>
@@ -343,6 +347,28 @@
 
 
 
+    <script>
+
+        if ($("#saveMessage").text().trim() !== "") {
+            $("#saveMessage").removeClass("d-none").fadeIn();
+
+            setTimeout(() => {
+                $("#saveMessage").fadeOut(function () {
+                    $(this).addClass("d-none");
+                });
+            }, 2000);
+        }
+
+            $("#removed").removeClass("d-none").fadeIn();
+
+            setTimeout(() => {
+                $("#removed").fadeOut(function () {
+                    $(this).addClass("d-none");
+                });
+            }, 2000);
+
+
+    </script>
   
     <!--end::Script-->
 </body>

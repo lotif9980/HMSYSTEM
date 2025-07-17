@@ -1,0 +1,16 @@
+﻿@{
+    var message = TempData["Message"] as string;
+    var messageType = TempData["MessageType"] as string ?? "info";
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="position-fixed top-0 end-0 m-3" style="z-index: 9999; width:350px">
+        <div id="saveMessage" class="alert alert-@messageType alert-dismissible d-none" role="alert">
+            @message
+        </div>
+    </div>
+
+
+   
+}

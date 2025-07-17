@@ -49,7 +49,7 @@ namespace HMSYSTEM.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // আবার View তে ফিরিয়ে দিতে হবে, ViewBag refill করতে হবে
+          
                 ViewBag.Patient = _unitOfWork.PatienRepo.getAll();
                 ViewBag.Doctor = _unitOfWork.doctorRepo.getAll();
                 ViewBag.Department = _unitOfWork.departmentRepo.getAll();
@@ -57,7 +57,7 @@ namespace HMSYSTEM.Controllers
                 return View(model);
             }
 
-            // Prescription Entity তৈরি করো ViewModel থেকে
+          
             var prescription = new Prescription
             {
                 Date = model.Date ,
@@ -71,7 +71,7 @@ namespace HMSYSTEM.Controllers
 
             };
 
-            // Child List Map করা
+            
             if (model.PrescriptionDetails != null && model.PrescriptionDetails.Count > 0)
             {
                 prescription.PrescriptionDetails = model.PrescriptionDetails.Select(d => new PrescriptionDetail
@@ -83,8 +83,11 @@ namespace HMSYSTEM.Controllers
                 }).ToList();
             }
 
-            // Save prescription (with details) রেপোজিটরিতে
+      
             _unitOfWork.PrescriptioRepository.Save(prescription);
+
+            TempData["Message"] = "✅ Successfully added!";
+            TempData["MessageType"] = "success";
           
 
             return RedirectToAction("Index"); // অথবা যেই পেজে যেতে চাও
@@ -122,6 +125,8 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int id)
         {
             _unitOfWork.PrescriptioRepository.Delete(id);
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
             return RedirectToAction("Index");
         }
     }
