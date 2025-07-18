@@ -7,6 +7,7 @@ namespace HMSYSTEM.Repository
 
         List<Medicine> GetAllMedicines();
         public void Save(Medicine medicine);
+        public void Delete(int Id);
 
     }
 }

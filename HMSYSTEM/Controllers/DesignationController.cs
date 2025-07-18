@@ -32,6 +32,11 @@ namespace HMSYSTEM.Controllers
         public IActionResult Save(Designation designation)
         {
             _unitOf.designationRepo.Save(designation);
+
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+
+
             return RedirectToAction("Save");
         }
 
@@ -39,6 +44,7 @@ namespace HMSYSTEM.Controllers
         public IActionResult Edit(int Id)
         {
             var data = _unitOf.designationRepo.Find(Id);
+          
             return View(data);
         }
 
@@ -46,6 +52,10 @@ namespace HMSYSTEM.Controllers
         public IActionResult Update(Designation designation)
         {
             _unitOf.designationRepo.Update(designation);
+
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+
             return RedirectToAction("Index");
         }
 
@@ -53,6 +63,10 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int Id)
         {
             _unitOf.designationRepo.Delete(Id);
+
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
+
             return RedirectToAction("Index");
         }
     }

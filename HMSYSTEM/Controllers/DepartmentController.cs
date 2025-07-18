@@ -49,6 +49,9 @@ namespace HMSYSTEM.Controllers
         public IActionResult Update(Department department)
         {
            var data=  _unitOf.departmentRepo.Update(department);
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+
             return RedirectToAction("Save",data);
         }
         public IActionResult Delete(int Id)

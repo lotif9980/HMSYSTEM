@@ -36,6 +36,18 @@ namespace HMSYSTEM.Controllers
         public IActionResult Save(Medicine medicine)
         {
             _unitOfWork.MedicineRepo.Save(medicine);
+
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+                
+            return RedirectToAction("Save");
+        }
+
+        public IActionResult Delete(int Id)
+        {
+            _unitOfWork.MedicineRepo.Delete(Id);
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
             return RedirectToAction("Index");
         }
     }

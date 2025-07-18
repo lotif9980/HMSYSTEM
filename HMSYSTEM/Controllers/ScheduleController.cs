@@ -47,6 +47,10 @@ namespace HMSYSTEM.Controllers
 
             ViewBag.Doctors = _unitofWork.doctorRepo.getAll().Where(c => c.Status == true);
             ViewBag.Department = _unitofWork.departmentRepo.getAll().Where(c => c.Status == true);
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+
+
             return View(data);
         }
 
@@ -61,6 +65,10 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int Id)
         {
             _unitofWork.scheduleRepo.Delete(Id);
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
+
+
             return RedirectToAction("Index");
         }
     }

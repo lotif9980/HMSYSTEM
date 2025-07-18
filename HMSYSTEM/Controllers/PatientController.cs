@@ -40,6 +40,9 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int Id)
         {
             _unit.PatienRepo.Delete(Id);
+            
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
 
             return RedirectToAction("Index");
         }
@@ -69,6 +72,11 @@ namespace HMSYSTEM.Controllers
             }
 
             _unit.PatienRepo.Save(patient);
+
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+
+
             return RedirectToAction("Save");
         }
 
@@ -115,6 +123,7 @@ namespace HMSYSTEM.Controllers
                     model.ImageFile.CopyTo(stream);
                 }
 
+
                 model.Picture = fileName;
             }
             else
@@ -124,6 +133,10 @@ namespace HMSYSTEM.Controllers
             }
 
             _unit.PatienRepo.Update(model);
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+
+
 
             return RedirectToAction("Index");
         }

@@ -10,7 +10,7 @@
                 <div class="card-header d-flex justify-content-around">
                     
                     <div> <h3 class="card-title bg-dark-subtle border border-danger-subtle">Existing Medicine List</h3></div>
-                    <div> <a class="btn btn-info" asp-controller="Appointment" asp-action="Save">Create</a></div> 
+                    <div> <a class="btn btn-info" asp-controller="Medicine" asp-action="Save">Create</a></div> 
                 </div>
 
 
@@ -43,11 +43,11 @@
                                     <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 
-                                            <a class="btn btn-primary ms-2" asp-route-id="@item.Id" asp- controller="Appointment" asp-action="Edit">
+                                            <a class="btn btn-primary ms-2" asp-route-id="@item.Id" asp- controller="Medicine" asp-action="Edit">
                                                 <i class="fa fa-edit"></i>
                                             </a>
 
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Appointment" asp-action="Delete">
+                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Medicine" asp-action="Delete">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         </div>

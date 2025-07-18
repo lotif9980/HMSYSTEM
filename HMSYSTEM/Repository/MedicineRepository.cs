@@ -22,5 +22,12 @@ namespace HMSYSTEM.Repository
             _db.Add(medicine);
             _db.SaveChanges();
         }
+
+        public void Delete(int Id)
+        {
+            var data=_db.Medicines.Find(Id);
+            _db.Remove(data);
+            _db.SaveChanges();
+        }
     }
 }

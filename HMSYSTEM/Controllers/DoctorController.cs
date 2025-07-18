@@ -82,6 +82,11 @@ namespace HMSYSTEM.Controllers
             }
 
             _unitOf.doctorRepo.Update(doctor);
+
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
+
+
             _unitOf.Save();
 
             // যদি নতুন ছবি দেওয়া হয়
@@ -105,6 +110,10 @@ namespace HMSYSTEM.Controllers
                 doctor.Picture = newFileName;
 
                 _unitOf.doctorRepo.Update(doctor);
+
+                TempData["Message"] = "✅ Successfully Added!";
+                TempData["MessageType"] = "primary";
+
                 _unitOf.Save();
             }
 
@@ -117,6 +126,9 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int Id)
         {
             _unitOf.doctorRepo.Delete(Id);
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
+
             return RedirectToAction("Index");
         }
 
@@ -161,6 +173,9 @@ namespace HMSYSTEM.Controllers
                 _unitOf.doctorRepo.Update(doctor);
                 await _unitOf.Save();
             }
+
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
 
             return RedirectToAction("Save");
         }
