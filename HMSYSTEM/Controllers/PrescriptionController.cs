@@ -129,5 +129,14 @@ namespace HMSYSTEM.Controllers
             TempData["MessageType"] = "danger";
             return RedirectToAction("Index");
         }
+
+        public IActionResult Details(int id)
+        {
+            var vm = _unitOfWork.PrescriptioRepository.GetPrescriptionViewModel(id);
+
+            if (vm == null) return NotFound();
+
+            return View(vm);
+        }
     }
 }

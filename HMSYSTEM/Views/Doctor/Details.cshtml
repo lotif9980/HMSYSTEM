@@ -20,8 +20,11 @@
                     Doctor List
                 </a>
 
-              
-                <button type="button" onclick="printContent('PrintMe')" class="btn btn-danger"><i class="fa fa-print"></i></button>
+
+                <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
+                    <i class="fa fa-print"></i> Print
+                </button>
+
             </div>
         </div>
         <div class="row">
@@ -85,4 +88,27 @@
     </div>
 </div>
 
+<div id="printContainer" style="display:none;"></div>
 
+
+<script>
+    function loadAndPrint(id) {
+        $.ajax({
+            url: '/Doctor/GetDoctorPrintPartial/' + id,
+            type: 'GET',
+            success: function (data) {
+                $('#printContainer').html(data);
+                var printContents = document.getElementById('printContainer').innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+                window.print();
+                document.body.innerHTML = originalContents;
+                location.reload();
+            },
+            error: function () {
+                alert("Failed to load print view.");
+            }
+        });
+    }
+</script>

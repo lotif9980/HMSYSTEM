@@ -1,4 +1,5 @@
 ﻿using HMSYSTEM.Models;
+using HMSYSTEM.ViewModels;
 
 namespace HMSYSTEM.Repository
 {
@@ -8,5 +9,7 @@ namespace HMSYSTEM.Repository
         public void Save(Prescription prescription);
 
         public void Delete(int id);
+
+        public PrescriptionViewModel GetPrescriptionViewModel(int id);
     }
 }

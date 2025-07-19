@@ -3,6 +3,7 @@ using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMSYSTEM.Controllers
 {
@@ -194,6 +195,16 @@ namespace HMSYSTEM.Controllers
                 file.CopyTo(fs);
                 fs.Flush();
             }
+        }
+
+
+        public IActionResult GetDoctorPrintPartial(int id)
+        {
+            var doctor = _unitOf.doctorRepo.Details(id);
+
+            if (doctor == null) return NotFound();
+
+            return PartialView("_DoctorPrintPartial", doctor);
         }
 
 

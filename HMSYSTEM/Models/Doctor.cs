@@ -18,7 +18,7 @@ namespace HMSYSTEM.Models
         public DateTime ? DateofBirth { get; set; }
         public string? Sex { get; set; }
         public string? Picture { get; set; }
-        public bool? Status { get; set; }
+        public bool Status { get; set; }
 
         public Department? Department { get; set; }
         public Designation? Designation { get; set; }

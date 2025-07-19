@@ -1,0 +1,35 @@
+﻿@model HMSYSTEM.ViewModels.PrescriptionViewModel
+
+<h2>Prescription Details</h2>
+
+<p><strong>Date:</strong> @Model.Date?.ToString("dd MMM yyyy")</p>
+<p><strong>Patient:</strong> @Model.PatientName</p>
+<p><strong>Doctor:</strong> @Model.DoctorName</p>
+<p><strong>Department:</strong> @Model.DepartmentName</p>
+<p><strong>Note:</strong> @Model.Note</p>
+<p><strong>Next Flow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")</p>
+
+<hr />
+
+<h4>Prescribed Medicines</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Medicine Name</th>
+            <th>Dose</th>
+            <th>Duration</th>
+            <th>Instructions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var detail in Model.PrescriptionDetails)
+        {
+            <tr>
+                <td>@detail.MedicineName</td>
+                <td>@detail.Dose</td>
+                <td>@detail.Duration</td>
+                <td>@(detail.Instructions == true ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>
