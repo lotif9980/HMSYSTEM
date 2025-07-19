@@ -32,16 +32,26 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(User user)
         {
+            if (user == null)
+            {
+                TempData["Message"] = "❌ Invalid user data submitted.";
+                TempData["MessageType"] = "error";
+                return View();
+            }
+
             try
             {
-                unitofwork.UserRepository.Save(user);
+                unitofwork.UserRepository.Save(user); 
+                TempData["Message"] = "✅ Successfully added!";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                
-                ModelState.AddModelError("Same Name alreay added", ex.Message);
-                return View(user);
+                TempData["Message"] = "❌ " + (ex?.Message ?? "An error occurred.");
+                TempData["MessageType"] = "danger";
+                ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
+                return View(user); 
             }
         }
 
