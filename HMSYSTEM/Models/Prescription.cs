@@ -7,7 +7,7 @@ namespace HMSYSTEM.Models
         public DateTime? Date { get; set; }     
         public int PatientId { get; set; }       
         public int DoctorId { get; set; }        
-        public int? DepartmentId { get; set; }    
+        public int DepartmentId { get; set; }    
         public int? Status { get; set; }   
         public string ? Note { get; set; }
         public DateTime? NextFlowUp { get;set;}

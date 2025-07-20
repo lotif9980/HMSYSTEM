@@ -13,7 +13,7 @@ namespace HMSYSTEM.ViewModels
         public int DoctorId { get; set; }
         public string? DoctorName { get; set; }
 
-        public int? DepartmentId { get; set; }
+        public int DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
 
         public int? Status { get; set; }
