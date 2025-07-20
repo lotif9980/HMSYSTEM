@@ -1,60 +1,93 @@
 ﻿@model HMSYSTEM.ViewModels.PrescriptionViewModel
+<div class="card-header">
+    <div class="btn-group">
+
+        <a class="btn btn-success " asp-route-id="" asp-controller="Precription" asp-action="Save">
+            <i class="fa fa-plus"></i>
+            Add Prescription
+        </a>
 
 
-<div class="container  ">
-    <div class="row  border border-black m-4 p-4">
-        <div class="col-md-4">
-            <h3>Dr.@Model.DoctorName</h3>
-            <h6>@Model.DesignationName</h6>
-            <h6>Contact No:@Model.DoctorMobile </h6>
-        </div>
+        <a class="btn btn-primary " asp-route-id="" asp-controller="Precription" asp-action="Index">
+            <i class="fa fa-list"></i>
+            Doctor List
+        </a>
 
-        <div class="col-md-4">
-            <h2>Prescription Details</h2>
-        </div>
 
-        <div class="col-md-4">
-            <h3>Hospital Management</h3>
-            <h6>Charghat , Rajshahi</h6>
-            <h6>Mobile : 01791177192</h6>
-        </div>
-        <hr />
+        <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
+            <i class="fa fa-print"></i> Print
+        </button>
+
     </div>
+</div>
 
-    <div class="row  m-4 p-1 border border-black">
-        <div class="col-md-6">
-            <p><strong>Date:</strong> @Model.Date?.ToString("dd MMM yyyy")</p>
-            <p><strong>Patient:</strong> @Model.PatientName</p>
+<div class="container ">
+    <div style="margin:50px;" class=" shadow border border-black">
+        <div class="row  border border-opacity-25  border-black m-4 p-4 ">
+            <div class="col-md-4">
+                <h3>Dr.@Model.DoctorName</h3>
+                <h6>@Model.DesignationName</h6>
+                <h6>Contact No:@Model.DoctorMobile </h6>
+            </div>
+
+            <div class="col-md-4">
+                <h2>Prescription Details</h2>
+            </div>
+
+            <div class="col-md-4">
+                <h3>Hospital Management</h3>
+                <h6>Charghat , Rajshahi</h6>
+                <h6>Mobile : 01791177192</h6>
+            </div>
+            <hr />
         </div>
 
-        <div class="col-md-6">
-            <p><strong>Department:</strong> @Model.DepartmentName</p>
-        </div>
-    </div>
+        <div class="row  m-4 p-1 border border-opacity-25 border-black">
+            <div class="col-md-6">
+                <p><strong>Date:</strong> @Model.Date?.ToString("dd MMM yyyy")</p>
+                <p><strong>Patient:</strong> @Model.PatientName</p>
+            </div>
 
-    <div class="row m-4 t-4">
-        <div class="d-flex justify-content-center "><u><h4>Prescribed Medicines</h4></u></div>
-        <table class="table table-bordered border-black">
-            <thead>
-                <tr>
-                    <th>Medicine Name</th>
-                    <th>Dose</th>
-                    <th>Duration</th>
-                    <th>Instructions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var detail in Model.PrescriptionDetails)
-                {
+            <div class="col-md-6">
+                <p><strong>Department:</strong> @Model.DepartmentName</p>
+            </div>
+        </div>
+
+        <div class="row m-4 t-4 ">
+            <div class="d-flex justify-content-center "><u><h4>Prescribed Medicines</h4></u></div>
+            <table class="table table-bordered border-opacity-25 border-black">
+                <thead>
                     <tr>
-                        <td>@detail.MedicineName</td>
-                        <td>@detail.Dose</td>
-                        <td>@detail.Duration</td>
-                        <td>@(detail.Instructions == true ? "Yes" : "No")</td>
+                        <th>Medicine Name</th>
+                        <th>Dose</th>
+                        <th>Duration</th>
+                        <th>Instructions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.PrescriptionDetails)
+                    {
+                        <tr>
+                            <td>@detail.MedicineName</td>
+                            <td>@detail.Dose</td>
+                            <td>@detail.Duration</td>
+                            <td>@(detail.Instructions == true ? "Yes" : "No")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row ">
+            <div class="col-md-6 m-4 p-1">
+
+
+                <p><strong>Note:</strong> @Model.Note</p>
+                <p><strong>Next Flow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")</p>
+
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -68,7 +101,3 @@
 
 
 
-
-
-<p><strong>Note:</strong> @Model.Note</p>
-<p><strong>Next Flow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")</p>
