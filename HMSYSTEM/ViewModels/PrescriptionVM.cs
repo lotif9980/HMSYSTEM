@@ -12,6 +12,10 @@ namespace HMSYSTEM.ViewModels
 
         public int DoctorId { get; set; }
         public string? DoctorName { get; set; }
+        public string? DoctorMobile { get; set; }
+
+        public int DesignationId { get; set; }
+        public string? DesignationName { get; set; }
 
         public int DepartmentId { get; set; }
         public string? DepartmentName { get; set; }

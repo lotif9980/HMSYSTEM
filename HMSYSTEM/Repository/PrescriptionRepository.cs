@@ -144,13 +144,16 @@ namespace HMSYSTEM.Repository
                  from d in dgroup.DefaultIfEmpty()
                  join dep in _db.Departments on p.DepartmentId equals dep.DepartmentId into depgroup
                  from dep in depgroup.DefaultIfEmpty()
+                 join des in _db.Designations on d.DesignationId equals des.DesignationId into desgrounp
+                 from des in desgrounp.DefaultIfEmpty()
                  where p.Id == id
                  select new
                  {
                      Prescription = p,
                      Patient = pt,
                      Doctor = d,
-                     Department = dep
+                     Department = dep,
+                     Designation= des
                  }).FirstOrDefault();
 
             if (prescriptionQuery == null) return null;
@@ -180,6 +183,8 @@ namespace HMSYSTEM.Repository
                 PatientName = prescriptionQuery.Patient.FirstName + " " + prescriptionQuery.Patient.LastName,
                 DoctorId = prescriptionQuery.Prescription.DoctorId,
                 DoctorName = prescriptionQuery.Doctor != null ? prescriptionQuery.Doctor.FirstName + " " + prescriptionQuery.Doctor.LastName : null,
+                DoctorMobile=prescriptionQuery.Doctor.PhoneNo,
+                DesignationName=prescriptionQuery.Designation.DesignationName,
                 DepartmentId = prescriptionQuery.Department != null ? prescriptionQuery.Department.DepartmentId : 0,
                 DepartmentName = prescriptionQuery.Department?.DepartmentName,
                 Status = prescriptionQuery.Prescription.Status,

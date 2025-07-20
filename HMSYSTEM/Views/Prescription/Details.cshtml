@@ -1,5 +1,17 @@
 ﻿@model HMSYSTEM.ViewModels.PrescriptionViewModel
 
+
+<div class="container">
+    <div class="row shadow">
+        <div class="col-md-4">
+            <h2>Dr.@Model.DoctorName</h2>
+            <h4>@Model.DesignationName</h4>
+            <h4>Contact No:@Model.DoctorMobile </h4>
+        </div>
+    </div>
+</div>
+
+
 <h2>Prescription Details</h2>
 
 <p><strong>Date:</strong> @Model.Date?.ToString("dd MMM yyyy")</p>
