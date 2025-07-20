@@ -6,9 +6,12 @@ namespace HMSYSTEM.ViewModels
     {
         public int Id { get; set; }
         public DateTime? Date { get; set; }
-
+         
         public int PatientId { get; set; }
         public string? PatientName { get; set; }
+        public string? PatientMobileNo { get; set; }
+        public String? PatientAddress { get; set; }
+        
 
         public int DoctorId { get; set; }
         public string? DoctorName { get; set; }
@@ -38,6 +41,8 @@ namespace HMSYSTEM.ViewModels
         public string? Dose { get; set; }
         public string? Duration { get; set; }
         public bool? Instructions { get; set; }
-    }
+        public string ? Strength { get; set; }
+        public string? Form { get; set; }
+    }       
 
 }

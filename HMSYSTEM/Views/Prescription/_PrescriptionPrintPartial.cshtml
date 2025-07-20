@@ -1,0 +1,127 @@
+﻿<style type="text/css">
+    @@media print {
+        @@page {
+            size: A4 portrait;
+            margin: 20mm;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+        }
+
+        #PrescriptionPrintArea {
+            width: 100%;
+            max-width: 210mm;
+            margin: auto;
+        }
+
+        .full-page-border {
+            min-height: 257mm; /* A4 height minus margin */
+            border: 1px solid black !important;
+            display: block;
+            padding: 20px !important;
+            box-sizing: border-box;
+            margin: 0 !important;
+        }
+
+        .shadow {
+            box-shadow: none !important;
+        }
+
+        .m-4, .p-4, .m-3, .p-3 {
+            margin: 0 !important;
+            padding: 5px !important;
+        }
+
+        h3, h4, h6, p, td, th {
+            font-size: 12pt;
+        }
+
+        .table {
+            page-break-inside: avoid;
+        }
+
+        .row, .col-md-4, .col-md-6 {
+            break-inside: avoid;
+        }
+
+        button {
+            display: none !important;
+        }
+    }
+</style>
+
+
+<div id="PrescriptionPrintArea" class="full-page-border">
+    <div class="d-flex justify-content-between align-items-start flex-wrap" style="margin-bottom: 15px;">
+        <div class="flex-fill " style="min-width: 200px;">
+            <h4>Dr. @Model.DoctorName</h4>
+            <h6>@Model.DesignationName</h6>
+            <h6>Contact No: @Model.DoctorMobile</h6>
+        </div>
+
+        <div class="text-center flex-fill" style="min-width: 200px;">
+            <h3>Prescription Details</h3>
+        </div>
+
+        <div class="text-end flex-fill" style="min-width: 200px;">
+            <h4>Hospital Management</h4>
+            <h6>Charghat, Rajshahi</h6>
+            <h6>Mobile: 01791177192</h6>
+        </div>
+    </div>
+  
+    <div class="d-flex justify-content-between flex-wrap border border-opacity-25 border-black" style="padding: 10px 15px; margin-bottom: 15px;">
+        <div style="min-width: 200px;">
+          
+            <strong>Patient:</strong> @Model.PatientName <br />
+            Phone No :  @Model.PatientMobileNo <br />
+            Address: @Model.PatientAddress </br>
+        </div>
+
+        <div style="min-width: 200px;">
+              <strong>Date:</strong> @Model.Date?.ToString("dd MMM yyyy") <br />
+            <strong>Department:</strong> @Model.DepartmentName
+        </div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <div class="text-center mb-3"><u><h4>Prescribed Medicines</h4></u></div>
+        <table class="table table-bordered border-opacity-25 border-black">
+            <thead>
+                <tr>
+                    <th>Medicine Name</th>
+                    <th>Dose</th>
+                    <th>Duration</th>
+                    <th>Instructions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detail in Model.PrescriptionDetails)
+                {
+                    <tr>
+                        <td>
+                            
+                            @detail.MedicineName
+                            <small class="text-muted">(@detail.Strength , @detail.Form)</small>
+                        </td>
+                        <td>@detail.Dose</td>
+                        <td>@detail.Duration</td>
+                        <td>@(detail.Instructions == true ? "After Meal" : "Before Meal")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="padding: 10px 15px;">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Advice Given:</strong> @Model.Note</p>
+                <p><strong>Next Follow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")</p>
+            </div>
+        </div>
+    </div>
+</div>

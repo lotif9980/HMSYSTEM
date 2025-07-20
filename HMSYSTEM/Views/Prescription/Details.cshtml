@@ -1,29 +1,30 @@
 ﻿@model HMSYSTEM.ViewModels.PrescriptionViewModel
-<div class="card-header">
-    <div class="btn-group">
 
-        <a class="btn btn-success " asp-route-id="" asp-controller="Prescription" asp-action="Save">
-            <i class="fa fa-plus"></i>
-            Add
-        </a>
-
-
-        <a class="btn btn-primary " asp-route-id="" asp-controller="Prescription" asp-action="Index">
-            <i class="fa fa-list"></i>
-            List
-        </a>
-
-
-        <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
-            <i class="fa fa-print"></i> Print
-        </button>
-
-    </div>
-</div>
 
 <div class="container ">
+
     <div style="margin:50px;" class=" shadow border border-black">
         <div class="row  border border-opacity-25  border-black m-4 p-4 ">
+            <div class=" d-flex justify-content-end">
+                <div class="btn-group">
+
+                    <a class="btn btn-success " asp-route-id="" asp-controller="Prescription" asp-action="Save">
+                        <i class="fa fa-plus"></i>
+                        Add
+                    </a>
+
+
+                    <a class="btn btn-primary " asp-route-id="" asp-controller="Prescription" asp-action="Index">
+                        <i class="fa fa-list"></i>
+                        List
+                    </a>
+
+                    <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
+                        <i class="fa fa-print"></i> Print
+                    </button>
+
+                </div>
+            </div>
             <div class="col-md-4">
                 <h3>Dr.@Model.DoctorName</h3>
                 <h6>@Model.DesignationName</h6>
@@ -44,12 +45,16 @@
 
         <div class="row  m-4 p-1 border border-opacity-25 border-black">
             <div class="col-md-6">
-                <p><strong>Date:</strong> @Model.Date?.ToString("dd MMM yyyy")</p>
-                <p><strong>Patient:</strong> @Model.PatientName</p>
+               
+                <strong>Patient : @Model.PatientName <br /></strong>
+                Phone No :  @Model.PatientMobileNo <br />
+                Address: @Model.PatientAddress </br>
+               
             </div>
 
             <div class="col-md-6">
-                <p><strong>Department:</strong> @Model.DepartmentName</p>
+                Date : @Model.Date?.ToString("dd - MMM - yyyy") <br />
+                Department: @Model.DepartmentName</p>
             </div>
         </div>
 
@@ -68,10 +73,13 @@
                     @foreach (var detail in Model.PrescriptionDetails)
                     {
                         <tr>
-                            <td>@detail.MedicineName</td>
+                            <td>
+                                @detail.MedicineName
+                                <small class="text-muted">(@detail.Strength , @detail.Form)</small>
+                            </td>
                             <td>@detail.Dose</td>
                             <td>@detail.Duration</td>
-                            <td>@(detail.Instructions == true ? "Yes" : "No")</td>
+                            <td>@(detail.Instructions == true ? "After Meal" : "Before Meal")</td>
                         </tr>
                     }
                 </tbody>
@@ -82,8 +90,8 @@
             <div class="col-md-6 m-4 p-1">
 
 
-                <p><strong>Note:</strong> @Model.Note</p>
-                <p><strong>Next Flow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")</p>
+                <strong>Advice Given:</strong> @Model.Note <br />
+                <strong>Next Flow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")
 
             </div>
         </div>
@@ -91,8 +99,30 @@
     </div>
 </div>
 
+<div id="printContainer" style="display:none;"></div>
 
 
+<script>
+    function loadAndPrint(id) {
+        $.ajax({
+            url: '/Prescription/GetPrescriptionPrintPartial/' + id,
+            type: 'GET',
+            success: function (data) {
+                $('#printContainer').html(data);
+                var printContents = document.getElementById('printContainer').innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+                window.print();
+                document.body.innerHTML = originalContents;
+                location.reload();
+            },
+            error: function () {
+                alert("Failed to load print view.");
+            }
+        });
+    }
+</script>
 
 
 

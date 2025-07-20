@@ -138,5 +138,15 @@ namespace HMSYSTEM.Controllers
 
             return View(vm);
         }
+
+
+        public IActionResult GetPrescriptionPrintPartial(int id)
+        {
+            var doctor = _unitOfWork.PrescriptioRepository.GetPrescriptionViewModel(id);
+
+            if (doctor == null) return NotFound();
+
+            return PartialView("_PrescriptionPrintPartial", doctor);
+        }
     }
 }

@@ -158,7 +158,7 @@ namespace HMSYSTEM.Repository
 
             if (prescriptionQuery == null) return null;
 
-            // এখন PrescriptionDetails ও Medicine গুলো fetch করতে হবে
+            
             var detailsQuery =
                 (from pd in _db.PrescriptionDetails
                  join m in _db.Medicines on pd.MedicineId equals m.Id into mgroup
@@ -172,7 +172,9 @@ namespace HMSYSTEM.Repository
                      MedicineName = m != null ? m.Name : null,
                      Dose = pd.Dose,
                      Duration = pd.Duration,
-                     Instructions = pd.Instructions
+                     Instructions = pd.Instructions,
+                     Strength=pd.Medicine.Strength,
+                     Form = pd.Medicine.Form
                  }).ToList();
 
             var viewModel = new PrescriptionViewModel
@@ -181,6 +183,9 @@ namespace HMSYSTEM.Repository
                 Date = prescriptionQuery.Prescription.Date,
                 PatientId = prescriptionQuery.Patient.PatientID,
                 PatientName = prescriptionQuery.Patient.FirstName + " " + prescriptionQuery.Patient.LastName,
+                PatientMobileNo= prescriptionQuery.Patient.Phone,
+                PatientAddress=prescriptionQuery.Patient.Address,
+               
                 DoctorId = prescriptionQuery.Prescription.DoctorId,
                 DoctorName = prescriptionQuery.Doctor != null ? prescriptionQuery.Doctor.FirstName + " " + prescriptionQuery.Doctor.LastName : null,
                 DoctorMobile=prescriptionQuery.Doctor.PhoneNo,
