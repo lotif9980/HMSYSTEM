@@ -14,7 +14,11 @@
                 <a class="btn btn-primary" asp-controller="Patient" asp-action="Index">
                     <i class="fa fa-list"></i> Patient List
                 </a>
-                <button type="button" onclick="printContent('PrintMe')" class="btn btn-danger"><i class="fa fa-print"></i></button>
+                @* <button type="button" onclick="printContent(@Model.PatientID)" class="btn btn-danger"><i class="fa fa-print"></i></button> *@
+                <button class="btn btn-danger" onclick="loadAndPrint(@Model.PatientID)">
+                    <i class="fa fa-print"></i> Print
+                </button>
+            
             </div>
         </div>
 
@@ -79,3 +83,33 @@
         </div>
     </div>
 </div>
+
+<div id="printContainer" style="display:none;"></div>
+
+
+
+
+
+
+
+ <script>
+        function loadAndPrint(id) {
+            $.ajax({
+                url: '/Patient/PrintGetPatient/' + id,
+                type: 'GET',
+                success: function (data) {
+                    $('#printContainer').html(data);
+                    var printContents = document.getElementById('printContainer').innerHTML;
+                    var originalContents = document.body.innerHTML;
+
+                    document.body.innerHTML = printContents;
+                    window.print();
+                    document.body.innerHTML = originalContents;
+                    location.reload();
+                },
+                error: function () {
+                    alert("Failed to load print view.");
+                }
+            });
+        }
+</script>

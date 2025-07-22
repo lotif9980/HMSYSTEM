@@ -142,6 +142,14 @@ namespace HMSYSTEM.Controllers
         }
 
 
+        public IActionResult PrintGetPatient(int id)
+        {
+
+            var patient=_unit.PatienRepo.Details(id);
+
+            return PartialView("_PatientPrintPartial", patient);
+        }
+
 
     }
 }
