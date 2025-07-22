@@ -90,7 +90,7 @@ namespace HMSYSTEM.Controllers
             TempData["MessageType"] = "success";
           
 
-            return RedirectToAction("Index"); // অথবা যেই পেজে যেতে চাও
+            return RedirectToAction("Index"); 
         }
 
 

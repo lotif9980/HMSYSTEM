@@ -47,15 +47,19 @@
             <div class="col-md-6">
 
                 <strong>Patient : @Model.PatientName <br /></strong>
-                Phone No :  @Model.PatientMobileNo <br />
-                Address: @Model.PatientAddress </br>
+               <small> 
+                    Phone No :  @Model.PatientMobileNo <br />
+                    Address: @Model.PatientAddress </br>
+                </small>
 
             </div>
 
             <div class="col-md-6">
-                Date : @Model.Date?.ToString("dd - MMM - yyyy") <br />
-               Next Flow Up: @Model.NextFlowUp?.ToString("dd MMM yyyy")
-                Department: @Model.DepartmentName</p>
+                <small>
+                    Date : @Model.Date?.ToString("dd - MMM - yyyy") <br />
+                    Next Flow Up: @Model.NextFlowUp?.ToString("dd MMM yyyy") <br />
+                    Department: @Model.DepartmentName</p>
+                </small>
             </div>
         </div>
 
