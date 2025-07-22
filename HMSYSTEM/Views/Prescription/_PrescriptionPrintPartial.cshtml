@@ -1,4 +1,5 @@
-﻿<style type="text/css">
+﻿@using System.Text.RegularExpressions
+<style type="text/css">
     @@media print {
         @@page {
             size: A4 portrait;
@@ -55,25 +56,25 @@
 
 
 <div id="PrescriptionPrintArea" class="full-page-border">
-    <div class="d-flex justify-content-between align-items-start flex-wrap" style="margin-bottom: 15px;">
-        <div class="flex-fill " style="min-width: 200px;">
-            <h4>Dr. @Model.DoctorName</h4>
+    <div class="d-flex justify-content-around align-items-start flex-wrap border border-black border-opacity-25 p-4" style="margin-bottom:15px;">
+        <div class="flex-fill p-4">
+            <h4>@Model.DoctorName</h4>
             <h6>@Model.DesignationName</h6>
             <h6>Contact No: @Model.DoctorMobile</h6>
         </div>
 
-        <div class="text-center flex-fill" style="min-width: 200px;">
+        <div class="text-center flex-fill p-4">
             <h3>Prescription Details</h3>
         </div>
 
-        <div class="text-end flex-fill" style="min-width: 200px;">
+        <div class="text-end flex-fill p-4 ">
             <h4>Hospital Management</h4>
             <h6>Charghat, Rajshahi</h6>
             <h6>Mobile: 01791177192</h6>
         </div>
     </div>
   
-    <div class="d-flex justify-content-between flex-wrap border border-opacity-25 border-black" style="padding: 10px 15px; margin-bottom: 15px;">
+    <div class="d-flex justify-content-between flex-wrap border border-opacity-25 border-black" style="padding: 10px 15px; margin-bottom: 15px; margin-top:10px;">
         <div style="min-width: 200px;">
           
             <strong>Patient:</strong> @Model.PatientName <br />
@@ -84,6 +85,7 @@
         <div style="min-width: 200px;">
               <strong>Date:</strong> @Model.Date?.ToString("dd MMM yyyy") <br />
             <strong>Department:</strong> @Model.DepartmentName
+            <strong>Next Flow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")
         </div>
     </div>
 
@@ -116,12 +118,23 @@
         </table>
     </div>
 
-    <div style="padding: 10px 15px;">
-        <div class="row">
-            <div class="col-md-6">
-                <p><strong>Advice Given:</strong> @Model.Note</p>
-                <p><strong>Next Follow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")</p>
-            </div>
+    @{
+        var noteLines = (Model.Note ?? "").Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+        int counter = 1;
+    }
+
+    <div class="row">
+        <div class="col-md-6 ps-4 ms-4">
+            <strong>Advice Given:</strong><br />
+            
+                @foreach (var line in noteLines)
+                {
+                <div>  @(counter++). @line.Trim()</div>
+            }
+        
+        </div>
+        <div class="col-md-6">
+          
         </div>
     </div>
 </div>

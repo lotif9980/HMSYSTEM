@@ -54,6 +54,7 @@
 
             <div class="col-md-6">
                 Date : @Model.Date?.ToString("dd - MMM - yyyy") <br />
+               Next Flow Up: @Model.NextFlowUp?.ToString("dd MMM yyyy")
                 Department: @Model.DepartmentName</p>
             </div>
         </div>
@@ -86,24 +87,25 @@
             </table>
         </div>
 
-        <div class="row ">
+        @{
+            var noteLines = (Model.Note ?? "").Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            int counter = 1;
+        }
+
+        <div class="row mb-5">
             <div class="col-md-6 ps-4 ms-4">
-
-
-                @*  <strong>Advice Given:</strong> @Model.Note <br /> *@
-
-
-                @{
-                    string formattedNote = Regex.Replace(Model.Note ?? "", @"[.]\s*", "<br />");
-                }
-
                 <strong>Advice Given:</strong><br />
-                @Html.Raw(formattedNote)
-
-
+                
+                @foreach (var line in noteLines)
+                {
+                    <div>  @(counter++). @line.Trim()</div>
+                }
+             
             </div>
-            <div class="col-md-6  ">
-                <strong>Next Flow Up:</strong> @Model.NextFlowUp?.ToString("dd MMM yyyy")
+
+
+            <div class="col-md-6">
+               
             </div>
         </div>
 
