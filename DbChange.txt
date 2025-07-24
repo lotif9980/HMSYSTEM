@@ -1,3 +1,119 @@
+
+
+-----------------------------------------------
+---------------24.07.2025-----------------
+-----------------------------------------------
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Admissions](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[PatientId] [int] NOT NULL,
+	[DoctorId] [int] NOT NULL,
+	[BedId] [int] NOT NULL,
+	[AdmitDate] [datetime] NULL,
+	[Status] [int] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Admissions] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_PatientId]  DEFAULT ((0)) FOR [PatientId]
+GO
+
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_DoctorId]  DEFAULT ((0)) FOR [DoctorId]
+GO
+
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_BedId]  DEFAULT ((0)) FOR [BedId]
+GO
+
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_Status]  DEFAULT ((0)) FOR [Status]
+GO
+
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+
+
+
+
+
+-----------------------------------------------
+---------------24.07.2025-----------------
+-----------------------------------------------
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Beds](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[BedNumber] [nvarchar](50) NULL,
+	[WardId] [int] NOT NULL,
+	[RatePerDay] [decimal](18, 0) NOT NULL,
+	[BedType] [nvarchar](50) NULL,
+	[IsOccupied] [bit] NULL,
+ CONSTRAINT [PK_Beds] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Beds] ADD  CONSTRAINT [DF_Beds_WardId]  DEFAULT ((0)) FOR [WardId]
+GO
+
+ALTER TABLE [dbo].[Beds] ADD  CONSTRAINT [DF_Beds_RatePerDay]  DEFAULT ((0)) FOR [RatePerDay]
+GO
+
+
+
+-----------------------------------------------
+---------------24.07.2025-----------------
+-----------------------------------------------
+/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
+BEGIN TRANSACTION
+SET QUOTED_IDENTIFIER ON
+SET ARITHABORT ON
+SET NUMERIC_ROUNDABORT OFF
+SET CONCAT_NULL_YIELDS_NULL ON
+SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET ANSI_WARNINGS ON
+COMMIT
+BEGIN TRANSACTION
+GO
+CREATE TABLE dbo.Wards
+	(
+	Id int NOT NULL IDENTITY (1, 1),
+	Name nvarchar(50) NULL,
+	Type int NULL,
+	DepartmentId int NOT NULL,
+	FloorNo nvarchar(50) NULL,
+	TotalBeds int NULL
+	)  ON [PRIMARY]
+GO
+ALTER TABLE dbo.Table_1 ADD CONSTRAINT
+	DF_Table_1_DepartmentId DEFAULT (0) FOR DepartmentId
+GO
+ALTER TABLE dbo.Table_1 ADD CONSTRAINT
+	PK_Table_1 PRIMARY KEY CLUSTERED 
+	(
+	Id
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+ALTER TABLE dbo.Table_1 SET (LOCK_ESCALATION = TABLE)
+GO
+COMMIT
+
+
 -----------------------------------------------
 ---------------20.07.2025-----------------
 -----------------------------------------------
