@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Bed>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-around">
+                    <div> <h3 class="card-title">Existing Department List</h3></div>
+                    <div> <a class="btn btn-info" asp-controller="Department" asp-action="Save">Create</a></div>
+                </div>
+
+
+
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">Id</th>
+                                <th>Ward Name</th>
+                                <th>Bed Number</th>
+                                <th>Bed Type</th>
+                                <th>Status</th>
+                                <th style="width:20px;text-align:center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int count = 1;
+                            }
+                            @foreach (Bed item in Model)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.Ward.Name</td>
+                                    <td>@item.BedNumber</td>
+                                    <td>@item.BedType</td>
+                                    <td>@(item.IsOccupied == true ? "Active" : "Inactive")</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Bed" asp-action="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                count++;
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-end">
+                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+</div>

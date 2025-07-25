@@ -17,6 +17,7 @@ namespace HMSYSTEM.Repository
         IMedicineRepository MedicineRepo { get; }
         IPrescriptionRepository PrescriptioRepository { get; }
         IWardRepository wardRepository { get; }
+        IBedRepository bedRepository { get; }
         void Complete();
         Task<int> Save();
     }

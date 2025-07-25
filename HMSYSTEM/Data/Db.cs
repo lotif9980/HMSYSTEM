@@ -47,6 +47,7 @@ namespace HMSYSTEM.Data
             public DbSet<PrescriptionDetail>PrescriptionDetails { get; set; }
             public DbSet<Medicine> Medicines { get; set; }
             public DbSet<Ward> Wards { get; set; }
+            public DbSet<Bed> Beds { get; set; }
 
 
     }

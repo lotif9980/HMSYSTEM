@@ -5,44 +5,38 @@
         <div class="card-header">
             <div class="btn-group">
 
-                <a class="btn btn-success " asp-route-id="" asp-controller="Doctor" asp-action="Save">
+                <a class="btn btn-success " asp-route-id="" asp-controller="ward" asp-action="Save">
                     <i class="fa fa-plus"></i>
-                    Add Doctor
+                    Add
                 </a>
 
 
-                <a class="btn btn-primary " asp-route-id="" asp-controller="Doctor" asp-action="Index">
+                <a class="btn btn-primary " asp-route-id="" asp-controller="ward" asp-action="Index">
                     <i class="fa fa-list"></i>
-                    Doctor List
+                     List
                 </a>
 
-
-                <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
-                    <i class="fa fa-print"></i> Print
-                </button>
 
             </div>
         </div>
-        <div class="row">
+        <div class="row d-flex justify-content-center">
            
-
-          
             <div class="col-md-8">
                 <div class="mb-2 d-flex">
-                    <div class="text-end fw-bold" style="width: 150px;">Name&nbsp;&nbsp;:</div>
+                    <div class="text-end fw-bold" style="width: 150px;"><string>Name : </string></div>
                     <div>@Model.Name</div>
                 </div>
                 <div class="mb-2 d-flex">
-                    <div class="text-end fw-bold" style="width: 150px;">Email&nbsp;&nbsp;:</div>
+                    <div class="text-end fw-bold" style="width: 150px;"><strong>Department: </strong></div>
                     <div>@Model.Department.DepartmentName</div>
                 </div>
                 <div class="mb-2 d-flex">
-                    <div class="text-end fw-bold" style="width: 150px;">Phone&nbsp;&nbsp;:</div>
+                    <div class="text-end fw-bold" style="width: 150px;"><strong>Type : </strong></div>
                     <div>@Model.Type</div>
                 </div>
                 <div class="mb-2 d-flex">
-                    <div class="text-end fw-bold" style="width: 150px;">Address&nbsp;&nbsp;:</div>
-                    <div>@Model.TotalBeds</div>
+                    <div class="text-end fw-bold" style="width: 150px;"><string>Total Beds : </string></div>
+                    <div>@Model.TotalBeds pcs</div>
                 </div>
                 
 

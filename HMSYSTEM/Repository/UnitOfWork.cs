@@ -21,6 +21,7 @@ namespace HMSYSTEM.Repository
         public IPrescriptionRepository PrescriptioRepository { get; set; }
         public IMedicineRepository MedicineRepo { get; set; }
         public IWardRepository wardRepository { get; set; }
+        public IBedRepository bedRepository { get; set; }
 
 
 
@@ -42,7 +43,7 @@ namespace HMSYSTEM.Repository
             PrescriptioRepository = new PrescriptionRepository(db);
             MedicineRepo = new MedicineRepository(db);
             wardRepository = new WardRepository(db);
-
+            bedRepository = new BedRepository(db);
         }
 
         public async Task<int> Save()
