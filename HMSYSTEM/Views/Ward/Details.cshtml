@@ -1,0 +1,55 @@
+﻿@model HMSYSTEM.Models.Ward
+
+<div class="container mt-5">
+    <div class="card shadow p-4 bg-light" style="max-width: 900px; margin: auto;">
+        <div class="card-header">
+            <div class="btn-group">
+
+                <a class="btn btn-success " asp-route-id="" asp-controller="Doctor" asp-action="Save">
+                    <i class="fa fa-plus"></i>
+                    Add Doctor
+                </a>
+
+
+                <a class="btn btn-primary " asp-route-id="" asp-controller="Doctor" asp-action="Index">
+                    <i class="fa fa-list"></i>
+                    Doctor List
+                </a>
+
+
+                <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
+                    <i class="fa fa-print"></i> Print
+                </button>
+
+            </div>
+        </div>
+        <div class="row">
+           
+
+          
+            <div class="col-md-8">
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Name&nbsp;&nbsp;:</div>
+                    <div>@Model.Name</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Email&nbsp;&nbsp;:</div>
+                    <div>@Model.Department.DepartmentName</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Phone&nbsp;&nbsp;:</div>
+                    <div>@Model.Type</div>
+                </div>
+                <div class="mb-2 d-flex">
+                    <div class="text-end fw-bold" style="width: 150px;">Address&nbsp;&nbsp;:</div>
+                    <div>@Model.TotalBeds</div>
+                </div>
+                
+
+                <div class="text-end mt-3">
+                    <a asp-action="Index" class="btn btn-secondary">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

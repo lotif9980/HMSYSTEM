@@ -20,6 +20,7 @@ namespace HMSYSTEM.Repository
         public IPatientHistoryRepository PatienHistoryRepo { get; set; }
         public IPrescriptionRepository PrescriptioRepository { get; set; }
         public IMedicineRepository MedicineRepo { get; set; }
+        public IWardRepository wardRepository { get; set; }
 
 
 
@@ -40,7 +41,7 @@ namespace HMSYSTEM.Repository
             PatienHistoryRepo = new PatientHistoryRepository(db);
             PrescriptioRepository = new PrescriptionRepository(db);
             MedicineRepo = new MedicineRepository(db);
-
+            wardRepository = new WardRepository(db);
 
         }
 

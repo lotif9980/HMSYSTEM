@@ -69,6 +69,7 @@ namespace HMSYSTEM.Controllers
             
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
+
             return RedirectToAction("Index", "Home");
         }
     }

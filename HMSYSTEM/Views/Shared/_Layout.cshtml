@@ -77,6 +77,7 @@
         <!--begin::Header-->
         @{
             var username = Context.Session.GetString("Username");
+           
         }
 
         @if (!string.IsNullOrEmpty(username))
@@ -84,8 +85,6 @@
             <partial name="Layouts/_navbar" />
             <partial name="Layouts/_sidebar" />
             <partial name="Layouts/_AlertMessage" />
-           
-
         }
      
         

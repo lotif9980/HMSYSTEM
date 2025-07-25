@@ -15,10 +15,13 @@ namespace HMSYSTEM.Controllers
             _unitOf = unitOf;
         }
 
-        [Authorize]
+
         [HttpGet]
+        [Authorize]
+        
         public IActionResult Index()
         {
+
             var data = _unitOf.departmentRepo.getAll();
             return View(data);
         }
