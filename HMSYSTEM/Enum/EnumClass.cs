@@ -1,4 +1,6 @@
-﻿namespace HMSYSTEM.Enum
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HMSYSTEM.Enum
 {
     
         public enum AppointmentStatus
@@ -32,6 +34,21 @@
             Deluxe=4,
             ICU=5,
             Burn=6
+        }
+
+        public enum AdmissionType
+        {
+        
+            Emergency=1,
+            Routine=2,
+            Maternity=3,
+            Surgical=4,
+            Observation=5,
+            Transfer=6,
+            ICU=7,
+            DayCare=8,
+            Accident=9,
+            Referral=10
         }
 
 

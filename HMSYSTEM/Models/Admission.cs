@@ -9,5 +9,12 @@
         public DateTime AdmitDate { get; set; }
         public int Status  { get; set;}
         public DateTime CreateDate {  get; set; }
+
+
+
+        public Patient Patient { get; set; }
+        public Doctor Doctor { get; set; }
+        public Bed Bed { get; set; }
+       
     }
 }
