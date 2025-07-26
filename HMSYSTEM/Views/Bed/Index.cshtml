@@ -1,16 +1,14 @@
 ﻿@model IEnumerable<Bed>
+@using HMSYSTEM.Enum
 
 <div class="container-fluid mt-3">
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Department List</h3></div>
-                    <div> <a class="btn btn-info" asp-controller="Department" asp-action="Save">Create</a></div>
+                    <div> <h3 class="card-title">Existing Bed List</h3></div>
+                    <div> <a class="btn btn-info" asp-controller="Bed" asp-action="Save">Create</a></div>
                 </div>
-
-
-
                 <!-- /.card-header -->
                 <div class="card-body">
                     <table class="table table-bordered">
@@ -34,8 +32,27 @@
                                     <td>@count</td>
                                     <td>@item.Ward.Name</td>
                                     <td>@item.BedNumber</td>
-                                    <td>@item.BedType</td>
-                                    <td>@(item.IsOccupied == true ? "Active" : "Inactive")</td>
+                                    <td>
+                                       @*  @(item.BedType == BedType.General? "General" :
+                                        item.BedType==BedType.ICU?"ICU":
+                                        item.BedType==BedType.SemiPrivate?"Semi Private": "Unknown") *@
+
+                                
+                                        @(item.BedType == BedType.General ? "General" :
+                                         item.BedType == BedType.SemiPrivate ? "SemiPrivate" : "ICU")
+                                    </td>
+                                    <td class="d-flex justify-content-center">
+                                        @* @(item.IsOccupied == true ? "Active" : "Inactive") *@
+
+                                        <form asp-action="StatusUpdate" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                            <button type="submit"
+                                                    class="btn btn-sm @(item.IsOccupied ? "btn-success" : "btn-danger")">
+                                                @(item.IsOccupied ? "Empty" : "Occupied")
+                                            </button>
+                                        </form>
+
+                                    </td>
+                                   
                                     <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 

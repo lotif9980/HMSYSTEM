@@ -17,5 +17,22 @@ namespace HMSYSTEM.Repository
         {
            return _db.Beds.Include(d=>d.Ward).ToList();
         }
+
+        public Bed Save(Bed bed)
+        {
+            _db.Beds.Add(bed);
+            _db.SaveChanges();
+
+            return bed;
+        }
+
+        public bool StatusUpdate(int id)
+        {
+            var bed = _db.Beds.FirstOrDefault(d => d.Id == id);
+            bed.IsOccupied = !bed.IsOccupied;
+            _db.SaveChanges();
+
+            return true;
+        }
     }
 }

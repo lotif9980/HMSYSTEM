@@ -1,0 +1,76 @@
+﻿@model Bed
+@using HMSYSTEM.Enum
+
+@{
+    var department = ViewBag.Department;
+    var ward = ViewBag.Ward;
+    var bedType = Enum.GetValues(typeof(BedType)).Cast<BedType>();
+
+}
+
+<form asp-action="Save" method="post" enctype="multipart/form-data">
+    <div class="d-flex justify-content-center mt-3">
+        <div class="col-md-6">
+
+            <div class="card card-warning card-outline mb-4">
+                <div class="btn-group-sm">
+                    <a class="btn btn-primary" asp-controller="Bed" asp-action="Index">
+                        <i class="fa fa-list"></i> Bed List
+                    </a>
+                </div>
+                <div class="card-header">
+                    <div class="card-title">Bed Information</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <label asp-for="BedNumber" class="col-sm-3 col-form-label">Bed Number</label>
+                        <div class="col-sm-9">
+                            <input asp-for="BedNumber" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="RatePerDay" class="col-sm-3 col-form-label">Rate Per Day</label>
+                        <div class="col-sm-9">
+                            <input asp-for="RatePerDay" class="form-control" type="number" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="WardId" class="form-label col-sm-3">ward</label>
+                        <div class="col-sm-9">
+                            <select asp-for="WardId" class="form-select">
+                                <option value="">-- Select Ward Name --</option>
+                                @foreach (var type in ward)
+                                {
+                                    <option value="@type.Id">@type.Name</option>
+                                 
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="BedType" class="form-label col-sm-3">Ward Type</label>
+                        <div class="col-sm-9">
+                            <select asp-for="BedType" class="form-select">
+                                <option value="">-- Select Ward Type --</option>
+                                @foreach (var type in bedType)
+                                {
+                                    <option value="@(Convert.ToInt32(type))">@type</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="card-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-warning me-2">Save</button>
+                    <button type="reset" class="btn btn-danger me-2">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

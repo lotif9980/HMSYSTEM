@@ -23,4 +23,16 @@
             Surgical=10
           
         }
+        
+        public enum BedType
+        {
+            General=1,
+            SemiPrivate=2,
+            Private=3,
+            Deluxe=4,
+            ICU=5,
+            Burn=6
+        }
+
+
 }
