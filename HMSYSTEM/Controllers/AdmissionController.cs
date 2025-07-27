@@ -17,5 +17,16 @@ namespace HMSYSTEM.Controllers
             var data = _unitOfWork.admissionRepository.getAll();
             return View(data);
         }
+
+        public IActionResult Save()
+        {
+
+            int lastSerial = _unitOfWork.admissionRepository.GetLastInvoiceNo();
+            int nextSerial = lastSerial + 1;
+            ViewBag.NextSerial = nextSerial;
+
+
+            return View();
+        }
     }
 }

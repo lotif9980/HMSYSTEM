@@ -19,5 +19,13 @@ namespace HMSYSTEM.Repository
                 .Include(d=>d.Doctor)
                 .Include(d=>d.Bed).ToList();
         }
+
+        public int GetLastInvoiceNo()
+        {
+            return _db.Admissions
+                .OrderByDescending(a => a.InvoiceNo)
+                .Select(a => a.InvoiceNo)
+                .FirstOrDefault();
+        }
     }
 }

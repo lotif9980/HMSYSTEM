@@ -33,16 +33,14 @@
                                     <td>@item.Ward.Name</td>
                                     <td>@item.BedNumber</td>
                                     <td>
-                                       @*  @(item.BedType == BedType.General? "General" :
-                                        item.BedType==BedType.ICU?"ICU":
-                                        item.BedType==BedType.SemiPrivate?"Semi Private": "Unknown") *@
+                                  
 
                                 
                                         @(item.BedType == BedType.General ? "General" :
                                          item.BedType == BedType.SemiPrivate ? "SemiPrivate" : "ICU")
                                     </td>
                                     <td class="d-flex justify-content-center">
-                                        @* @(item.IsOccupied == true ? "Active" : "Inactive") *@
+                                     
 
                                         <form asp-action="StatusUpdate" asp-route-id="@item.Id" method="post" style="display:inline;">
                                             <button type="submit"

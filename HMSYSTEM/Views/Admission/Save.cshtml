@@ -1,0 +1,54 @@
+﻿@model Admission
+
+<div class="container-fluid mt-4">
+    <div class="row g-4">
+        <div class="col-12 d-flex justify-content-center">
+            <div class="col-md-10">
+                <div class="card card-warning card-outline mb-4">
+                    <div class="btn-group-sm mt-2 ms-2">
+                        <a class="btn btn-primary" asp-route-id="" asp-controller="Admission" asp-action="Index">
+                            <i class="fa fa-list"></i>List
+                        </a>
+                    </div>
+
+                    <div class="card-header d-flex justify-content-center fs-1">
+                        <div style="text-transform: uppercase;">
+                            <span style="font-size: 1.5em;">A</span>DMISSION INFORMATION
+                        </div>
+                    </div>
+
+                    <form asp-action="Save" method="post" enctype="multipart/form-data">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Patient.Phone" class="form-label">Patient Phn </label>
+                                    <input asp-for="Patient.Phone" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="InvoiceNo" class="form-label">Invoice No</label>
+                                    <input asp-for="InvoiceNo" class="form-control" value="@ViewBag.NextSerial" readonly />
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+
+                            </div>
+
+                           
+
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-center">
+                            <button type="submit" class="btn btn-warning me-2">Save</button>
+                            <button type="reset" class="btn btn-danger me-2">Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   
+</script>
