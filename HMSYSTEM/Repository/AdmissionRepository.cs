@@ -17,7 +17,8 @@ namespace HMSYSTEM.Repository
           //return _db.Admissions.ToList();
           return _db.Admissions.Include(d=>d.Patient)
                 .Include(d=>d.Doctor)
-                .Include(d=>d.Bed).ToList();
+                .Include(d=>d.Bed)
+                .ThenInclude(b=>b.Ward).ToList();
         }
 
         public int GetLastInvoiceNo()
@@ -34,6 +35,16 @@ namespace HMSYSTEM.Repository
             _db.SaveChanges();
         }
 
-     
+        public void Delete(int id)
+        {
+           var data= _db.Admissions.Find(id);
+            _db.Remove(data);
+            _db.SaveChanges();
+        }
+
+        public Admission GetById(int id)
+        {
+            return _db.Admissions.Find(id);
+        }
     }
 }

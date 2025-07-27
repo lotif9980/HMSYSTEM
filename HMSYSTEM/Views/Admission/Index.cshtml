@@ -7,8 +7,8 @@
         <div class="col-md-12">
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Bed List</h3></div>
-                    <div> <a class="btn btn-info" asp-controller="Bed" asp-action="Save">Create</a></div>
+                    <div> <h3 class="card-title">Existing Admission List</h3></div>
+                    <div> <a class="btn btn-info" asp-controller="Admission" asp-action="Save">Create</a></div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -17,10 +17,11 @@
                             <tr>
                                 <th style="width: 10px">Id</th>
                                 <th>Date</th>
-                                <ht>Invoice No</ht>
+                                <th>Invoice No</th>
                                 <th>Patient Name</th>
                                 <th>Doctor Name</th>
-                                <th>word</th>
+                                <th>Ward Name</th>
+                                <th>Bed Number</th>
                                 <th>Status</th>
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
@@ -33,10 +34,11 @@
                             {
                                 <tr>
                                     <td>@count</td>
-                                    <td>@item.AdmitDate</td>
+                                    <td>@(item.AdmitDate?.ToString("dd-MM-yyyy"))</td>
                                     <td>@item.InvoiceNo</td>
                                     <td>@item.Patient.FirstName @item.Patient.LastName</td>
                                     <td>@item.Doctor.FirstName @item.Doctor.LastName</td>
+                                    <td>@item.Bed?.Ward.Name</td>
                                     <td>@item.Bed.BedNumber</td>
                                     <td>
                                         @((AdmissionType)item.Status == AdmissionType.Emergency ? "Emergency"
@@ -54,7 +56,7 @@
                                     <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Bed" asp-action="Delete">
+                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Delete">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         </div>

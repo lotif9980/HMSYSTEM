@@ -82,5 +82,14 @@ namespace HMSYSTEM.Controllers
             return Json(beds);
         }
 
+        public IActionResult Delete(int id)
+        {
+            var admission=_unitOfWork.admissionRepository.GetById(id);
+
+            _unitOfWork.admissionRepository.Delete(id);
+            _unitOfWork.bedRepository.StatusUpdate(admission.BedId);
+            return RedirectToAction("Index");
+        }
+
     }
 }

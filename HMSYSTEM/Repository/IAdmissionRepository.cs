@@ -8,5 +8,8 @@ namespace HMSYSTEM.Repository
 
         public int GetLastInvoiceNo();
         public void Save(Admission admission);
+
+        public Admission GetById(int id);
+        public void Delete(int id);
     }
 }
