@@ -1,4 +1,13 @@
 ﻿@model Admission
+@{
+    var doctor = ViewBag.Doctor;
+    var beds = ViewBag.Bed;
+    var words= ViewBag.Ward;
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
 
 <div class="container-fluid mt-4">
     <div class="row g-4">
@@ -21,8 +30,13 @@
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label asp-for="Patient.Phone" class="form-label">Patient Phn </label>
-                                    <input asp-for="Patient.Phone" class="form-control" />
+                                    <label class="form-label">Date</label>
+                                    <div class="input-group">
+                                        <input type="text" id="date" name="date" class="form-control" value="@DateTime.Now.ToString(" dd-MM-yyyy")" />
+                                        <span class="input-group-text" id="calendar-icon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label asp-for="InvoiceNo" class="form-label">Invoice No</label>
@@ -32,9 +46,53 @@
 
                             <div class="row mb-3">
 
+                                <div class="col-md-6">
+                                    <label asp-for="Patient.Phone" class="form-label">Patient Phn </label>
+                                    <input asp-for="Patient.Phone" class="form-control" id="patientPhoneNumber" />
+
+                                    <input type="hidden" id="patientId" name="Patient.PatientID" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Patient Name</label>
+                                    <input class="form-control" id="patientName" readonly />
+                                </div>
                             </div>
 
-                           
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Doctor Name</label>
+                                    <select name="DoctorId" id="DoctorId" class="form-control form-select">
+                                        <option value="">---Select Doctor---</option>
+                                        @foreach (var item in doctor)
+                                        {
+                                        <option value="@item.Id">@item.FirstName @item.LastName</option>
+                                        }
+                                    </select>
+                                </div>
+
+
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Select Ward</label>
+                                    <select id="wardDropdown" class="form-select">
+                                        <option value="">-- Select Ward --</option>
+                                        @foreach (var ward in words)
+                                        {
+                                        <option value="@ward.Id">@ward.Name</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Select Bed</label>
+                                    <select id="bedDropdown" class="form-select" name="BedId">
+                                        <option value="">-- Select Bed --</option>
+                                    </select>
+                                </div>
+                            </div>
 
                         </div>
 
@@ -50,5 +108,74 @@
 </div>
 
 <script>
-   
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("patientPhoneNumber").addEventListener("blur", function () {
+            const phoneNumber = this.value.trim();
+
+            if (phoneNumber !== "") {
+                fetch(`/Admission/GetPatientPhoneNumber?phoneNumber=${phoneNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById("patientName").value = data.name;
+                            document.getElementById('patientId').value = data.id;
+                            document.getElementById("fatherName").value = data.fName;
+                            alert("Patient Found with this Number");
+                        } else {
+                            document.getElementById("patientName").value = "";
+                            document.getElementById("patientId").value = "";
+                            document.getElementById('fatherName').value = "";
+                            alert("No patient found with this number.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("Error while fetching patient data.");
+                    });
+            }
+        });
+    });
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const wardDropdown = document.getElementById("wardDropdown");
+        const bedDropdown = document.getElementById("bedDropdown");
+
+        wardDropdown.addEventListener("change", function () {
+            const wardId = this.value;
+
+            if (wardId) {
+                fetch(`/Admission/GetBedsByWardId?wardId=${wardId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear existing options
+                        bedDropdown.innerHTML = '<option value="">-- Select Bed --</option>';
+
+                        data.forEach(bed => {
+                            const option = document.createElement("option");
+                            option.value = bed.id;
+                            option.text = bed.bedNumber;
+                            bedDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Error fetching beds:", error);
+                    });
+            } else {
+                // No ward selected
+                bedDropdown.innerHTML = '<option value="">-- Select Bed --</option>';
+            }
+        });
+    });
+
+
+    $(function () {
+        $("#date").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true
+        });
+    });
 </script>

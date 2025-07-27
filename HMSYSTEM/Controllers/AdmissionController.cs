@@ -1,4 +1,5 @@
-﻿using HMSYSTEM.Repository;
+﻿using HMSYSTEM.Models;
+using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMSYSTEM.Controllers
@@ -20,6 +21,14 @@ namespace HMSYSTEM.Controllers
 
         public IActionResult Save()
         {
+            var doctors = _unitOfWork.doctorRepo.getAll();
+            ViewBag.Doctor = doctors;
+
+            var beds=_unitOfWork.bedRepository.getAllBed().ToList().Where(p=>p.IsOccupied==true);
+            ViewBag.Bed = beds;
+
+            var wards = _unitOfWork.wardRepository.GetAll().ToList();
+            ViewBag.Ward= wards;
 
             int lastSerial = _unitOfWork.admissionRepository.GetLastInvoiceNo();
             int nextSerial = lastSerial + 1;
@@ -29,11 +38,36 @@ namespace HMSYSTEM.Controllers
             return View();
         }
 
-        public IActionResult GetPatientPhoneNumber(string PhoneNumber)
+        public IActionResult GetPatientPhoneNumber(string phoneNumber)
         {
-          var phoneNumber= _unitOfWork.PatienRepo.getAll().FirstOrDefault(p=>p.Phone==PhoneNumber && p.Status==true);
-            return View();
-        
+          var patient= _unitOfWork.PatienRepo.getAll().FirstOrDefault(p=>p.Phone== phoneNumber && p.Status==true);
+
+            if (patient != null)
+            {
+                return Json(new
+                {
+                    success = true,
+                    name = patient.FirstName + " " + patient.LastName,
+                    fName = patient.FatherName,
+                    id = patient.PatientID
+
+                });
+            }
+            else
+            {
+                return Json(new{success = false});
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetBedsByWardId(int wardId)
+        {
+            var beds = _unitOfWork.bedRepository.getAllBed()
+                .Where(b => b.WardId == wardId)
+                .Select(b => new { b.Id, b.BedNumber })
+                .ToList();
+
+            return Json(beds);
         }
 
     }
