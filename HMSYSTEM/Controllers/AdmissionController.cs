@@ -42,6 +42,9 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Admission admission)
         {
+           
+           
+            _unitOfWork.bedRepository.StatusUpdate(admission.BedId);
             _unitOfWork.admissionRepository.Save(admission);
 
             return RedirectToAction("Index");
@@ -72,7 +75,7 @@ namespace HMSYSTEM.Controllers
         public IActionResult GetBedsByWardId(int wardId)
         {
             var beds = _unitOfWork.bedRepository.getAllBed()
-                .Where(b => b.WardId == wardId)
+                .Where(b => b.WardId == wardId && b.IsOccupied==true)
                 .Select(b => new { b.Id, b.BedNumber })
                 .ToList();
 

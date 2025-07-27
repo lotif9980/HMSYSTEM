@@ -8,7 +8,7 @@
         public int BedId { get; set; }
         public DateTime? AdmitDate { get; set; }
         public int Status { get; set; } = 1;
-        public DateTime? CreateDate {  get; set; }
+        //public DateTime? CreateDate {  get; set; }
         public int InvoiceNo { get; set; }
 
 
