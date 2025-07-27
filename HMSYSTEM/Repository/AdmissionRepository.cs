@@ -27,5 +27,13 @@ namespace HMSYSTEM.Repository
                 .Select(a => a.InvoiceNo)
                 .FirstOrDefault();
         }
+
+        public void Save(Admission admission)
+        {
+            _db.Add(admission);
+            _db.SaveChanges();
+        }
+
+     
     }
 }

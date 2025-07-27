@@ -7,5 +7,6 @@ namespace HMSYSTEM.Repository
         public List<Admission> getAll();
 
         public int GetLastInvoiceNo();
+        public void Save(Admission admission);
     }
 }

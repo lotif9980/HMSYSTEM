@@ -19,6 +19,7 @@ namespace HMSYSTEM.Controllers
             return View(data);
         }
 
+        [HttpGet]
         public IActionResult Save()
         {
             var doctors = _unitOfWork.doctorRepo.getAll();
@@ -36,6 +37,14 @@ namespace HMSYSTEM.Controllers
 
 
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Save(Admission admission)
+        {
+            _unitOfWork.admissionRepository.Save(admission);
+
+            return RedirectToAction("Index");
         }
 
         public IActionResult GetPatientPhoneNumber(string phoneNumber)

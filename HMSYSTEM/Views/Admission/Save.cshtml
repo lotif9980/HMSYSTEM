@@ -4,10 +4,12 @@
     var beds = ViewBag.Bed;
     var words= ViewBag.Ward;
 }
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
+<!-- jQuery UI -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
 <div class="container-fluid mt-4">
     <div class="row g-4">
@@ -30,10 +32,12 @@
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Date</label>
+
+
+                                    <label for="AdmitDate" class="col-form-label">Admit Date</label>
                                     <div class="input-group">
-                                        <input type="text" id="date" name="date" class="form-control" value="@DateTime.Now.ToString(" dd-MM-yyyy")" />
-                                        <span class="input-group-text" id="calendar-icon">
+                                        <input type="text" id="AdmitDate" name="AdmitDate" class="form-control" />
+                                        <span class="input-group-text">
                                             <i class="fa fa-calendar"></i>
                                         </span>
                                     </div>
@@ -43,14 +47,15 @@
                                     <input asp-for="InvoiceNo" class="form-control" value="@ViewBag.NextSerial" readonly />
                                 </div>
                             </div>
+                            <input type="hidden" id="patientId" name="PatientId" />
 
                             <div class="row mb-3">
 
                                 <div class="col-md-6">
-                                    <label asp-for="Patient.Phone" class="form-label">Patient Phn </label>
-                                    <input asp-for="Patient.Phone" class="form-control" id="patientPhoneNumber" />
+                                    <label class="form-label">Patient Phn </label>
+                                    <input class="form-control" id="patientPhoneNumber" />
 
-                                    <input type="hidden" id="patientId" name="Patient.PatientID" />
+
                                 </div>
 
                                 <div class="col-md-6">
@@ -109,6 +114,16 @@
 
 <script>
 
+    $(function () {
+        $("#AdmitDate").datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+
+        $(".input-group-text").click(function () {
+            $("#AdmitDate").focus();
+        });
+    });
+
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("patientPhoneNumber").addEventListener("blur", function () {
             const phoneNumber = this.value.trim();
@@ -164,18 +179,11 @@
                         console.error("Error fetching beds:", error);
                     });
             } else {
-                // No ward selected
                 bedDropdown.innerHTML = '<option value="">-- Select Bed --</option>';
             }
         });
     });
 
 
-    $(function () {
-        $("#date").datepicker({
-            dateFormat: "dd-mm-yy",
-            changeMonth: true,
-            changeYear: true
-        });
-    });
+
 </script>
