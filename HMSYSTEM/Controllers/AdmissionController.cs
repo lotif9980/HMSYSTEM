@@ -28,5 +28,13 @@ namespace HMSYSTEM.Controllers
 
             return View();
         }
+
+        public IActionResult GetPatientPhoneNumber(string PhoneNumber)
+        {
+          var phoneNumber= _unitOfWork.PatienRepo.getAll().FirstOrDefault(p=>p.Phone==PhoneNumber && p.Status==true);
+            return View();
+        
+        }
+
     }
 }

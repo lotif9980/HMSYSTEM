@@ -59,10 +59,11 @@ namespace HMSYSTEM.Controllers
                 return Json(new { success = true, 
                     name = patient.FirstName+" " + patient.LastName ,
                     id=patient.PatientID
+                   
                 });
             }
 
-            return Json(new { success = false });
+            return Json(new { success = false  });
         }
 
         [HttpPost]

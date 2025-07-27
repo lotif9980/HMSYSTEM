@@ -92,28 +92,43 @@
                                     <input asp-for="Address" class="form-control" />
                                 </div>
                                 <div class="col-md-6">
-                                    <label asp-for="EmergencyContact" class="form-label">Emergency Contact</label>
-                                    <input asp-for="EmergencyContact" class="form-control" />
+                                    <label asp-for="FatherName" class="form-label">Father Name</label>
+                                    <input asp-for="FatherName" class="form-control" />
+
+                                   
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Status</label><br />
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" />
-                                        <label class="form-check-label" for="statusActive">Active</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" asp-for="Status" value="false" id="statusInactive" />
-                                        <label class="form-check-label" for="statusInactive">Inactive</label>
-                                    </div>
-                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                    <label asp-for="EmergencyContact" class="form-label">Emergency Contact</label>
+                                    <input asp-for="EmergencyContact" class="form-control" />
                                 </div>
+                                <div class="col-md-6">
+                                    
+                                        <label class="form-label">Status</label><br />
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" />
+                                            <label class="form-check-label" for="statusActive">Active</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" asp-for="Status" value="false" id="statusInactive" />
+                                            <label class="form-check-label" for="statusInactive">Inactive</label>
+                                        </div>
+                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                    
+                                </div>
+
+                            </div>
+
+                            <div class="row mb-3">
+                               
                                 <div class="col-md-6">
                                     <label asp-for="ImageFile" class="form-label">Profile Picture</label>
                                     <input asp-for="ImageFile" class="form-control" type="file" />
                                 </div>
+
+                                
                             </div>
 
                         </div>

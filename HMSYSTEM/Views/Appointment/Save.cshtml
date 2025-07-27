@@ -164,10 +164,11 @@
                         if (data.success) {
                             document.getElementById("patientName").value = data.name;
                             document.getElementById('patientId').value = data.id;
+                            alert("Patient Found with this Number");
                         } else {
                             document.getElementById("patientName").value = "";
                             document.getElementById("patientId").value = "";
-                            // alert("No patient found with this number.");
+                            alert("No patient found with this number.");
                         }
                     })
                     .catch(error => {

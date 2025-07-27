@@ -65,6 +65,7 @@ namespace HMSYSTEM.Repository
             existing.DateOfBirth = patient.DateOfBirth;
             existing.Address = patient.Address;
             existing.EmergencyContact = patient.EmergencyContact;
+            existing.FatherName = patient.FatherName;
 
             
             if (!string.IsNullOrEmpty(patient.Picture))

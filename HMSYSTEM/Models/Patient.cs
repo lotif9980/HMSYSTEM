@@ -13,7 +13,7 @@ namespace HMSYSTEM.Models
         public string? Phone { get; set; }
         public string? BloodGroup { get; set; }
         public string ? Sex { get; set; }
-
+        public string? FatherName { get; set; }
 
       
         public DateTime? DateOfBirth { get; set; }
