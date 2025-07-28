@@ -98,5 +98,11 @@ namespace HMSYSTEM.Controllers
             return View (admission);
         }
 
+        public IActionResult GetPrintPartial(int id)
+        {
+            var data = _unitOfWork.admissionRepository.GetById(id);
+            return PartialView("_PartialPrintAdmission", data);
+        }
+
     }
 }

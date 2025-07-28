@@ -48,7 +48,9 @@ namespace HMSYSTEM.Repository
                 .Include(p=>p.Patient)
                 .Include(p=>p.Doctor)
                 .Include(p=>p.Bed)
-                .ThenInclude(p=>p.Ward).FirstOrDefault(a=>a.Id==id);
+                .ThenInclude(p=>p.Ward)
+                .ThenInclude(p=>p.Department)
+                .FirstOrDefault(a=>a.Id==id);
         }
 
     }

@@ -2,90 +2,173 @@
 
 @{
     ViewData["Title"] = "Admission Details";
+    var labelStyle = "font-weight: bold; width: 140px;";
 }
 
 <div class="container mt-5">
-    <div class="card shadow p-4 bg-light" style="max-width: 900px; margin: auto;">
-        <div class="card-header">
+    <div class="card shadow ps-5 pe-4 pt-3 pb-4 bg-light" style="max-width: 900px; margin: auto;">
+
+        <!-- Top Action Buttons -->
+        <div class="d-flex justify-content-end mb-3">
             <div class="btn-group">
-                <a class="btn btn-success" asp-controller="Patient" asp-action="Save">
-                    <i class="fa fa-plus"></i> Add Patient
+                <a class="btn btn-success" asp-controller="Admission" asp-action="Save">
+                    <i class="fa fa-plus"></i> Add
                 </a>
-                <a class="btn btn-primary" asp-controller="Patient" asp-action="Index">
-                    <i class="fa fa-list"></i> Patient List
+                <a class="btn btn-primary" asp-controller="Admission" asp-action="Index">
+                    <i class="fa fa-list"></i> List
                 </a>
-                @* <button type="button" onclick="printContent(@Model.PatientID)" class="btn btn-danger"><i class="fa fa-print"></i></button> *@
                 <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
                     <i class="fa fa-print"></i> Print
                 </button>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="text-center mb-4">
+            <h3>Hospital Admission Form</h3>
+            <hr />
+        </div>
+
+        <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Admission Information</h5>
+     
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Invoice No:</div>
+                    <div>@Model.InvoiceNo</div>
+                </div>
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Admit Date:</div>
+                    <div>@Model.AdmitDate</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Ward:</div>
+                    <div>@Model.Bed.Ward.Name</div>
+                </div>
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Bed Number:</div>
+                    <div>@Model.Bed.BedNumber</div>
+                </div>
+            </div>
+        </div>
+        <!-- Patient Information Section Title -->
+        <h5 class="mb-3 text-primary border-bottom pb-1">Patient Information</h5>
+
+        <!-- Info Rows -->
+        <div class="row">
+            <!-- Left Side -->
+            <div class="col-md-6">
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Patient Name:</div>
+                    <div>
+                        <div>@Model.Patient.FirstName @Model.Patient.LastName</div>
+                     
+                    </div>
+                </div>
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Phone:</div>
+                    <div>@Model.Patient.Phone</div>
+                </div>
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Email:</div>
+                    <div>@Model.Patient.Email</div>
+                </div>
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Address:</div>
+                    <div>@Model.Patient.Address</div>
+                </div>
+            </div>
+
+            <!-- Right Side -->
+            <div class="col-md-6">
+
+               
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Emr. Phone:</div>
+                    <div>@Model.Patient.EmergencyContact</div>
+                </div>
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Father Name:</div>
+                    <div>@Model.Patient.FatherName</div>
+                </div>
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">DOB:</div>
+                    <div>@Model.Patient.DateOfBirth</div>
+                </div>
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Blood Group:</div>
+                    <div>@Model.Patient.BloodGroup</div>
+                </div>
 
             </div>
         </div>
+
+        <!-- Doctor Information Section Title -->
+        <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Doctor Information</h5>
 
         <div class="row">
-            <!-- Patient Image -->
-            
-
-            <!-- Patient Info -->
-            <div class="col-md-8">
-                @{
-                    var labelStyle = "width: 160px; font-weight: bold;";
-                }
-                <div class="mb-2 d-flex">
+            <div class="col-md-6">
+                <div class="mb-1 d-flex">
                     <div style="@labelStyle">Admit Doctor:</div>
-                    <div>@Model.Doctor.FirstName @Model.Doctor.LastName</div>
+                    <div>
+                        <div>@Model.Doctor.FirstName @Model.Doctor.LastName</div>
+                    </div>
                 </div>
 
-                <div class="mb-2 d-flex">
-                    <div style="@labelStyle">Phone Number:</div>
-                    <div>@Model.Doctor.PhoneNo </div>
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Doctor Phone:</div>
+                    <div>@Model.Doctor.PhoneNo</div>
                 </div>
-
-
-
-                <div class="mb-2 d-flex">
-                    <div style="@labelStyle">Patient Name</div>
-                    <div>@Model.Patient.FirstName @Model.Patient.LastName</div>
-                </div>
-
-                <div class="mb-2 d-flex">
-                    <div style="@labelStyle">Phone Number:</div>
-                    <div>@Model.Patient.Phone </div>
-                </div>
-
-                <div class="mb-2 d-flex">
-                    <div style="@labelStyle">Email:</div>
-                    <div>@Model.Patient.Email </div>
-                </div>
-
-                <div class="mb-2 d-flex">
-                    <div style="@labelStyle">Address:</div>
-                    <div>@Model.Patient.Address </div>
-                </div>
-
-                <div class="mb-2 d-flex">
-                    <div style="@labelStyle">Emergency Contact:</div>
-                    <div>@Model.Patient.EmergencyContact </div>
-                </div>
-
-
-                <div class="mb-2 d-flex">
-                    <div style="@labelStyle">Ward :</div>
-                    <div>@Model.Bed.Ward.Name </div>
-                </div>
-
-                <div class="mb-2 d-flex">
-                    <div style="@labelStyle">Bed Number :</div>
-                    <div>@Model.Bed.BedNumber </div>
-                </div>
-
-
-
-
             </div>
-
+            <div class="col-md-6">
+                
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Specialist  :</div>
+                    <div>
+                        <div>@Model.Doctor.Specialist</div>
+                    </div>
+                </div>
+                
+            </div>
         </div>
 
-        
     </div>
 </div>
+
+
+<div id="printContainer" style="display:none;"></div>
+
+
+<script>
+    function loadAndPrint(id) {
+        $.ajax({
+            url: '/Admission/GetPrintPartial/' + id,
+            type: 'GET',
+            success: function (data) {
+                $('#printContainer').html(data);
+                var printContents = document.getElementById('printContainer').innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+                window.print();
+                document.body.innerHTML = originalContents;
+                location.reload();
+            },
+            error: function () {
+                alert("Failed to load print view.");
+            }
+        });
+    }
+</script>
