@@ -40,15 +40,7 @@
                                          item.BedType == BedType.SemiPrivate ? "SemiPrivate" : "ICU")
                                     </td>
                                     <td class="d-flex justify-content-center">
-                                     
-
-                                        <form asp-action="StatusUpdate" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                            <button type="submit"
-                                                    class="btn btn-sm @(item.IsOccupied ? "btn-success" : "btn-danger")">
-                                                @(item.IsOccupied ? "Empty" : "Occupied")
-                                            </button>
-                                        </form>
-
+                                        @(item.IsOccupied?"Empty" : "Occupied")
                                     </td>
                                    
                                     <td>
