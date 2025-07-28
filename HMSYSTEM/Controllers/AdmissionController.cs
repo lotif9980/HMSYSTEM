@@ -91,5 +91,12 @@ namespace HMSYSTEM.Controllers
             return RedirectToAction("Index");
         }
 
+
+        public IActionResult Details(int id)
+        {
+            var admission=_unitOfWork.admissionRepository.GetById(id);
+            return View (admission);
+        }
+
     }
 }

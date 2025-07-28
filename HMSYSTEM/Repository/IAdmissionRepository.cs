@@ -11,5 +11,7 @@ namespace HMSYSTEM.Repository
 
         public Admission GetById(int id);
         public void Delete(int id);
+
+      
     }
 }

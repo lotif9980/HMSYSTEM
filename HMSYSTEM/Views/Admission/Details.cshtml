@@ -1,0 +1,91 @@
+﻿@model HMSYSTEM.Models.Admission
+
+@{
+    ViewData["Title"] = "Admission Details";
+}
+
+<div class="container mt-5">
+    <div class="card shadow p-4 bg-light" style="max-width: 900px; margin: auto;">
+        <div class="card-header">
+            <div class="btn-group">
+                <a class="btn btn-success" asp-controller="Patient" asp-action="Save">
+                    <i class="fa fa-plus"></i> Add Patient
+                </a>
+                <a class="btn btn-primary" asp-controller="Patient" asp-action="Index">
+                    <i class="fa fa-list"></i> Patient List
+                </a>
+                @* <button type="button" onclick="printContent(@Model.PatientID)" class="btn btn-danger"><i class="fa fa-print"></i></button> *@
+                <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
+                    <i class="fa fa-print"></i> Print
+                </button>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Patient Image -->
+            
+
+            <!-- Patient Info -->
+            <div class="col-md-8">
+                @{
+                    var labelStyle = "width: 160px; font-weight: bold;";
+                }
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Admit Doctor:</div>
+                    <div>@Model.Doctor.FirstName @Model.Doctor.LastName</div>
+                </div>
+
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Phone Number:</div>
+                    <div>@Model.Doctor.PhoneNo </div>
+                </div>
+
+
+
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Patient Name</div>
+                    <div>@Model.Patient.FirstName @Model.Patient.LastName</div>
+                </div>
+
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Phone Number:</div>
+                    <div>@Model.Patient.Phone </div>
+                </div>
+
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Email:</div>
+                    <div>@Model.Patient.Email </div>
+                </div>
+
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Address:</div>
+                    <div>@Model.Patient.Address </div>
+                </div>
+
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Emergency Contact:</div>
+                    <div>@Model.Patient.EmergencyContact </div>
+                </div>
+
+
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Ward :</div>
+                    <div>@Model.Bed.Ward.Name </div>
+                </div>
+
+                <div class="mb-2 d-flex">
+                    <div style="@labelStyle">Bed Number :</div>
+                    <div>@Model.Bed.BedNumber </div>
+                </div>
+
+
+
+
+            </div>
+
+        </div>
+
+        
+    </div>
+</div>

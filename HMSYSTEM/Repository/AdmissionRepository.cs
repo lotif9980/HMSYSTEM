@@ -44,7 +44,12 @@ namespace HMSYSTEM.Repository
 
         public Admission GetById(int id)
         {
-            return _db.Admissions.Find(id);
+            return _db.Admissions
+                .Include(p=>p.Patient)
+                .Include(p=>p.Doctor)
+                .Include(p=>p.Bed)
+                .ThenInclude(p=>p.Ward).FirstOrDefault(a=>a.Id==id);
         }
+
     }
 }
