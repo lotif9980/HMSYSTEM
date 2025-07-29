@@ -10,6 +10,8 @@ namespace HMSYSTEM.Repository
         public Ward Find(int id);
         public Task<bool> IsBedinUsed(int id);
 
+        public int TotalWard();
+
 
 
       

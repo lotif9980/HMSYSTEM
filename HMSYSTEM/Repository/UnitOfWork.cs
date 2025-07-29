@@ -23,6 +23,7 @@ namespace HMSYSTEM.Repository
         public IWardRepository wardRepository { get; set; }
         public IBedRepository bedRepository { get; set; }
         public IAdmissionRepository admissionRepository { get; set; }
+        public IHomeRepository homeRepository { get; set; }
 
 
 
@@ -45,6 +46,7 @@ namespace HMSYSTEM.Repository
             wardRepository = new WardRepository(db);
             bedRepository = new BedRepository(db);
             admissionRepository = new AdmissionRepository(db);
+            homeRepository= new HomeRepository(db);
         }
 
         public async Task<int> Save()

@@ -14,5 +14,9 @@ namespace HMSYSTEM.Repository
         public List<Bed> Delete(int id);
 
         public Task<bool> CanAddBedToWardAsync(int id);
+
+        public int TotalBedCount();
+
+        public int TotalOccupied();
     }
 }

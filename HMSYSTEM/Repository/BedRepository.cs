@@ -60,5 +60,18 @@ namespace HMSYSTEM.Repository
 
             return exestingBed < ward.TotalBeds;
         }
+
+        
+        public int TotalBedCount()
+        {
+            return _db.Beds.Count();
+        }
+
+        public int TotalOccupied()
+        {
+            return _db.Beds.Count(d => d.IsOccupied == false);
+        }
+
+
     }
 }

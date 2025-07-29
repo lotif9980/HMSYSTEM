@@ -45,7 +45,10 @@ namespace HMSYSTEM.Repository
         {
             return _db.Wards.Include(d=>d.Department).FirstOrDefault(d=>d.Id==id);
         }
-        
-        
+
+        public int TotalWard()
+        {
+            return _db.Wards.Count();
+        }
     }
 }

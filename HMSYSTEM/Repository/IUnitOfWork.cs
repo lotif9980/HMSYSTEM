@@ -19,6 +19,7 @@ namespace HMSYSTEM.Repository
         IWardRepository wardRepository { get; }
         IBedRepository bedRepository { get; }
         IAdmissionRepository admissionRepository { get; }
+        IHomeRepository homeRepository { get; }
 
 
         void Complete();
