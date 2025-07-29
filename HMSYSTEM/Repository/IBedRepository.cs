@@ -9,6 +9,10 @@ namespace HMSYSTEM.Repository
 
         public bool StatusUpdate(int id);
 
+        public Task<bool> IsBedInUseAsync(int id);
 
+        public List<Bed> Delete(int id);
+
+        public Task<bool> CanAddBedToWardAsync(int id);
     }
 }

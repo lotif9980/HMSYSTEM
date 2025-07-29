@@ -57,8 +57,15 @@ namespace HMSYSTEM.Controllers
 
             return RedirectToAction("Save",data);
         }
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
+            var data =await _unitOf.departmentRepo.inUsedCheck(Id);
+            if (data)
+            {
+                TempData["Message"] = "✅ Used in Department!";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Index");
+            }
             _unitOf.departmentRepo.Delete(Id);
             TempData["Message"] = "✅ Successfully Delete!";
             TempData["MessageType"] = "danger";

@@ -25,18 +25,27 @@ namespace HMSYSTEM.Repository
             return _db.Wards.ToList();
         }
 
-        public void Delete(int id)
+        public async Task<bool> IsBedinUsed(int id)
+        {
+            return await _db.Beds.AnyAsync(d=>d.WardId == id);
+        }
+
+
+        public List<Ward> Delete(int id)
         {
            var data= _db.Wards.Find(id);
 
             _db.Remove(data);
             _db.SaveChanges();
+
+            return _db.Wards.ToList();
         }
 
         public Ward Find(int id)
         {
             return _db.Wards.Include(d=>d.Department).FirstOrDefault(d=>d.Id==id);
         }
+        
         
     }
 }

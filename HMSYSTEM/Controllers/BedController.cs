@@ -32,9 +32,20 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpPost]
-        public IActionResult Save(Bed bed)
+        public async Task<IActionResult> Save(Bed bed)
         {
-            _unitOfWork.bedRepository.Save(bed);
+
+            var canAdd = await _unitOfWork.bedRepository.CanAddBedToWardAsync(bed.WardId);
+            if (!canAdd)
+            {
+                TempData["Message"] = "✅ Target Filup";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Save");
+            }
+
+             _unitOfWork.bedRepository.Save(bed);
+            TempData["Message"] = "✅ Save Successful";
+            TempData["MessageType"] = "danger";
             return RedirectToAction("Index");
         }
 
@@ -44,7 +55,23 @@ namespace HMSYSTEM.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var isInUsed = await _unitOfWork.bedRepository.IsBedInUseAsync(id);
+            if (isInUsed)
+            {
+                TempData["Message"] = "✅ Bed Used in Prescription!";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Index");
 
+            }
+            _unitOfWork.bedRepository.Delete(id);
+            
+            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["MessageType"] = "danger";
+
+            return RedirectToAction("Index");
+        }
 
     }
 }

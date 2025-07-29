@@ -6,7 +6,12 @@ namespace HMSYSTEM.Repository
     {
         public List<Ward> GetAll();
         public List<Ward> Save(Ward ward);
-        public void Delete(int id);
+        public List<Ward> Delete(int id);
         public Ward Find(int id);
+        public Task<bool> IsBedinUsed(int id);
+
+
+
+      
     }
 }

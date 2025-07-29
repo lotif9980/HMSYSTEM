@@ -13,5 +13,7 @@ namespace HMSYSTEM.Models
 
         public Department Department { get; set; }
         public WardType Type { get; set; }
+
+        public ICollection<Bed> Bed { get; set; }
     }
 }

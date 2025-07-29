@@ -1,6 +1,7 @@
 ﻿using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HMSYSTEM.Controllers
 {
@@ -34,8 +35,17 @@ namespace HMSYSTEM.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var data =await _unitOfWork.wardRepository.IsBedinUsed(id);
+
+            if (data)
+            {
+                TempData["Message"] = "✅ Ward Used in Bed!";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Index");
+            }
+            
             _unitOfWork.wardRepository.Delete(id);
 
             TempData["Message"] = "✅ Successfully Delete!";

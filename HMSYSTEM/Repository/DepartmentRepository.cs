@@ -1,5 +1,6 @@
 ﻿using HMSYSTEM.Data;
 using HMSYSTEM.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMSYSTEM.Repository
 {
@@ -48,6 +49,11 @@ namespace HMSYSTEM.Repository
             _db.SaveChanges();
 
             return _db.Departments.Where(x=>x.DepartmentId==department.DepartmentId).FirstOrDefault();
+        }
+
+        public async Task<bool> inUsedCheck(int id)
+        {
+            return await _db.Doctors.AnyAsync(d=>d.DepartmentId==id);
         }
     }
 }
