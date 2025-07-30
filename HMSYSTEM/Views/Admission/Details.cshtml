@@ -6,7 +6,7 @@
 }
 
 <div class="container mt-5">
-    <div class="card shadow ps-5 pe-4 pt-3 pb-4 bg-light" style="max-width: 900px; margin: auto;">
+    <div class="card shadow ps-5 pe-4 pt-3 pb-4 bg-light" style="max-width: 900px; height:1000px; margin: auto;">
 
         <!-- Top Action Buttons -->
         <div class="d-flex justify-content-end mb-3">
@@ -26,6 +26,7 @@
         <!-- Title -->
         <div class="text-center mb-4">
             <h3>Hospital Admission Form</h3>
+            
             <hr />
         </div>
 
@@ -90,8 +91,6 @@
             <!-- Right Side -->
             <div class="col-md-6">
 
-               
-
                 <div class="mb-1 d-flex">
                     <div style="@labelStyle">Emr. Phone:</div>
                     <div>@Model.Patient.EmergencyContact</div>
@@ -141,6 +140,52 @@
                     </div>
                 </div>
                 
+            </div>
+        </div
+
+
+        <!-- Attendent Information Section Title -->
+        <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Attendant Information</h5>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Attendant Name:</div>
+                    <div>
+                        <div>@Model.AttendentName</div>
+                    </div>
+                </div>
+
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Relation:</div>
+                    <div>@Model.AttendentRelation</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                
+                <div class="mb-1 d-flex">
+                    <div style="@labelStyle">Phone Number  :</div>
+                    <div>
+                        <div>@Model.AttendentPhone</div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <hr />
+        <div class="row">
+            <div> ✅I hereby declare that the information provided is true and I agree to hospital policies.</div>
+            <div class="d-flex justify-content-around" style="margin-top:100px;">
+                <div class="">
+                    <u> Patient Signature</u>
+                </div>
+                <div class="">
+                    <u>Attendant/Guardian Signature</u>
+                </div>
+                <div class="">
+                    <u>Hospital Authority</u>
+                </div>
             </div>
         </div>
 

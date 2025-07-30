@@ -53,5 +53,9 @@ namespace HMSYSTEM.Repository
                 .FirstOrDefault(a=>a.Id==id);
         }
 
+        public async Task<bool> PatientStatusCheck(int patientId)
+        {
+            return await _db.Admissions.AnyAsync(b=>b.PatientId==patientId && b.Status==1);
+        }
     }
 }

@@ -59,10 +59,12 @@
 <div id="PrescriptionPrintArea" class="full-page-border">
 
     <div class="container mt-3">
-        <div class="card shadow ps-4 pe-4 pt-3 pb-4 bg-light" style="max-width: 900px; margin: auto;">
+        <div class="card shadow ps-4 pe-4 pt-3 pb-4 bg-light" style="max-width: 900px; height:1000px; margin: auto;">
 
             <div class="text-center mb-4">
                 <h3>Hospital Admission Form</h3>
+                <p>Address: Charghat, Rajshahi</p>
+                <p>Phone: 01791177192</p>
                 <hr />
             </div>
 
@@ -161,6 +163,51 @@
                     <div class="mb-1 d-flex">
                         <div style="@labelStyle">Specialist:</div>
                         <div>@Model.Doctor.Specialist</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendent Information Section Title -->
+            <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Attendant Information</h5>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-1 d-flex">
+                        <div style="@labelStyle">Attendant Name:</div>
+                        <div>
+                            <div>@Model.AttendentName</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-1 d-flex">
+                        <div style="@labelStyle">Relation:</div>
+                        <div>@Model.AttendentRelation</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+
+                    <div class="mb-1 d-flex">
+                        <div style="@labelStyle">Phone Number  :</div>
+                        <div>
+                            <div>@Model.AttendentPhone</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <hr />
+            <div class="row">
+                <div> ✅I hereby declare that the information provided is true and I agree to hospital policies.</div>
+                <div class="d-flex justify-content-around">
+                    <div class="mt-5">
+                        <u> Patient Signature</u>
+                    </div>
+                    <div class="mt-5">
+                        <u>Attendant/Guardian Signature</u>
+                    </div>
+                    <div class="mt-5">
+                        <u>Hospital Authority</u>
                     </div>
                 </div>
             </div>

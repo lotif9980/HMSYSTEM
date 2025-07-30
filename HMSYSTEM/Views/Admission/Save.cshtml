@@ -54,8 +54,6 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Patient Phone Number </label>
                                     <input class="form-control" id="patientPhoneNumber" />
-
-
                                 </div>
 
                                 <div class="col-md-6">
@@ -96,6 +94,39 @@
                                     <select id="bedDropdown" class="form-select" name="BedId">
                                         <option value="">-- Select Bed --</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <h5 >Attendant Information</h5> <hr />
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label asp-for="AttendentName" class="form-label">Attendent Name</label>
+                                    <input asp-for="AttendentName" class="form-control"  />
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="AttendentRelation" class="form-label">Attendent Relation</label>
+                                    <input asp-for="AttendentRelation" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="AttendentPhone" class="form-label">Attendent Phone</label>
+                                    <input asp-for="AttendentPhone" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label asp-for="ForReason" class="form-label">For Reason</label>
+                                    <input asp-for="ForReason" class="form-control" />
+                                </div>
+
+                                <div class="col-md-6 form-check">
+                                    <div class="form-check mt-4">
+                                        <input asp-for="Declaration" class="form-check-input" type="checkbox" id="Declaration" />
+                                        <label class="form-check-label" for="Declaration">
+                                            I hereby declare that the information provided is true and I agree to hospital policies.
+                                        </label>
+                                        <span asp-validation-for="Declaration" class="text-danger"></span>
+                                    </div>
                                 </div>
                             </div>
 

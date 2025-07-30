@@ -10,8 +10,11 @@
         public int Status { get; set; } = 1;
         //public DateTime? CreateDate {  get; set; }
         public int InvoiceNo { get; set; }
-
-
+        public string ? AttendentName { get; set; }
+        public string ? AttendentRelation { get; set; }
+        public string ? AttendentPhone { get;set; }
+        public string ? ForReason { get; set; }
+        public bool   Declaration { get; set; }
 
         public Patient Patient { get; set; }
         public Doctor Doctor { get; set; }

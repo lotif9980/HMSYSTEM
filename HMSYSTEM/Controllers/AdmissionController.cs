@@ -40,9 +40,15 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpPost]
-        public IActionResult Save(Admission admission)
+        public async Task<IActionResult> Save(Admission admission)
         {
-           
+            var data =await _unitOfWork.admissionRepository.PatientStatusCheck(admission.PatientId);
+            if (data)
+            {
+                TempData["Message"] = "✅ Patient Already Aded";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Save");
+            }
            
             _unitOfWork.bedRepository.StatusUpdate(admission.BedId);
             _unitOfWork.admissionRepository.Save(admission);
