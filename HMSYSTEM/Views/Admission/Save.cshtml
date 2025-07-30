@@ -165,24 +165,28 @@
                     .then(data => {
                         if (data.success) {
                             document.getElementById("patientName").value = data.name;
-                            document.getElementById('patientId').value = data.id;
+                            document.getElementById("patientId").value = data.id;
                             document.getElementById("fatherName").value = data.fName;
-                            alert("Patient Found with this Number");
+                            alert("✅ Patient Found with this Number");
+                        } else if (data.alreadyAdded) {
+                            alert("⚠️ " + data.message);
                         } else {
                             document.getElementById("patientName").value = "";
                             document.getElementById("patientId").value = "";
-                            document.getElementById('fatherName').value = "";
-                            alert("No patient found with this number.");
+                            document.getElementById("fatherName").value = "";
+                            alert("❌ No patient found with this number.");
                         }
-                    })
+                    })  // ← this .then(data => {}) was not closed properly before!
                     .catch(error => {
                         console.error("Error:", error);
-                        alert("Error while fetching patient data.");
+                        alert("🚨 Error while fetching patient data.");
                     });
             }
         });
     });
 
+
+   
 
 
     document.addEventListener("DOMContentLoaded", function () {

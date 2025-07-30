@@ -1,6 +1,7 @@
 ﻿using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HMSYSTEM.Controllers
 {
@@ -45,9 +46,10 @@ namespace HMSYSTEM.Controllers
             var data =await _unitOfWork.admissionRepository.PatientStatusCheck(admission.PatientId);
             if (data)
             {
+               
                 TempData["Message"] = "✅ Patient Already Aded";
                 TempData["MessageType"] = "danger";
-                return RedirectToAction("Save");
+                return  View (admission);
             }
            
             _unitOfWork.bedRepository.StatusUpdate(admission.BedId);
@@ -56,26 +58,46 @@ namespace HMSYSTEM.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult GetPatientPhoneNumber(string phoneNumber)
+        public async Task<IActionResult> GetPatientPhoneNumber(string phoneNumber)
         {
-          var patient= _unitOfWork.PatienRepo.getAll().FirstOrDefault(p=>p.Phone== phoneNumber && p.Status==true);
+            var patient = _unitOfWork.PatienRepo.getAll()
+                .FirstOrDefault(p => p.Phone == phoneNumber && p.Status == true);
 
             if (patient != null)
             {
+                // 👉 Check if patient already admitted
+                var isAdmitted =await _unitOfWork.admissionRepository
+                    .PatientStatusCheck(patient.PatientID);  // assume this returns bool
+
+                if (isAdmitted)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        alreadyAdded = true,
+                        message = "✅ This patient is already admitted."
+                    });
+                }
+
                 return Json(new
                 {
                     success = true,
                     name = patient.FirstName + " " + patient.LastName,
                     fName = patient.FatherName,
                     id = patient.PatientID
-
                 });
             }
             else
             {
-                return Json(new{success = false});
+                return Json(new
+                {
+                    success = false,
+                    alreadyAdded = false,
+                    message = "❌ Patient not found with this number."
+                });
             }
         }
+
 
         [HttpGet]
         public IActionResult GetBedsByWardId(int wardId)
