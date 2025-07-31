@@ -46,7 +46,7 @@ namespace HMSYSTEM.Controllers
              _unitOfWork.bedRepository.Save(bed);
             TempData["Message"] = "✅ Save Successful";
             TempData["MessageType"] = "danger";
-            return RedirectToAction("Index");
+            return RedirectToAction("Save");
         }
 
         public IActionResult StatusUpdate(int id)
