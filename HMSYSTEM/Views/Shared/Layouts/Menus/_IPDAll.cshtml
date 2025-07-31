@@ -1,0 +1,44 @@
+﻿<li class="nav-item">
+    <a href="#" class="nav-link">
+        @* <i class="fa fa-id-badge"></i> *@
+        <i class="fas fa-hospital"></i>
+
+        <p>
+            IPD All
+            <i class="nav-arrow bi bi-chevron-right"></i>
+        </p>
+    </a>
+
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a asp-controller="Ward" asp-action="Index" class="nav-link">
+                <i class="ms-4 fas fa-procedures"></i>
+                <p>Ward List</p>
+            </a>
+        </li>
+
+    </ul>
+
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a asp-controller="Bed" asp-action="Index" class="nav-link">
+                <i class="ms-4 fas fa-bed"></i>
+                <p>Bed List</p>
+            </a>
+        </li>
+
+    </ul>
+
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a asp-controller="Admission" asp-action="Index" class="nav-link">
+                <i class="ms-4 fas fa-hospital-user"></i>
+                <p>Admission List</p>
+            </a>
+        </li>
+
+    </ul>
+
+
+
+</li>

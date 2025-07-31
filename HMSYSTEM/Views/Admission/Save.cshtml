@@ -161,26 +161,36 @@
 
             if (phoneNumber !== "") {
                 fetch(`/Admission/GetPatientPhoneNumber?phoneNumber=${phoneNumber}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        console.log("✅ Response Data:", data); // Debug
                         if (data.success) {
                             document.getElementById("patientName").value = data.name;
                             document.getElementById("patientId").value = data.id;
-                            document.getElementById("fatherName").value = data.fName;
-                            alert("✅ Patient Found with this Number");
+           
+            
                         } else if (data.alreadyAdded) {
                             alert("⚠️ " + data.message);
+                            document.getElementById("patientName").value = "";
+                            document.getElementById("patientId").value = "";
+           
                         } else {
                             document.getElementById("patientName").value = "";
                             document.getElementById("patientId").value = "";
-                            document.getElementById("fatherName").value = "";
+          
                             alert("❌ No patient found with this number.");
                         }
-                    })  // ← this .then(data => {}) was not closed properly before!
+                    })
                     .catch(error => {
-                        console.error("Error:", error);
+                        console.error("🚨 Error in fetch/catch:", error);
                         alert("🚨 Error while fetching patient data.");
                     });
+
             }
         });
     });

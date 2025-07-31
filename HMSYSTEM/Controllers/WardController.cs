@@ -60,5 +60,32 @@ namespace HMSYSTEM.Controllers
             
            return View(data);
         }
+
+
+
+        [HttpGet]
+        public IActionResult GetBedsByWardId(int wardId)
+        {
+            var beds = _unitOfWork.bedRepository.getAllBed()
+                .Where(b => b.WardId == wardId)
+                .Select(b => new
+                {
+                    bedNumber = b.BedNumber,
+                    isOccupied = b.IsOccupied
+                }).ToList();
+
+            var totalBeds = beds.Count;
+            var occupiedBeds = beds.Count(b => b.isOccupied==false);
+            var emptyBeds = beds.Count(b => b.isOccupied == true);
+
+            return Json(new
+            {
+                totalBeds,
+                emptyBeds,
+                occupiedBeds,
+                beds
+            });
+        }
+
     }
 }

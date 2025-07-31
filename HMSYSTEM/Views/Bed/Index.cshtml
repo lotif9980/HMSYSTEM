@@ -33,14 +33,13 @@
                                     <td>@item.Ward.Name</td>
                                     <td>@item.BedNumber</td>
                                     <td>
-                                  
-
-                                
                                         @(item.BedType == BedType.General ? "General" :
                                          item.BedType == BedType.SemiPrivate ? "SemiPrivate" : "ICU")
                                     </td>
-                                    <td class="d-flex justify-content-center">
-                                        @(item.IsOccupied?"Empty" : "Occupied")
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            @(item.IsOccupied ? "Empty" : "Occupied")
+                                        </div>
                                     </td>
                                    
                                     <td>

@@ -18,5 +18,10 @@ namespace HMSYSTEM.Repository
         public int TotalBedCount();
 
         public int TotalOccupied();
+
+
+        //public List<Bed> GetAvailAble(int id);
+        List<Bed> GetAvailableBedsByWardId(int wardId);
+
     }
 }

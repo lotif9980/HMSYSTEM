@@ -72,6 +72,16 @@ namespace HMSYSTEM.Repository
             return _db.Beds.Count(d => d.IsOccupied == false);
         }
 
+        //public List<Bed> GetAvailAble(int id)
+        //{
+        //    return _db.Beds.Where(d=>d.WardId==id && d.IsOccupied==true).ToList();
+        //}
 
+        public List<Bed> GetAvailableBedsByWardId(int wardId)
+        {
+            return _db.Beds
+                .Where(b => b.WardId == wardId && b.IsOccupied == true)
+                .ToList();
+        }
     }
 }
