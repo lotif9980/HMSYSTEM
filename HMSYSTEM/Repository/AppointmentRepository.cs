@@ -81,6 +81,12 @@ namespace HMSYSTEM.Repository
         {
             return _db.Appointments.Where(p=>p.Status != AppointmentStatus.Deleted).ToList();
         }
+
+        public int GetAppointmentsCount()
+        {
+            DateTime date = DateTime.Today;
+            return _db.Appointments.Count(p=>p.CreateDate==date);
+        }
     }
 
 }

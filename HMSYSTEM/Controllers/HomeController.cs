@@ -40,6 +40,9 @@ public class HomeController : Controller
         var totalPrescription = _unitOfWork.PrescriptioRepository.GetCountPrescription();
         ViewBag.TotalPrescription= totalPrescription;
 
+        var totalAppointment=_unitOfWork.AppointmentRepository.GetAppointmentsCount();
+        ViewBag.TotalAppointment= totalAppointment;
+
 
 
         if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))

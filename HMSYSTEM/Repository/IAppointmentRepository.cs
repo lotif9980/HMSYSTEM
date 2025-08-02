@@ -15,5 +15,7 @@ namespace HMSYSTEM.Repository
         public void UpdateStatus(int id, AppointmentStatus status);
         List<Appointment> GetSerial();
 
+        int GetAppointmentsCount();
+
     }
 }
