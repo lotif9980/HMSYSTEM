@@ -14,8 +14,10 @@ namespace HMSYSTEM.Models
         public string? BloodGroup { get; set; }
         public string ? Sex { get; set; }
         public string? FatherName { get; set; }
+        public DateTime  CreateDate { get; set; }
 
-      
+
+
         public DateTime? DateOfBirth { get; set; }
         public string ? Address { get; set; }
         public string ? EmergencyContact { get; set; }

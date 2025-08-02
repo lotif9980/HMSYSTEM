@@ -9,5 +9,7 @@ namespace HMSYSTEM.Repository
         public void Save(Medicine medicine);
         public void Delete(int Id);
 
+
+
     }
 }

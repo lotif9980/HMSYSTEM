@@ -9,17 +9,17 @@ namespace HMSYSTEM.Repository
         protected readonly Db _db;
         private readonly IWebHostEnvironment _env;
 
-        public PatientRepository(Db db , IWebHostEnvironment env)
+        public PatientRepository(Db db, IWebHostEnvironment env)
         {
             _db = db;
             _env = env;
         }
 
-        
+
 
         public List<Patient> getAll()
         {
-           return _db.Patients.ToList();
+            return _db.Patients.ToList();
         }
 
 
@@ -67,7 +67,7 @@ namespace HMSYSTEM.Repository
             existing.EmergencyContact = patient.EmergencyContact;
             existing.FatherName = patient.FatherName;
 
-            
+
             if (!string.IsNullOrEmpty(patient.Picture))
             {
                 existing.Picture = patient.Picture;
@@ -78,6 +78,14 @@ namespace HMSYSTEM.Repository
             _db.SaveChanges();
             return existing;
         }
+
+        public int CountPatinet()
+        {
+            DateTime todate = DateTime.Today;
+            return _db.Patients.Count(p => p.CreateDate.Date == todate);
+
+        }
+
 
     }
 }

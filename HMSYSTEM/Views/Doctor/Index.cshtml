@@ -11,6 +11,9 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Doctor List</h3></div>
+                    <div>
+                        <input type="text" name="name" id="searchBox" class="form-control" />
+                    </div>
                     <div> <a class="btn btn-info" asp-controller="Doctor" asp-action="Save">Create</a></div>
                 </div>
 
@@ -31,7 +34,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="boadyBox">
                             @{
                                 int count = 1;
                             }
@@ -89,3 +92,40 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function () {
+    $('#searchBox').on('keyup', function () {
+        var name = $(this).val().trim();
+
+        $.ajax({
+            url: '/Doctor/GetName',
+            data: { name: name }, 
+
+            success: function (data) {
+                let rows = '';
+
+                data.forEach(item => {
+                    let status = item.status ? "Active" : "Inactive";
+                    let department = item.department?.departmentName ?? "N/A";
+                        let imagePath = `/Doctor/${item.picture}`; 
+
+                    rows += `<tr>
+                        <td>${item.id}</td>
+                        <td><img src="${imagePath}" alt="Doctor Image" width="65" height="65" /></td>
+                        <td>${item.firstName}</td>
+                        <td>${item.lastName}</td>
+                        <td>${department}</td>
+                        <td>${item.emailAddress}</td>
+                        <td>${status}</td>
+                    </tr>`;
+                });
+
+                $('#boadyBox').html(rows);
+            }
+        });
+    });
+});
+
+</script>

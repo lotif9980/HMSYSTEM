@@ -11,7 +11,9 @@ namespace HMSYSTEM.Models
         public int? Status { get; set; }   
         public string ? Note { get; set; }
         public DateTime? NextFlowUp { get;set;}
-        
+        public DateTime CreateDate {  get; set; }
+
+
         public Doctor? Doctor { get; set; } 
         public Patient? Patient { get; set; }
         public Department? Department { get; set; }

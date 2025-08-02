@@ -118,7 +118,7 @@
 
 <!-- #endregion -->
 <script>
-       function showBeds(wardId, wardName) {
+    function showBeds(wardId, wardName) {
         $('#bedModalLabel').html(`Beds in Ward: <b>${wardName}</b>`);
         $('#bedModalBody').html('Loading...');
         $('#bedModal').modal('show');
@@ -128,7 +128,7 @@
             type: 'GET',
             success: function (data) {
                 if (data.beds.length > 0) {
-                    // Show total, empty, occupied count on top
+              
                     let summaryHtml = `
                         <p><strong>Total Beds:</strong> ${data.totalBeds} |
                         <strong>Occupied:</strong> ${data.occupiedBeds} |

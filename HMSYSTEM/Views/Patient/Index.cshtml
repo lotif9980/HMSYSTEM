@@ -11,6 +11,9 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Patient</h3></div>
+                    <div>
+                        <input type="text" name="name" id="searchBox" class="form-control" placeholder="Search Patient" />
+                    </div>
                     <div> <a class="btn btn-info" asp-controller="Patient" asp-action="Save">Create</a></div>
                 </div>
 
@@ -32,7 +35,7 @@
                                 <th style="width:20px;text-align:ce">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tableBoady">
                             @{
                                 int counter = 1;
                             }
@@ -89,3 +92,47 @@
         </div>
     </div>
 </div>
+
+
+ <script>
+        $(document).ready(function () {
+        $("#searchBox").on('keyup', function () {
+            var name = $(this).val().trim();
+
+            $.ajax({
+                url: '/Patient/GetName',
+                data: { name: name },
+
+                success: function (data) {
+                    let rows = '';
+                    // console.log(data)
+                    data.forEach(item => {
+                        let dob = item.dateOfBirth
+                            ? new Date(item.dateOfBirth).toLocaleDateString('en-GB', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric'
+                              })
+                            : "N/A";
+
+                        let status = item.status ? "Active" : "Inactive";
+
+                        rows += `<tr>
+                            <td>${item.patientID}</td>
+                            <td>${item.firstName} ${item.lastName}</td>
+                            <td>${item.email}</td>
+                            <td>${item.address}</td>
+                            <td>${item.phone}</td>
+                            <td>${item.bloodGroup}</td>
+                            <td>${dob}</td>
+                            <td>${status}</td>
+                        </tr>`;
+                    });
+
+                    $('#tableBoady').html(rows);
+                }
+            });
+        });
+    });
+
+ </script>

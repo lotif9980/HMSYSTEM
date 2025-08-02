@@ -201,5 +201,10 @@ namespace HMSYSTEM.Repository
             return viewModel;
         }
 
+        public int GetCountPrescription()
+        {
+            DateTime date= DateTime.Today;
+            return _db.Prescriptions.Count(p => p.CreateDate == date);
+        }
     }
 }

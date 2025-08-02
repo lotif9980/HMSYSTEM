@@ -10,6 +10,9 @@
                 <div class="card-header d-flex justify-content-around">
                     
                     <div> <h3 class="card-title bg-dark-subtle border border-danger-subtle">Existing Medicine List</h3></div>
+                   <div>
+                       <input type="text" id="searchBox" class="form-control" placeholder="Search Medicine" />
+                   </div>
                     <div> <a class="btn btn-info" asp-controller="Medicine" asp-action="Save">Create</a></div> 
                 </div>
 
@@ -28,7 +31,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="medicineBoady">
                             @{
                                 int count = 1;
                             }
@@ -74,3 +77,38 @@
         </div>
     </div>
 </div>
+
+
+<script>
+
+    $(document).ready(function () {
+        $('#searchBox').on('keyup', function () {
+            var name = $(this).val();
+
+            $.ajax({
+                url: '/Medicine/Search',
+                data: {
+                    name: name,
+            
+                },
+             
+                success: function (data) {
+                    let rows = '';
+
+                    data.forEach(item => {
+                        rows += `<tr>
+                            <td>${item.id}</td>
+                            <td>${item.name}</td>
+                            <td>${item.strength}</td>
+                            <td>${item.genericName}</td>
+                            <td>${item.form}</td>
+                        </tr>`;
+                    });
+
+                    $('#medicineBoady').html(rows);
+                }
+            });
+        });
+    });
+
+</script>

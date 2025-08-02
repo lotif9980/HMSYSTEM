@@ -34,6 +34,13 @@ public class HomeController : Controller
         var totalEmpty = TotalBed - totalOccupied;
         ViewBag.TotalEmpty = totalEmpty;
 
+        var totalPatient = _unitOfWork.PatienRepo.CountPatinet();
+        ViewBag.TotalPatient = totalPatient;
+
+        var totalPrescription = _unitOfWork.PrescriptioRepository.GetCountPrescription();
+        ViewBag.TotalPrescription= totalPrescription;
+
+
 
         if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
         {

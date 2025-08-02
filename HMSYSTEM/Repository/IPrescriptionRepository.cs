@@ -11,5 +11,7 @@ namespace HMSYSTEM.Repository
         public void Delete(int id);
 
         public PrescriptionViewModel GetPrescriptionViewModel(int id);
+
+        int GetCountPrescription();
     }
 }

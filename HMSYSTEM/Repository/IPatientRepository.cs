@@ -11,5 +11,7 @@ namespace HMSYSTEM.Repository
         public Patient Edit(int Id);
         public List<Patient> Save(Patient Patient);
         public Patient Update(Patient patient);
+
+        int CountPatinet();
     }
 }

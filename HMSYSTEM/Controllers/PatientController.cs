@@ -150,6 +150,29 @@ namespace HMSYSTEM.Controllers
             return PartialView("_PatientPrintPartial", patient);
         }
 
+        public IActionResult GetName(string name)
+        {
+            name = (name ?? "").Trim().ToLower();
 
+            var result = _unit.PatienRepo.getAll()
+                .Where(p =>
+                    (p.FirstName ?? "").Trim().ToLower().Contains(name) ||
+                    (p.LastName ?? "").Trim().ToLower().Contains(name)
+                )
+                .Select(p => new
+                {
+                    p.PatientID,
+                    p.FirstName,
+                    p.LastName,
+                    p.DateOfBirth,
+                    p.Email,
+                    p.Phone,
+                    p.Address,
+                    p.BloodGroup,
+                    p.Status
+                }).ToList();
+
+            return Json(result);
+        }
     }
 }

@@ -50,5 +50,24 @@ namespace HMSYSTEM.Controllers
             TempData["MessageType"] = "danger";
             return RedirectToAction("Index");
         }
+
+        public IActionResult Search(string name)
+        {
+
+            name = name?.Trim().ToLower() ?? "";
+
+            var result = _unitOfWork.MedicineRepo.GetAllMedicines()
+                .Where(m => !string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(name))
+                .Select(m => new
+                {
+                    m.Id,
+                    m.Name,
+                    m.Strength,
+                    m.GenericName,
+                    m.Form
+                }).ToList();
+
+            return Json(result);
+        }
     }
 }
