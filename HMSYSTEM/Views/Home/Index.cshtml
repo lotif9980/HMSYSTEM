@@ -1,4 +1,6 @@
-﻿<main class="app-main">
+﻿@model HMSYSTEM.ViewModels.HomeViewModel
+
+<main class="app-main">
     <!--begin::App Content Header-->
     <div class="app-content-header">
         <!--begin::Container-->
@@ -29,7 +31,7 @@
                     <!--begin::Small Box Widget 2-->
                     <div class="small-box text-bg-success">
                         <div class="inner">
-                            <h3>@ViewBag.TotalWard</h3>
+                            <h3>@Model.TotalWard</h3>
                             <p>Total Ward</p>
                         </div>
                         <svg class="small-box-icon"
@@ -52,7 +54,7 @@
                     <div class="small-box text-bg-primary">
                         <div class="inner d-flex">
                             <div>
-                                <h3>@ViewBag.TotalBed</h3>
+                                <h3>@Model.TotalBed</h3>
                                 <p>Total Beds</p>
                             </div>
                             
@@ -80,7 +82,7 @@
                     <div class="small-box text-bg-warning">
                         <div class="inner">
                             <div>
-                                <h3>@ViewBag.TotalOccupied</h3>
+                                <h3>@Model.TotalOccupied</h3>
                                 <p>Total Occupied</p>
                             </div>
                         </div>
@@ -103,7 +105,7 @@
                     <!--begin::Small Box Widget 4-->
                     <div class="small-box text-bg-danger">
                         <div class="inner">
-                            <h3>@ViewBag.TotalEmpty</h3>
+                            <h3>@Model.TotalEmpty</h3>
                             <p>Total Empty</p>
                         </div>
                         <svg class="small-box-icon"
@@ -133,7 +135,7 @@
                     <!--begin::Small Box Widget 4-->
                     <div class="small-box text-bg-danger">
                         <div class="inner">
-                            <h3>@ViewBag.TotalPatient</h3>
+                            <h3>@Model.TotalPatient</h3>
                             <p>Today Total Patient</p>
                         </div>
                         <svg class="small-box-icon"
@@ -157,7 +159,7 @@
                     <!--begin::Small Box Widget 4-->
                     <div class="small-box text-bg-info">
                         <div class="inner">
-                            <h3>@ViewBag.TotalPrescription</h3>
+                            <h3>@Model.TotalPrescription</h3>
                             <p>Today Prescription</p>
                         </div>
                         <svg class="small-box-icon"
@@ -181,8 +183,8 @@
                     <!--begin::Small Box Widget 4-->
                     <div class="small-box text-bg-info">
                         <div class="inner">
-                            <h3>@ViewBag.TotalAppointment</h3>
-                            <p>Today Prescription</p>
+                            <h3>@Model.TotalAppointment</h3>
+                            <p>Today Total Appointment</p>
                         </div>
                         <svg class="small-box-icon"
                              fill="currentColor"

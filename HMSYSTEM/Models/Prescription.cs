@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace HMSYSTEM.Models
 {
     public class Prescription
@@ -11,6 +13,8 @@ namespace HMSYSTEM.Models
         public int? Status { get; set; }   
         public string ? Note { get; set; }
         public DateTime? NextFlowUp { get;set;}
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreateDate {  get; set; }
 
 

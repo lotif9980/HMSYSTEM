@@ -1,5 +1,4 @@
 ﻿@model Schedule
-
 <div class="container-fluid mt-4">
     <div class="row g-4">
         <div class="col-12 d-flex justify-content-center">
@@ -20,6 +19,15 @@
                     <form asp-action="Save" method="post">
                         <!--begin::Body-->
                         <div class="card-body">
+
+                            <div class="row mb-3">
+                                <label for="Date" class="col-sm-3 col-form-label">Date</label>
+                                <div class="input-group">
+                                    <input type="text" id="dateTO" name="date" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")"  />
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+
+                            </div>
 
                             <div class="row mb-3">
                                 <label for="DoctorId" class="col-sm-3 col-form-label">Doctor</label>
@@ -130,15 +138,14 @@
 
 <script>
     $(function () {
-        $("#dateOfBirth").datepicker({
+        $("#dateTO").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true
         });
 
-        // Calendar icon click করলে input focus হবে
         $(".input-group-text").click(function () {
-            $("#dateOfBirth").focus();
+            $("#dateTO").focus();
         });
     });
 </script>

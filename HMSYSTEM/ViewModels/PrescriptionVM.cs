@@ -1,4 +1,5 @@
 ﻿using HMSYSTEM.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HMSYSTEM.ViewModels
 {
@@ -11,7 +12,9 @@ namespace HMSYSTEM.ViewModels
         public string? PatientName { get; set; }
         public string? PatientMobileNo { get; set; }
         public String? PatientAddress { get; set; }
-        
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime CreateDate { get; set; }
 
         public int DoctorId { get; set; }
         public string? DoctorName { get; set; }

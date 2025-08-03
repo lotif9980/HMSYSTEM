@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace HMSYSTEM.Models
 {
     public class Patient
@@ -14,6 +15,9 @@ namespace HMSYSTEM.Models
         public string? BloodGroup { get; set; }
         public string ? Sex { get; set; }
         public string? FatherName { get; set; }
+
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime  CreateDate { get; set; }
 
 

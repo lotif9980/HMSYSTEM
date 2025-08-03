@@ -22,6 +22,7 @@
                         <thead>
                             <tr>
                                 <th style="width: 10px">Id</th>
+                                <th>Date</th>
                                 <th>Doctro Name</th>
                                 <th>Department Name</th>
                                 <th>Day</th>
@@ -39,6 +40,7 @@
                             {
                                 <tr>
                                     <td>@count</td>
+                                    <td>@(schedule.Date?.ToString("dd-MM-yyyy"))</td>
                                     <td>@schedule.Doctor.FirstName @schedule.Doctor?.LastName</td>
                                     <td>@schedule.Department?.DepartmentName</td>
                                     <td>@schedule.DayOfWeek</td>

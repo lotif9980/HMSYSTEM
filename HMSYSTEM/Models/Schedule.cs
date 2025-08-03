@@ -1,4 +1,6 @@
-﻿namespace HMSYSTEM.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HMSYSTEM.Models
 {
     public class Schedule
     {
@@ -13,6 +15,11 @@
 
         public Department? Department { get; set; }
         public Doctor? Doctor { get; set; }
+
+        public DateTime? Date { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreateDate { get; set; }
 
     }
 

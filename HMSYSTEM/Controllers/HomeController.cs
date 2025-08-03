@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using HMSYSTEM.Models;
 using Microsoft.AspNetCore.Authorization;
 using HMSYSTEM.Repository;
+using HMSYSTEM.ViewModels;
 
 namespace HMSYSTEM.Controllers;
 [Authorize]
@@ -23,26 +24,24 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         var TotalBed = _unitOfWork.bedRepository.TotalBedCount();
-        ViewBag.TotalBed = TotalBed;
-
         var totalOccupied = _unitOfWork.bedRepository.TotalOccupied();
-        ViewBag.TotalOccupied = totalOccupied;
-
         var totalWard=_unitOfWork.wardRepository.TotalWard();
-        ViewBag.TotalWard= totalWard;
-
         var totalEmpty = TotalBed - totalOccupied;
-        ViewBag.TotalEmpty = totalEmpty;
-
         var totalPatient = _unitOfWork.PatienRepo.CountPatinet();
-        ViewBag.TotalPatient = totalPatient;
-
         var totalPrescription = _unitOfWork.PrescriptioRepository.GetCountPrescription();
-        ViewBag.TotalPrescription= totalPrescription;
-
         var totalAppointment=_unitOfWork.AppointmentRepository.GetAppointmentsCount();
-        ViewBag.TotalAppointment= totalAppointment;
 
+
+        var data = new HomeViewModel
+        {
+            TotalBed = TotalBed,
+            TotalOccupied= totalOccupied,
+            TotalWard= totalWard,
+            TotalEmpty= totalEmpty,
+            TotalPatient= totalPatient,
+            TotalPrescription= totalPrescription,
+            TotalAppointment= totalAppointment,
+        };
 
 
         if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
@@ -50,7 +49,7 @@ public class HomeController : Controller
             return RedirectToAction("Login", "Account");
         }
 
-        return View();
+        return View(data);
     }
     
 
