@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Doctor>
+﻿@using HMSYSTEM.ViewModels
+@model PaginationViewModel<Doctor>
 
 @* @foreach(Patient patient in Model)
 {
@@ -36,14 +37,14 @@
                         </thead>
                         <tbody id="boadyBox">
                             @{
-                                int count = 1;
+                                int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
                             }
-                            @foreach (Doctor doctor in Model)
+                            @foreach (Doctor doctor in Model.Items)
                             {
                                 <tr>
                                     <td>@count</td>
                                     <td style="text-align:center">
-                                        <img src="~/Doctor/@doctor.Picture" alt="Doctor Image" width="65" height="65" />
+                                        <img src="~/Doctor/@doctor.Picture" alt="Image not found" width="65" height="65" />
                                     </td>
                                     <td>@doctor.FirstName</td>
                                     <td>@doctor.LastName</td>
@@ -80,13 +81,26 @@
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@i">@i</a>
+                            </li>
+                        }
+
+                        <!-- Next Button -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
+                        </li>
                     </ul>
                 </div>
+
+               
             </div>
             <!-- /.card -->
         </div>
@@ -98,6 +112,12 @@
     $(document).ready(function () {
     $('#searchBox').on('keyup', function () {
         var name = $(this).val().trim();
+
+
+                   if (name.length === 0) {
+                        location.reload();
+                    return;
+                   }
 
         $.ajax({
             url: '/Doctor/GetName',
@@ -119,6 +139,25 @@
                         <td>${department}</td>
                         <td>${item.emailAddress}</td>
                         <td>${status}</td>
+                        <td>
+                              <div class="d-flex justify-content-center btn-group-sm ">
+
+                                 <a class="btn btn-primary ms-2" asp-route-id="item.Id" asp-controller="Doctor" asp-action="Edit">
+                               <i class="fa fa-edit"></i>
+                             </a>
+
+                             <a class="btn btn-danger ms-2" asp-route-id="doctor.Id" asp-controller="Doctor" asp-action="Delete">
+                              <i class="fa fa-trash"></i>
+                             </a>
+
+                             <a class="btn btn-success ms-2" asp-route-id="doctor.Id" asp-controller="Doctor" asp-action="Details">
+                                  <i class="fa fa-eye"></i>
+                             </a>
+
+
+
+
+                       </td>
                     </tr>`;
                 });
 

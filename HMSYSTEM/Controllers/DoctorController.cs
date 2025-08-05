@@ -1,6 +1,7 @@
 ﻿using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
+using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,10 +22,26 @@ namespace HMSYSTEM.Controllers
 
 
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            var data = _unitOf.doctorRepo.getAll();
-            return View(data);
+            var allDoctors = _unitOf.doctorRepo.getAll(); 
+
+            int totalCount = allDoctors.Count();
+
+            var pagedDoctors = allDoctors
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var viewModel = new PaginationViewModel<Doctor>
+            {
+                Items = pagedDoctors,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Details(int Id)
