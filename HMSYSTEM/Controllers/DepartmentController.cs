@@ -72,5 +72,22 @@ namespace HMSYSTEM.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult GetNameSearch(string name)
+        {
+            name = name?.Trim().ToLower() ?? "";
+
+            var data = _unitOf.departmentRepo.getAll()
+                .Where(m => !string.IsNullOrEmpty(m.DepartmentName)&& m.DepartmentName.ToLower().Contains(name))
+                .Select(m => new
+                {
+                    m.DepartmentName,
+                    m.DepartmentId,
+                    m.Status
+                }).ToList();
+
+
+            return Json(data);
+        }
+
     }
 }

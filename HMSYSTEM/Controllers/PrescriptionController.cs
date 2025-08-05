@@ -148,5 +148,30 @@ namespace HMSYSTEM.Controllers
 
             return PartialView("_PrescriptionPrintPartial", doctor);
         }
+
+
+        public IActionResult GetSearch(string name)
+        {
+            name = name?.Trim().ToLower() ?? "";
+
+            var result = _unitOfWork.PrescriptioRepository.GetAll()
+                .Where(p => p.Patient != null &&
+                (
+                 (!string.IsNullOrEmpty(p.Patient.FirstName) && p.Patient.FirstName.ToLower().Contains(name)) ||
+                 (!string.IsNullOrEmpty(p.Patient.LastName) && p.Patient.LastName.ToLower().Contains(name))
+                ))
+                .Select(p => new
+                {
+                    Id=p.Id,
+                    Date=p.Date,
+                    PatientName=p.Patient.FirstName +""+p.Patient.LastName,
+                    DoctorName=p.Doctor.FirstName + ""+ p.Doctor.LastName,
+                    DepartmentName=p.Department.DepartmentName,
+
+                }).ToList();
+
+
+            return Json(result);
+        }
     }
 }

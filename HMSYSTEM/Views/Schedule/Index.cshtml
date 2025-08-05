@@ -11,6 +11,9 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Schedule List</h3></div>
+                    <div>
+                        <input type="text" class="form-control" placeholder="Search Doctor Name" id="searchBox" />
+                    </div>
                     <div> <a class="btn btn-info" asp-controller="Schedule" asp-action="Save">Create</a></div>
                 </div>
 
@@ -32,7 +35,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tableBoady">
                             @{
                                 int count = 1;
                             }
@@ -89,3 +92,62 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('#searchBox').on({
+            keyup:function(){
+                var name=$(this).val();
+
+                $.ajax({
+                    url:'/Schedule/GetSearch',
+                    data:{name:name},
+                    success:function(data){
+                        console.log(data);
+                       let rows='';
+
+                       
+
+                       data.forEach(item=>{
+                           let timeText = item.startTime
+                        ? new Date(item.startTime).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                          })
+                        : 'N/A';
+                           rows+=`<tr>
+                                <td>${item.id}</td>
+                                <td>${timeText}</td>
+                                <td>${item.firstName +" "+ item.lastName}</td>
+                                <td>${item.departmentName}</td>
+                                <td>${item.dayOfWeek}</td>
+                                <td>${timeText}</td>
+                                <td>${timeText}</td>
+                                <td>${timeText}</td>
+                                <td>
+                                        <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-primary ms-2" asp-route-id=${item.ScheduleId} asp-controller="Schedule" asp-action="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a class="btn btn-danger ms-2" asp-route-id=${item.ScheduleId} asp-controller="Schedule" asp-action="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                               
+                           </tr>`
+                       })
+
+                       $('#tableBoady').html(rows);
+
+                    }
+                });
+
+            }
+        });
+
+    })
+</script>

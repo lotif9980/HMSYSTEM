@@ -14,6 +14,9 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Patient History List</h3></div>
+                    <div>
+                        <input class="form-control" id="searchBox" />
+                    </div>
                     <div> <a class="btn btn-info" asp-controller="Prescription" asp-action="Save">Create</a></div>
                 </div>
 
@@ -32,7 +35,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tableDataShow">
                             @{
                                 int count = 1;
                             }
@@ -84,3 +87,77 @@
     </div>
 </div>
 
+<script>
+    // $(document).ready(function(){
+    //     $('#searchBox').on('keyup', function(){
+    //         var name = $(this).val();
+
+    //         $.ajax({
+    //             url: '/Prescription/GetSearch',
+    //             data: {
+    //                 name: name
+    //             },
+    //             success: function(data){
+    //                 console.log(data);
+    //             }
+    //         });
+    //     });
+    // });
+
+   $(document).ready(function(){
+      $('#searchBox').on({
+        keyup:function(){
+            var name=$(this).val();
+
+            $.ajax({
+                 url:'/Prescription/GetSearch',
+                 data:{name:name},
+                 success: function(data){
+                     console.log(data)
+
+                     let rows='';
+
+                     data.forEach(item=>{
+                          let date = item.date
+                             ? new Date(item.date).toLocaleDateString('en-GB', {
+                                   day: 'numeric',
+                                   month: 'short',
+                                   year: 'numeric'
+                               })
+                             : "N/A";
+
+
+                         rows+=`<tr>
+                             <td>${item.id}</td>
+                             <td>${date}</td>
+                             <td>${item.patientName}</td>
+                             <td>${item.doctorName}</td>
+                             <td>${item.departmentName}</td>
+                             <td>
+                                         <div class="d-flex justify-content-center btn-group-sm ">
+
+                                             <a class="btn btn-primary ms-2" asp-route-id="item.Id" asp-controller="Doctor" asp-action="Edit">
+                                                 <i class="fa fa-edit"></i>
+                                             </a>
+
+                                             <a class="btn btn-danger ms-2" asp-route-id="item.Id" asp-controller="Prescription" asp-action="Delete">
+                                                 <i class="fa fa-trash"></i>
+                                             </a>
+
+                                             <a class="btn btn-success ms-2" asp-route-id="item.Id" asp-controller="Prescription" asp-action="Details">
+                                                 <i class="fa fa-eye"></i>
+                                             </a>
+                                         </div>
+                                     </td>
+                         </tr>`
+                     });
+
+                       $('#tableDataShow').html(rows)
+                        
+                 }
+            });
+        }
+      });
+   
+   })
+</script>

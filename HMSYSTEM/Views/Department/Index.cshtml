@@ -11,6 +11,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Department List</h3></div>
+                    <div><input class="form-control" placeholder="Search Department" id="departmentName" /></div>
                     <div> <a class="btn btn-info" asp-controller="Department" asp-action="Save">Create</a></div>
                 </div>
 
@@ -18,7 +19,7 @@
 
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">Id</th>
@@ -27,7 +28,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="dataTable">
                             @foreach (Department department in Model)
                             {
                                 <tr>
@@ -67,3 +68,48 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('#departmentName').on('keyup',function(){
+         var name=$(this).val();
+
+         $.ajax({
+            url:'/Department/GetNameSearch',
+            data:{
+                name:name,
+            },
+
+            success: function(data){
+                let rows='';
+                console.log(data)
+
+                data.forEach(item=>{
+                    rows +=`<tr>
+                        <td>${item.departmentId}</td>
+                        <td>${item.departmentName}</td>
+                        <td>${item.status == true ? "Active" : "Inactive"}</td>
+                        <td>
+                                        <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-primary ms-2" asp-route-id=${item.DepartmentId} asp-controller="Department" asp-action="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a class="btn btn-danger ms-2" asp-route-id="item.DepartmentId" asp-controller="Department" asp-action="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                        </td>
+                    </tr>`
+                
+                });
+                $('#dataTable').html(rows);
+            }
+         
+         });
+        
+        });
+    
+    })
+</script>

@@ -71,5 +71,28 @@ namespace HMSYSTEM.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public IActionResult GetSearch(string name)
+        {
+            name = name?.Trim().ToLower() ?? "";
+            var result = _unitofWork.scheduleRepo.getAll()
+                .Where(p=>p.Doctor !=null &&
+                    (! string.IsNullOrEmpty(p.Doctor.FirstName) && p.Doctor.FirstName.ToLower().Contains(name)) ||
+                    (! string.IsNullOrEmpty(p.Doctor.LastName) && p.Doctor.LastName.ToLower().Contains(name))
+
+                ).Select(p => new
+                {
+                    FirstName=p.Doctor.FirstName,
+                    LastName=p.Doctor.LastName,
+                    Date=p.Date,
+                    DepartmentName=p.Department.DepartmentName,
+                    DayOfWeek=p.DayOfWeek,
+                    Id=p.ScheduleId,
+                    StartTime=p.StartTime,
+
+                }).ToList();
+
+            return Json(result);
+        }
     }
 }

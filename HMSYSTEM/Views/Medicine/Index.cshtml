@@ -56,7 +56,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                                        count++;
+                                count++;
                             }
 
                         </tbody>
@@ -89,7 +89,6 @@
                 url: '/Medicine/Search',
                 data: {
                     name: name,
-            
                 },
              
                 success: function (data) {
@@ -102,6 +101,18 @@
                             <td>${item.strength}</td>
                             <td>${item.genericName}</td>
                             <td>${item.form}</td>
+                             <td>
+                                        <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-primary ms-2" asp-route-id="item.Id" asp- controller="Medicine" asp-action="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
+                                            <a class="btn btn-danger ms-2" asp-route-id="item.Id" asp-controller="Medicine" asp-action="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
                         </tr>`;
                     });
 
