@@ -3,6 +3,7 @@ using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
+using HMSYSTEM.ViewModels;
 
 
 namespace HMSYSTEM.Controllers
@@ -24,10 +25,26 @@ namespace HMSYSTEM.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(int page=1, int pageSize=10)
         {
+       
             var data=  _unit.PatienRepo.getAll();
-            return View(data);
+            int totalCount =data.Count();
+
+            var pageAllPatient= data
+                .Skip((page-1)*pageSize)
+                .Take(pageSize)
+                .ToList();
+
+
+            var vModel = new PaginationViewModel<Patient>
+            {
+                Items= pageAllPatient,
+                CurrentPage=page,
+                PageSize=pageSize,
+                TotalPages= (int)Math.Ceiling((double)totalCount / pageSize)
+            };
+            return View(vModel);
         }
 
         [HttpGet]
