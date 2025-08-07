@@ -28,21 +28,22 @@ namespace HMSYSTEM.Controllers
         public IActionResult Index(int page=1, int pageSize=10)
         {
        
-            var data=  _unit.PatienRepo.getAll();
-            int totalCount =data.Count();
+            var totalStudents=  _unit.PatienRepo.getAll();
+            int totalCount = totalStudents.Count();
 
-            var pageAllPatient= data
+            var pageAllPatient= totalStudents
                 .Skip((page-1)*pageSize)
                 .Take(pageSize)
                 .ToList();
-
+            var totalPage = (int)Math.Ceiling((double)totalCount / pageSize);
+           
 
             var vModel = new PaginationViewModel<Patient>
             {
                 Items= pageAllPatient,
                 CurrentPage=page,
                 PageSize=pageSize,
-                TotalPages= (int)Math.Ceiling((double)totalCount / pageSize)
+                TotalPages= totalPage
             };
             return View(vModel);
         }
