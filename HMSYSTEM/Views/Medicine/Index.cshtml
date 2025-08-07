@@ -1,6 +1,7 @@
-﻿
+﻿@using HMSYSTEM.ViewModels
 @using HMSYSTEM.Enum
-@model IEnumerable<Medicine>
+@model PaginationViewModel<Medicine>
+@* @model IEnumerable<Medicine> *@
 
 
 <div class="container-fluid mt-3">
@@ -33,9 +34,10 @@
                         </thead>
                         <tbody id="medicineBoady">
                             @{
-                                int count = 1;
+                                int count = ((Model.CurrentPage-1)*Model.PageSize)+1;
+                                // int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
                             }
-                            @foreach (Medicine item in Model)
+                            @foreach (Medicine item in Model.Items)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -65,11 +67,22 @@
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@i">@i</a>
+                            </li>
+                        }
+
+                        <!-- Next Button -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
+                        </li>
                     </ul>
                 </div>
             </div>
