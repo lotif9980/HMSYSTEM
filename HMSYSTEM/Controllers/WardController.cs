@@ -1,5 +1,6 @@
 ﻿using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
+using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -14,10 +15,28 @@ namespace HMSYSTEM.Controllers
         }
 
 
-        public IActionResult Index()
+        public IActionResult Index(int pageSize=5, int page=1)
         {
-            var data= _unitOfWork.wardRepository.GetAll();
-            return View(data);
+            var totalWard= _unitOfWork.wardRepository.GetAll().OrderBy(i=>i.Id);
+            var totalItems=totalWard.Count();
+
+            var totalPage=(int)Math.Ceiling((double)totalItems/pageSize);
+
+            var wards=totalWard
+                .Skip((page-1)*pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var viewModel = new PaginationViewModel<Ward>
+            {
+                Items= wards,
+                CurrentPage=page,
+                TotalPages=totalPage,
+                PageSize=pageSize,
+                TotalItems=totalItems,
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Save()

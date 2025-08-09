@@ -1,5 +1,6 @@
 ﻿using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
+using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +17,28 @@ namespace HMSYSTEM.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(int pageSize=5, int page=1)
         {
-          var data=  unitofwork.UserRepository.GetAll();
-            return View(data);
+          var totalUser=  unitofwork.UserRepository.GetAll().OrderBy(m=>m.Id);
+          var totalItem=totalUser.Count();
+
+            var totalPage = (int)Math.Ceiling((double)totalItem/ pageSize);
+
+            var users=totalUser
+                       .Skip((page-1)* pageSize)
+                       .Take(pageSize)
+                       .ToList();
+
+            var viewModel = new PaginationViewModel<User>
+            {
+                Items= users,
+                CurrentPage=page,
+                PageSize=pageSize,
+                TotalItems=totalItem,
+                TotalPages=totalPage
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]

@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Ward>
+﻿@* @model IEnumerable<Ward> *@
+@using HMSYSTEM.ViewModels
+@model PaginationViewModel<Ward>
 @using HMSYSTEM.Enum
 
 
@@ -41,7 +43,7 @@
                             @{
                                 int count = 1;
                             }
-                            @foreach (Ward item in Model)
+                            @foreach (Ward item in Model.Items)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -83,11 +85,22 @@
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@i">@i</a>
+                            </li>
+                        }
+
+                        <!-- Next Button -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -152,4 +165,6 @@
         });
     }
 
+
+ 
 </script>
