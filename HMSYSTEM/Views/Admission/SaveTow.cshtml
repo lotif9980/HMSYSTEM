@@ -1,0 +1,72 @@
+﻿@model Admission
+@{
+    var doctor = ViewBag.Doctor;
+    var beds = ViewBag.Bed;
+    var words = ViewBag.Ward;
+    var department = ViewBag.Department;
+}
+
+<div class="container shadow mt-5 ms-5" style="min-height:150px;">
+
+    <form asp-action="Save">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Doctor Name:</label>
+                <select id="departmentDropdown" name="DepartmentId" class="form-control">
+                    <option value="">-- Select Department --</option>
+                    @foreach (var dept in department)
+                    {
+                        <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                    }
+                </select>
+            </div>
+
+
+            <div class="col-md-6">
+                <label class="form-label">Doctor Name:</label>
+                <select class="form-control" id="doctorDropdown">
+                    <option>----Select Doctor---</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<script>
+    $(document).ready(function(){
+        $('#departmentDropdown').change(function(){
+        
+          var deptId=$(this).val();
+          var $doctordropdown=$("#doctorDropdown");
+
+          $doctordropdown.empty();
+          $doctordropdown.append('<option>----Select Doctor---</option>')
+
+          if(deptId){
+              $.ajax({
+               url:'/Admission/GetDoctrobyDepartment',
+               type:'GET',
+               data:{departmentId:deptId},
+
+                   success:function(data){
+                       $.each(data,function(i,doctor){
+
+                          $doctordropdown.append(
+                             $('<option>', {
+                                 value: doctor.id,
+                                 text: doctor.firstName
+                             })
+                          );
+                       });
+                   }
+              
+              });
+          }
+        
+        });
+
+
+    })
+</script>

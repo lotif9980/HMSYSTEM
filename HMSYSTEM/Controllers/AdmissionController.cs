@@ -132,5 +132,53 @@ namespace HMSYSTEM.Controllers
             return PartialView("_PartialPrintAdmission", data);
         }
 
+
+
+
+        #region saveDetails Describe
+
+        [HttpGet]
+        public IActionResult SaveTow()
+        {
+            var doctors = _unitOfWork.doctorRepo.getAll();
+            ViewBag.Doctor = doctors;
+
+            var beds = _unitOfWork.bedRepository.getAllBed().ToList().Where(p => p.IsOccupied == true);
+            ViewBag.Bed = beds;
+
+            var wards = _unitOfWork.wardRepository.GetAll().ToList();
+            ViewBag.Ward = wards;
+
+            int lastSerial = _unitOfWork.admissionRepository.GetLastInvoiceNo();
+            int nextSerial = lastSerial + 1;
+            ViewBag.NextSerial = nextSerial;
+
+            var department = _unitOfWork.departmentRepo.getAll();
+            ViewBag.Department = department;
+
+
+            return View();
+        }
+
+
+        public IActionResult GetDoctrobyDepartment(int departmentId)
+        {
+            var doctors=_unitOfWork.doctorRepo.getAll()
+                .Where(d=>d.DepartmentId == departmentId)
+                .Select(d => new
+                {
+                    d.FirstName,
+                    d.Id
+                })
+                .ToList();
+
+
+            return Json(doctors);
+        }
+
+
+
+        #endregion
+
     }
 }
