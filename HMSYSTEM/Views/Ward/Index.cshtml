@@ -41,7 +41,7 @@
                         </thead>
                         <tbody>
                             @{
-                                int count = 1;
+                                int count = ((Model.CurrentPage-1)* Model.PageSize)+1;
                             }
                             @foreach (Ward item in Model.Items)
                             {

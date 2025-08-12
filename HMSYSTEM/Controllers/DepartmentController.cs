@@ -2,6 +2,7 @@
 using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using HMSYSTEM.ViewModels;
 
 namespace HMSYSTEM.Controllers
 {
@@ -19,11 +20,28 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         [Authorize]
         
-        public IActionResult Index()
+        public IActionResult Index(int page=1, int pageSize=5)
         {
 
-            var data = _unitOf.departmentRepo.getAll();
-            return View(data);
+
+            var totalDepartment = _unitOf.departmentRepo.getAll().OrderBy(d=>d.DepartmentId);
+            var totalItem = totalDepartment.Count();
+            var totalPage=(int)Math.Ceiling((decimal)totalItem / pageSize);
+
+            var departments= totalDepartment
+                            .Skip((page-1)*pageSize)
+                            .Take(pageSize)
+                            .ToList();
+
+            var viewModel = new PaginationViewModel<Department>
+            {
+                Items = departments,
+                CurrentPage=page,
+                PageSize=pageSize,
+                TotalItems=totalItem,
+                TotalPages=totalPage,
+            };
+            return View(viewModel);
         }
 
         [HttpGet]

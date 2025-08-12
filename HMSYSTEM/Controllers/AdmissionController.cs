@@ -15,7 +15,7 @@ namespace HMSYSTEM.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(int page=1 , int pageSize=5)
+        public IActionResult Index(int page=1 , int pageSize=10)
         {
 
             var totalAdmission = _unitOfWork.admissionRepository.getAll().OrderBy(d=>d.Id);

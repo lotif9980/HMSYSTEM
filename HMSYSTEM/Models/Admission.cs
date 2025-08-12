@@ -20,7 +20,5 @@
         public Doctor Doctor { get; set; }
         public Bed Bed { get; set; }
        
-        
-       
     }
 }
