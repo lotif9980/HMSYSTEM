@@ -14,11 +14,28 @@ namespace HMSYSTEM.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public IActionResult Index( int pageSize=10 , int page=1)
         {
-           var data=  _unitOfWork.PrescriptioRepository.GetAll();
-            return View(data);
+            var totalPrescription=  _unitOfWork.PrescriptioRepository.GetAll();
+            var totalItem= totalPrescription.Count();
+            var totalPage=(int)Math.Ceiling((decimal)totalItem/pageSize);
+            var prescription = totalPrescription
+                               .Skip((page - 1) * pageSize)
+                               .Take(pageSize)
+                               .ToList();
+
+            var viewModel = new PaginationViewModel<Prescription>
+            {
+                Items= prescription,
+                TotalItems= totalItem,
+                PageSize= pageSize,
+                TotalPages= totalPage,
+                CurrentPage=page
+            };
+            return View(viewModel);
         }
+
+
 
         [HttpGet]
         public IActionResult Save()
