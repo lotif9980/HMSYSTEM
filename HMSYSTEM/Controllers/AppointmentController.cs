@@ -90,7 +90,7 @@ namespace HMSYSTEM.Controllers
             TempData["MessageType"] = "primary";
 
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Save");
         }
 
         public IActionResult Delete(int Id)
@@ -102,10 +102,26 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetDeleteList()
+        public IActionResult GetDeleteList(int page = 1, int pageSize = 10)
         {
-            var data = _unitofWork.AppointmentRepository.GetDeleteAppointments();
-            return View(data);
+            var totalDelete = _unitofWork.AppointmentRepository.GetDeleteAppointments();
+            var totalItem = totalDelete.Count();
+            var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
+            var progress = totalDelete
+                          .Skip((page - 1) * pageSize)
+                          .Take(pageSize)
+                          .ToList();
+
+            var viewModel = new PaginationViewModel<Appointment>
+            {
+                Items = progress,
+                TotalItems = totalItem,
+                TotalPages = totalPage,
+                CurrentPage = page,
+                PageSize = pageSize
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -116,22 +132,42 @@ namespace HMSYSTEM.Controllers
             var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
             var progress=totalProgress
                           .Skip((page-1)*pageSize)
-                          .Take(page)
+                          .Take(pageSize)
                           .ToList();
 
             var viewModel = new PaginationViewModel<Appointment>
             {
-
+               Items= progress,
+               TotalItems= totalItem,
+               TotalPages= totalPage,
+               CurrentPage= page,
+               PageSize= pageSize
             };
 
             return View(viewModel);
         }
 
         [HttpGet]
-        public IActionResult GetComplete()
+        public IActionResult GetComplete(int page = 1, int pageSize = 10)
         {
-            var data = _unitofWork.AppointmentRepository.GetComplete();
-            return View(data);
+            var totalComplete = _unitofWork.AppointmentRepository.GetComplete();
+            var totalItem = totalComplete.Count();
+            var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
+            var progress = totalComplete
+                          .Skip((page - 1) * pageSize)
+                          .Take(pageSize)
+                          .ToList();
+
+            var viewModel = new PaginationViewModel<Appointment>
+            {
+                Items = progress,
+                TotalItems = totalItem,
+                TotalPages = totalPage,
+                CurrentPage = page,
+                PageSize = pageSize
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult ChangeStatus(int id, int status)

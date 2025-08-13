@@ -11,12 +11,12 @@ namespace HMSYSTEM.Models
         public DateTime? AppoinmentDate { get; set; }
         public int? SerialNumber { get; set; }
         public string ? Problem { get; set; }
-        //public bool Status { get; set; }
+       
 
         public Department? Department { get; set; }
         public Doctor? Doctor { get; set; }
         public AppointmentStatus Status { get; set; }
-        public DateTime CreateDate { get; set; }
+
 
         public int PatientID { get; set; }
         public Patient? Patient { get; set; }

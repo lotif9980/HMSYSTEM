@@ -85,7 +85,7 @@ namespace HMSYSTEM.Repository
         public int GetAppointmentsCount()
         {
             DateTime date = DateTime.Today;
-            return _db.Appointments.Count(p=>p.CreateDate==date);
+            return _db.Appointments.Count(p => p.AppoinmentDate == date);
         }
     }
 
