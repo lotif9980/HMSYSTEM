@@ -1,6 +1,7 @@
 ﻿using HMSYSTEM.Enum;
 using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
+using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,10 +18,25 @@ namespace HMSYSTEM.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(int pageSize=10, int page=1)
         {
-           var appointments= _unitofWork.AppointmentRepository.GetAllAppointments();
-            return View(appointments);
+            var totalAappointments= _unitofWork.AppointmentRepository.GetAllAppointments();
+            var totalItem=totalAappointments.Count();
+            var totalPage=(int)Math.Ceiling((decimal)totalItem/pageSize);
+            var appointment= totalAappointments
+                             .Skip((page-1)*pageSize)
+                             .Take(pageSize)
+                             .ToList();
+
+            var viewModel = new PaginationViewModel<Appointment>
+            {
+                Items=appointment,
+                TotalItems=totalItem,
+                TotalPages=totalPage,
+                CurrentPage=page,
+                PageSize=pageSize
+            };
+            return View(viewModel);
         }
 
         [HttpGet]
