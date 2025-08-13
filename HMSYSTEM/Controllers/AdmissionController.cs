@@ -1,4 +1,5 @@
-﻿using HMSYSTEM.Models;
+﻿using HMSYSTEM.Helpers;
+using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -18,26 +19,13 @@ namespace HMSYSTEM.Controllers
         public IActionResult Index(int page=1 , int pageSize=10)
         {
 
-            var totalAdmission = _unitOfWork.admissionRepository.getAll().OrderBy(d=>d.Id);
-            var totalItem= totalAdmission.Count();
+            var totalAdmission = _unitOfWork.admissionRepository.getAll()
+                                   .OrderBy(d => d.Id)
+                                   .AsQueryable()
+                                   .ToPagedList(page, pageSize);
+           
 
-            var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
-
-            var users = totalAdmission
-                     .Skip((page - 1) * pageSize)
-                     .Take(pageSize)
-                     .ToList();
-
-            var viewModel = new PaginationViewModel<Admission>
-            {
-                Items=users,
-                PageSize=pageSize,
-                CurrentPage=page,
-                TotalItems=totalItem,
-                TotalPages=totalPage,
-            };
-
-            return View(viewModel);
+            return View(totalAdmission);
         }
 
         [HttpGet]

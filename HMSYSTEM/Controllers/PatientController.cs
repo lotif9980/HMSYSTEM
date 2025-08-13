@@ -4,6 +4,7 @@ using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using HMSYSTEM.ViewModels;
+using HMSYSTEM.Helpers;
 
 
 namespace HMSYSTEM.Controllers
@@ -27,25 +28,33 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public IActionResult Index(int page=1, int pageSize=10)
         {
-       
-            var totalStudents=  _unit.PatienRepo.getAll();
-            int totalCount = totalStudents.Count();
+            #region Previous Pagination
+            //var totalStudents=  _unit.PatienRepo.getAll();
+            //int totalCount = totalStudents.Count();
 
-            var pageAllPatient= totalStudents
-                .Skip((page-1)*pageSize)
-                .Take(pageSize)
-                .ToList();
-            var totalPage = (int)Math.Ceiling((double)totalCount / pageSize);
-           
+            //var pageAllPatient= totalStudents
+            //    .Skip((page-1)*pageSize)
+            //    .Take(pageSize)
+            //    .ToList();
+            //var totalPage = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            var vModel = new PaginationViewModel<Patient>
-            {
-                Items= pageAllPatient,
-                CurrentPage=page,
-                PageSize=pageSize,
-                TotalPages= totalPage
-            };
-            return View(vModel);
+
+            //var vModel = new PaginationViewModel<Patient>
+            //{
+            //    Items= pageAllPatient,
+            //    CurrentPage=page,
+            //    PageSize=pageSize,
+            //    TotalPages= totalPage
+            //};
+            //return View(vModel);
+            #endregion
+
+
+            var patients = _unit.PatienRepo.getAll()
+                          .OrderBy(p => p.PatientID)
+                          .AsQueryable()
+                          .ToPagedList(page, pageSize);
+            return View(patients);
         }
 
         [HttpGet]
