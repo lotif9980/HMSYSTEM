@@ -109,10 +109,22 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetProgress()
+        public IActionResult GetProgress(int page=1 , int pageSize=10)
         {
-            var data =_unitofWork.AppointmentRepository.GetProgress();
-            return View(data);
+            var totalProgress =_unitofWork.AppointmentRepository.GetProgress();
+            var totalItem = totalProgress.Count();
+            var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
+            var progress=totalProgress
+                          .Skip((page-1)*pageSize)
+                          .Take(page)
+                          .ToList();
+
+            var viewModel = new PaginationViewModel<Appointment>
+            {
+
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]
