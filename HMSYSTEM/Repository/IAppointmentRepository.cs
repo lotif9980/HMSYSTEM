@@ -6,7 +6,7 @@ namespace HMSYSTEM.Repository
 {
     public interface IAppointmentRepository
     {
-        List<Appointment> GetAllAppointments();
+        IQueryable<Appointment> GetAllAppointments(DateTime? fromDate = null, DateTime? toDate = null);
         public void Save(Appointment appointment);
         public void Delete(int Id);
         List<Appointment> GetDeleteAppointments();

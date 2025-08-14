@@ -19,14 +19,38 @@ namespace HMSYSTEM.Controllers
         }
 
         [Authorize]
-        public IActionResult Index(int pageSize=10, int page=1)
+        [HttpGet]
+        public IActionResult Index(int pageSize = 10, int page = 1)
         {
-            var totalAappointments= _unitofWork.AppointmentRepository.GetAllAppointments()
-                .OrderBy(p=>p.AppointmentId)
-                .AsQueryable()
-                .ToPagedList(page,pageSize);
-            
-            return View(totalAappointments);
+            DateTime fromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime toDate = fromDate.AddMonths(1).AddDays(-1);
+
+            ViewBag.FromDate = fromDate.ToString("yyyy-MM-dd");
+            ViewBag.ToDate = toDate.ToString("yyyy-MM-dd");
+
+            var query = _unitofWork.AppointmentRepository.GetAllAppointments(fromDate, toDate);
+
+            var pagedData = query
+                .OrderBy(a => a.AppointmentId)
+                .ToPagedList(page, pageSize);
+
+            return View(pagedData);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Index(DateTime? fromDate, DateTime? toDate, int pageSize = 10, int page = 1)
+        {
+            var query = _unitofWork.AppointmentRepository.GetAllAppointments(fromDate, toDate);
+
+            ViewBag.FromDate = fromDate?.ToString("yyyy-MM-dd") ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString("yyyy-MM-dd");
+            ViewBag.ToDate = toDate?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd");
+
+            var pagedData = query
+                .OrderBy(a => a.AppointmentId)
+                .ToPagedList(page, pageSize);
+
+            return View(pagedData);
         }
 
         [HttpGet]

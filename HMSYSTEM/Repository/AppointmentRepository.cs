@@ -17,12 +17,25 @@ namespace HMSYSTEM.Repository
             _db = db;
         }
 
-        public List<Appointment> GetAllAppointments()
+        public IQueryable<Appointment> GetAllAppointments(DateTime? fromDate = null, DateTime? toDate = null)
         {
-           return  _db.Appointments.Include(d=>d.Department)
-                .Include(x=>x.Patient)
-                .Include(d=>d.Doctor). Where(p => p.Status == AppointmentStatus.Active).ToList();
+            var query = _db.Appointments
+                .Include(a => a.Department)
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .Where(a => a.Status == AppointmentStatus.Active)
+                .AsQueryable();
 
+            // Default current month
+            fromDate ??= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            toDate ??= fromDate.Value.AddMonths(1).AddDays(-1);
+
+            // Filter by only date part
+            query = query.Where(a =>
+                a.AppoinmentDate.Value.Date >= fromDate.Value.Date &&
+                a.AppoinmentDate.Value.Date <= toDate.Value.Date);
+
+            return query;
         }
 
 

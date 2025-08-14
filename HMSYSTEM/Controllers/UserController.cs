@@ -111,7 +111,24 @@ namespace HMSYSTEM.Controllers
         }
 
       
+        public IActionResult GetSearch(string name)
+        {
+            name = name?.Trim().ToLower() ?? "";
 
+            var result = unitofwork.UserRepository.GetAll()
+                        .Where(p => p.Name?.ToLower().Contains(name) == true)
+                        .Select(p => new
+                        {
+                            Name = p.Name,
+                            UserName=p.UserName,
+                            Id=p.Id,
+                            MobileNo=p.MobileNo,
+                            Status=p.Status,
+
+                        }).ToList();
+
+            return Json(result);
+        }
        
     }
 }
