@@ -34,6 +34,7 @@ namespace HMSYSTEM.Controllers
                 .OrderBy(a => a.AppointmentId)
                 .ToPagedList(page, pageSize);
 
+
             return View(pagedData);
         }
 

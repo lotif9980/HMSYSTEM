@@ -130,5 +130,11 @@ namespace HMSYSTEM.Controllers
             return Json(result);
         }
        
+        public IActionResult GetStatusUpdate(int id)
+        {
+            unitofwork.UserRepository.GetStatus(id);
+           
+            return RedirectToAction("Index");
+        }
     }
 }

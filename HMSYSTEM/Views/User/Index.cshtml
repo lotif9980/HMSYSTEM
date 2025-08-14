@@ -44,7 +44,12 @@
                                     <td>@item.Name</td>
                                     <td>@item.MobileNo</td>
                                     <td>@item.UserName</td>
-                                    <td>@(item.Status == true ? "Active" : "Invactive")</td>
+                                    <td >
+                                        <a asp-action="GetStatusUpdate" asp-route-id="@item.Id"
+                                           class="btn btn-sm @(item.Status == true ? "btn-success" : "btn-danger")">
+                                            @(item.Status == true ? "Active" : "Inactive")
+                                        </a>
+                                    </td>
                                     <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 

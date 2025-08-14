@@ -96,6 +96,17 @@ namespace HMSYSTEM.Repository
            
         }
 
+        public void GetStatus(int id)
+        {
+            var data=_db.Users.Find(id);
+            if (data != null)
+            {
+                data.Status = ! data.Status ;
+                Update(data);
+            }
+
+        }
+
 
     }
 }

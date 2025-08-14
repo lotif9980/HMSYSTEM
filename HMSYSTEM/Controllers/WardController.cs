@@ -106,5 +106,27 @@ namespace HMSYSTEM.Controllers
             });
         }
 
+
+
+        public IActionResult GetSearch(string name)
+        {
+            name = name?.Trim().ToLower() ?? "";
+
+            var result = _unitOfWork.wardRepository.GetAll()
+                        .Where(p => p.Name?.ToLower().Contains(name) == true)
+                        .Select(p => new
+                        {
+                            p.Name,
+                            p.Id,
+                            p.DepartmentId,
+                            p.TotalBeds,
+                            p.FloorNo,
+                            p.Type
+                        }).ToList();
+
+            return Json(result);
+
+        }
+
     }
 }
