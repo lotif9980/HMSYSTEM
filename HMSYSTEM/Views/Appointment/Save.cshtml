@@ -1,4 +1,5 @@
-﻿@model Appointment
+﻿@using HMSYSTEM.ViewModels
+@model AppointmentVM
 
 
 
@@ -34,7 +35,8 @@
                                 </div>
                                 <div class="col-md-6 col-12">
                                     <label class="form-label">Patient Name</label>
-                                    <input class="form-control" id="patientName" readonly>
+                                    <input class="form-control" id="patientName" asp-for="PatientName" readonly>
+                                  
                                 </div>
                             </div>
 
@@ -57,8 +59,10 @@
                                         @foreach (var item in ViewBag.Doctor)
                                         {
                                             <option value="@item.Id">@item.FirstName @item.LastName</option>
+                                            <span asp-validation-for="DoctorId" class="text-danger"></span>
                                         }
                                     </select>
+                                    <span asp-validation-for="DoctorId" class="text-danger"></span>
                                 </div>
                             </div>
 
@@ -165,10 +169,10 @@
     });
 
 
-  
 
 
 </script>
+
 
 <!-- jQuery UI CSS -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">

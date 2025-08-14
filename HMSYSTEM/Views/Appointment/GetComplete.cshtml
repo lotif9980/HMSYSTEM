@@ -57,25 +57,19 @@
 
                                     <td>
                                         <div class="dropdown">
-                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="statusDropdown_@appointment.AppointmentId" data-bs-toggle="dropdown"
+                                            <button class="btn btn-primary btn-sm " type="button" id="statusDropdown_@appointment.AppointmentId" data-bs-toggle="dropdown"
                                                     aria-expanded="false">
                                                 @(appointment.Status == AppointmentStatus.Active ? "Active" :
-                                                                                            appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
-                                                                                            appointment.Status == AppointmentStatus.Completed ? "Completed" :
-                                                                                            appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
+                                                 appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
+                                                 appointment.Status == AppointmentStatus.Completed ? "Completed" :
+                                                 appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
                                         </button>
-                                        <ul class="dropdown-menu" aria-labelledby="statusDropdown_@appointment.AppointmentId">
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="Appointment" asp-action="ChangeStatus" asp-route-id="@appointment.AppointmentId" asp-route-status="3">
-                                                    Completed
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        
                                     </div>
                                 </td>
 
                                 </tr>
-                                                        count++;
+                                 count++;
                             }
 
                         </tbody>

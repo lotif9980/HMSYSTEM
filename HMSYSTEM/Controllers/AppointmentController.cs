@@ -73,9 +73,52 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpPost]
-        public IActionResult Save(Appointment appointment)
+        public IActionResult Save(AppointmentVM appointment)
         {
-            _unitofWork.AppointmentRepository.Save(appointment);
+            if (string.IsNullOrEmpty(appointment.PatientPhoneNumber) ||
+            appointment.DepartmentId == null ||
+            appointment.DoctorId == null ||
+            appointment.PatientID== 0 ||
+            appointment.AppoinmentDate == null)
+            {
+                TempData["Message"] = "❌ Please fill all required fields!";
+                TempData["MessageType"] = "danger";
+
+                ViewBag.Department = _unitofWork.departmentRepo.getAll();
+                ViewBag.Doctor = _unitofWork.doctorRepo.getAll();
+
+                    var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
+                .OrderByDescending(a => a.SerialNumber)
+                .Select(a => a.SerialNumber)
+                .FirstOrDefault();
+
+                int nextSerial = (lastSerial ?? 0) + 1;
+                ViewBag.NextSerial = nextSerial;
+
+                var patient =GetPatientNameByPhone(appointment.PatientPhoneNumber);
+                if (patient != null)
+                {
+                    appointment.PatientName = appointment.PatientName ; 
+                }
+
+
+                return View(appointment);
+            }
+
+            Appointment appointments = new Appointment
+            {
+                PatientID = appointment.PatientID,
+                PatientPhoneNumber = appointment.PatientPhoneNumber,
+                DepartmentId = appointment.DepartmentId,
+                DoctorId = appointment.DoctorId,
+                AppoinmentDate = appointment.AppoinmentDate,
+                SerialNumber = appointment.SerialNumber,
+                Problem = appointment.Problem,
+                Status = appointment.Status
+            };
+
+
+            _unitofWork.AppointmentRepository.Save(appointments);
             TempData["Message"] = "✅ Successfully Added!";
             TempData["MessageType"] = "primary";
 
@@ -160,10 +203,10 @@ namespace HMSYSTEM.Controllers
             return View(viewModel);
         }
 
-        public IActionResult ChangeStatus(int id, int status)
+        public IActionResult ChangeStatus(int id, int status, string returnAction)
         {
             _unitofWork.AppointmentRepository.UpdateStatus(id, (AppointmentStatus)status);
-            return RedirectToAction("Index");
+            return RedirectToAction(returnAction);
         }
     }
 }
