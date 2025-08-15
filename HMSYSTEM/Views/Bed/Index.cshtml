@@ -10,6 +10,9 @@
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Bed List</h3></div>
                     <div> <a class="btn btn-info" asp-controller="Bed" asp-action="Save">Create</a></div>
+                    <div>
+                        <input type="text" class="form-control" id="searchBox" placeholder="Search Bed Name" />
+                    </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -24,7 +27,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="dataShow">
                             @{
                                 int count = ((Model.CurrentPage-1)*Model.PageSize)+1;
                             }
@@ -85,3 +88,43 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function(){
+        $("#searchBox").on('keyup',function(){
+            var name=$(this).val();
+
+            $.ajax({
+                url:'/Bed/GetSearch',
+                data:{name:name},
+                success:function(data){
+                    let rows="";
+
+                    data.forEach(item=>{
+                        rows+=`<tr>
+                            <td>${item.id}</td>
+                            <td>${item.wardName}</td>
+                            <td>${item.bedName}</td>
+                            <td>${item.bedName}</td>
+                            <td>
+                                  <div class="d-flex justify-content-center">
+                                    ${item.isOccupied ? "Empty" : "Occupied"}
+                                  </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center btn-group-sm ">
+                                            <a class="btn btn-danger ms-2" href="/Bed/Delete/${item.id}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                </td>
+                        </tr>`
+                    })
+
+                    $("#dataShow").html(rows);
+                }
+            })
+        })
+    })
+</script>

@@ -22,7 +22,7 @@
                                 <th>Date</th>
                                 <th>Invoice No</th>
                                 <th>Patient Name</th>
-                                <th>Doctor Name</th>
+                                <th>P. Number</th>
                                 <th>Ward Name</th>
                                 <th>Bed Number</th>
                                 <th>Status</th>
@@ -40,7 +40,7 @@
                                     <td>@(item.AdmitDate?.ToString("dd-MM-yyyy"))</td>
                                     <td>@item.InvoiceNo</td>
                                     <td>@item.Patient.FirstName @item.Patient.LastName</td>
-                                    <td>@item.Doctor.FirstName @item.Doctor.LastName</td>
+                                    <td>@item.Patient.Phone</td>
                                     <td>@item.Bed?.Ward.Name</td>
                                     <td>@item.Bed.BedNumber</td>
                                     <td>

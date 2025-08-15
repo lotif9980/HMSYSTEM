@@ -42,7 +42,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="dataShwo">
                             @{
                                 int count = ((Model.CurrentPage-1)* Model.PageSize)+1;
                             }
@@ -174,7 +174,45 @@
 
    $(document).ready(function(){
 
-       $("#")
+        $("#searchBox").on('keyup', function(){
+            var name=$(this).val();
+
+            $.ajax({
+                 url:'/Ward/GetSearch',
+                 data:{name:name},
+                 success:function(data){
+                     console.log(data);
+                     let rows="";
+                     data.forEach(item=>{
+                         rows+=`<tr>
+                          <td>${item.id}</td>
+                          <td>${item.name}</td>
+                          <td>${item.type}</td>
+                           <td>${item.departmentName}</td>
+                           <td>${item.floorNo}</td>
+                          <td>
+                             <div class="d-flex justify-content-center btn-group-sm ">
+
+                                             <a class="btn btn-danger ms-2" href="/Ward/Delete/${item.id}">
+                                                 <i class="fa fa-trash"></i>
+                                             </a>
+
+                                             <a class="btn btn-success ms-2" href="/Ward/Details/${item.id}">
+                                                 <i class="fa fa-eye"></i>
+                                             </a>
+
+                             </div>
+                          </td>
+                            
+                            
+                         </tr>`
+                     })
+
+                      $('#dataShwo').html(rows);
+                 }
+                
+            })
+        })
    })
 
 

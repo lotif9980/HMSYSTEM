@@ -93,5 +93,25 @@ namespace HMSYSTEM.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult GetSearch(string name)
+        {
+            name = name?.Trim().ToLower() ?? "";
+
+            var result = _unitOfWork.bedRepository.getAllBed()
+                        .Where(p => p.BedNumber?.ToLower().Contains(name) == true)
+                        .Select(p => new
+                        {
+                            Id=p.Id,
+                            BedName=p.BedNumber,
+                            WardName=p.Ward.Name,
+                            Rate=p.RatePerDay,
+                            IsOccupied=p.IsOccupied,
+                            Type=p.BedType
+                        })
+                        .ToList();
+
+            return Json(result);
+        }
+
     }
 }

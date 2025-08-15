@@ -118,7 +118,7 @@ namespace HMSYSTEM.Controllers
                         {
                             p.Name,
                             p.Id,
-                            p.DepartmentId,
+                            DepartmentName=p.Department.DepartmentName,
                             p.TotalBeds,
                             p.FloorNo,
                             p.Type
