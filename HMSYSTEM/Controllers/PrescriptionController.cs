@@ -172,10 +172,11 @@ namespace HMSYSTEM.Controllers
             name = name?.Trim().ToLower() ?? "";
 
             var result = _unitOfWork.PrescriptioRepository.GetAll()
-                .Where(p =>
-                    (p.Patient?.FirstName?.ToLower().Contains(name) == true) ||
-                    (p.Patient?.LastName?.ToLower().Contains(name) == true)
-                )
+                 .Where(p =>
+                    ((p.Patient.FirstName ?? "").Trim().ToLower().Contains(name)) ||
+                    ((p.Patient.LastName ?? "").Trim().ToLower().Contains(name)) ||
+                    (((p.Patient.FirstName ?? "") + " " + (p.Patient.LastName ?? "")).Trim().ToLower().Contains(name))
+                  )
                 .Select(p => new
                 {
                     Id=p.Id,

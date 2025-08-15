@@ -230,16 +230,15 @@ namespace HMSYSTEM.Controllers
             name=(name ?? "").Trim().ToLower();
 
             var result=_unitOf.doctorRepo.getAll()
-                .Where(d=>
-                (d.FirstName ?? "").Trim().ToLower().Contains(name) || 
-                (d.LastName ?? "").Trim().ToLower().Contains(name))
-
-                .Select(p => new
+               .Where(d =>
+                    ((d.FirstName ?? "").Trim().ToLower().Contains(name)) ||
+                    ((d.LastName ?? "").Trim().ToLower().Contains(name)) ||
+                    (((d.FirstName ?? "") + " " + (d.LastName ?? "")).Trim().ToLower().Contains(name))
+               ).Select(p => new
                 {
                     p.Id,
-                    p.FirstName,
-                    p.LastName,
-                    Department = new { p.Department.DepartmentName },
+                    Name= p.FirstName +" "+ p.LastName,
+                    Department = p.Department.DepartmentName,
                     p.Picture,
                     p.EmailAddress,
                     p.Status,

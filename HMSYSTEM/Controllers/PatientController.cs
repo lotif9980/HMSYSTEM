@@ -182,15 +182,15 @@ namespace HMSYSTEM.Controllers
             name = (name ?? "").Trim().ToLower();
 
             var result = _unit.PatienRepo.getAll()
-                .Where(p =>
-                    (p.FirstName ?? "").Trim().ToLower().Contains(name) ||
-                    (p.LastName ?? "").Trim().ToLower().Contains(name)
-                )
+                  .Where(p =>
+                    ((p.FirstName ?? "").Trim().ToLower().Contains(name)) ||
+                    ((p.LastName ?? "").Trim().ToLower().Contains(name)) ||
+                    (((p.FirstName ?? "") + " " + (p.LastName ?? "")).Trim().ToLower().Contains(name))
+                  )
                 .Select(p => new
                 {
                     p.PatientID,
-                    p.FirstName,
-                    p.LastName,
+                    name=  p.FirstName +" "+ p.LastName,
                     p.DateOfBirth,
                     p.Email,
                     p.Phone,

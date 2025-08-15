@@ -13,7 +13,7 @@
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Doctor List</h3></div>
                     <div>
-                        <input type="text" name="name" id="searchBox" class="form-control" />
+                        <input type="text" name="name" id="searchBox" class="form-control" placeholder="Search Name" />
                     </div>
                     <div> <a class="btn btn-info" asp-controller="Doctor" asp-action="Save">Create</a></div>
                 </div>
@@ -27,8 +27,7 @@
                             <tr>
                                 <th style="width: 10px">Id</th>
                                 <th>Picture</th>
-                                <th>FirstName</th>
-                                <th>LastName</th>
+                                <th>Name</th>
                                 <th>Department</th>
                                 <th>EmailAddress</th>
                                 <th>Status</th>
@@ -46,8 +45,7 @@
                                     <td style="text-align:center">
                                         <img src="~/Doctor/@doctor.Picture" alt="Image not found" width="65" height="65" />
                                     </td>
-                                    <td>@doctor.FirstName</td>
-                                    <td>@doctor.LastName</td>
+                                    <td>@doctor.FirstName @doctor.LastName</td>
                                     <td>@doctor.Department?.DepartmentName</td>
                                     <td>@doctor.EmailAddress</td>
                                     <td>@(doctor.Status==true?"Active": "Invactive")</td>
@@ -128,29 +126,27 @@
 
                 data.forEach(item => {
                     let status = item.status ? "Active" : "Inactive";
-                    let department = item.department?.departmentName ?? "N/A";
                         let imagePath = `/Doctor/${item.picture}`; 
 
                     rows += `<tr>
                         <td>${item.id}</td>
                         <td><img src="${imagePath}" alt="Doctor Image" width="65" height="65" /></td>
-                        <td>${item.firstName}</td>
-                        <td>${item.lastName}</td>
-                        <td>${department}</td>
+                        <td>${item.name}</td>
+                        <td>${item.department}</td>
                         <td>${item.emailAddress}</td>
                         <td>${status}</td>
                         <td>
                               <div class="d-flex justify-content-center btn-group-sm ">
 
-                                 <a class="btn btn-primary ms-2" asp-route-id="item.Id" asp-controller="Doctor" asp-action="Edit">
+                                 <a class="btn btn-primary ms-2" href="/Doctor/Edit/${item.id}">
                                <i class="fa fa-edit"></i>
                              </a>
 
-                             <a class="btn btn-danger ms-2" asp-route-id="doctor.Id" asp-controller="Doctor" asp-action="Delete">
+                             <a class="btn btn-danger ms-2" href="/Doctor/Delete/${item.id}">
                               <i class="fa fa-trash"></i>
                              </a>
 
-                             <a class="btn btn-success ms-2" asp-route-id="doctor.Id" asp-controller="Doctor" asp-action="Details">
+                             <a class="btn btn-success ms-2" href="/Doctor/Details/${item.id}">
                                   <i class="fa fa-eye"></i>
                              </a>
 

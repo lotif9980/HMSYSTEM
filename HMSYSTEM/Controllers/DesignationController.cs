@@ -86,5 +86,21 @@ namespace HMSYSTEM.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public IActionResult GetSearch(string name)
+        {
+            name = name?.Trim().ToLower() ?? "";
+
+            var result = _unitOf.designationRepo.getAll()
+                        .Where(p => p.DesignationName?.ToLower().Contains(name) == true)
+                        .Select(p => new
+                        {
+                            p.DesignationId,
+                            p.DesignationName,
+                            p.Status,
+                        }).ToList();
+
+            return Json(result);
+        }
     }
 }

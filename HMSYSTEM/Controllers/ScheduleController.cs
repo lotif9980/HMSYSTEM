@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Models;
+﻿    using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -93,14 +93,14 @@ namespace HMSYSTEM.Controllers
         {
             name = name?.Trim().ToLower() ?? "";
             var result = _unitofWork.scheduleRepo.getAll()
-                .Where(p=>p.Doctor !=null &&
-                    (! string.IsNullOrEmpty(p.Doctor.FirstName) && p.Doctor.FirstName.ToLower().Contains(name)) ||
-                    (! string.IsNullOrEmpty(p.Doctor.LastName) && p.Doctor.LastName.ToLower().Contains(name))
-
-                ).Select(p => new
-                {
-                    FirstName=p.Doctor.FirstName,
-                    LastName=p.Doctor.LastName,
+                 .Where(p =>
+                    ((p.Doctor.FirstName ?? "").Trim().ToLower().Contains(name)) ||
+                    ((p.Doctor.LastName ?? "").Trim().ToLower().Contains(name)) ||
+                    (((p.Doctor.FirstName ?? "") + " " + (p.Doctor.LastName ?? "")).Trim().ToLower().Contains(name))
+                  ).Select(p => new
+                  {
+                   name=p.Doctor.FirstName +" "+p.Doctor.LastName,
+                  
                     Date=p.Date,
                     DepartmentName=p.Department.DepartmentName,
                     DayOfWeek=p.DayOfWeek,

@@ -24,7 +24,7 @@
                         <thead>
                             <tr>
                                 <th style="width: 10px">Id</th>
-                                <th>Patient Name</th>
+                                <th>Name</th>
                                 <th>Email</th>
                                 <th>Address</th>
                                 <th>Phone</th>
@@ -102,8 +102,9 @@
                 data: { name: name },
 
                 success: function (data) {
+                    console.log(data)
                     let rows = '';
-                    // console.log(data)
+                    
                     data.forEach(item => {
                         let dob = item.dateOfBirth
                             ? new Date(item.dateOfBirth).toLocaleDateString('en-GB', {
@@ -117,13 +118,28 @@
 
                         rows += `<tr>
                             <td>${item.patientID}</td>
-                            <td>${item.firstName} ${item.lastName}</td>
+                            <td>${item.name}</td>
                             <td>${item.email}</td>
                             <td>${item.address}</td>
                             <td>${item.phone}</td>
                             <td>${item.bloodGroup}</td>
                             <td>${dob}</td>
                             <td>${status}</td>
+                            <td>
+                                <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-primary ms-2" href="/Patient/Edit/${item.patientID}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a class="btn btn-info ms-2" href="/Patient/Details/${item.patientID}">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <a class="btn btn-danger ms-2" href="/Patient/Delete/${item.patientID}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+
+                                </div>
+                            </td>
                         </tr>`;
                     });
 

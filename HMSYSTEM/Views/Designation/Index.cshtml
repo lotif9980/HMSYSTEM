@@ -15,7 +15,9 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Designation List</h3></div>
+                    <div><input class="form-control" placeholder="Search Designation" id="SearchBox"/></div>
                     <div> <a class="btn btn-info" asp-controller="Designation" asp-action="Save">Create</a></div>
+
                 </div>
 
 
@@ -31,7 +33,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="dataShow">
                             @{
                                 int count =((Model.CurrentPage-1)*Model.PageSize)+1;
                             }
@@ -86,3 +88,39 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        $("#SearchBox").on('keyup',function(){
+            var name=$(this).val();
+
+            $.ajax({
+                url:'/Designation/GetSearch',
+                data:{name:name},
+                success: function(data){
+                    var rows='';
+
+                    data.forEach(item=>{
+                        rows+=`<tr>
+                        <td>${item.designationId}</td>
+                        <td>${item.designationName}</td>
+                        <td>${item.status?"Active":"Inactive"}</td>
+                        <td>
+                            <div class="d-flex justify-content-center btn-group-sm ">
+
+                               <a class="btn btn-primary ms-2" href="/Designation/Edit/${item.designationId}">
+                                 <i class="fa fa-edit"></i>
+                               </a>
+
+                               <a class="btn btn-danger ms-2" href="/Designation/Details/${item.designationId}">
+                                  <i class="fa fa-trash"></i>
+                               </a>
+                            </div>
+                        </td>
+                        </tr>`
+                    })
+                    $("#dataShow").html(rows);
+                }
+            })
+        })
+    })
+</script>
