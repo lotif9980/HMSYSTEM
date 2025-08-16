@@ -11,6 +11,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Admission List</h3></div>
+                      <div><input placeholder="Search Patient Name" id="SearchBox" class="form-control" /></div>
                     <div> <a class="btn btn-info" asp-controller="Admission" asp-action="Save">Create</a></div>
                 </div>
                 <!-- /.card-header -->
@@ -29,7 +30,7 @@
                                 <th style="width:20px;text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="dataShow">
                             @{
                                 int count =((Model.CurrentPage-1)*Model.PageSize)+1;
                             }
@@ -43,19 +44,7 @@
                                     <td>@item.Patient.Phone</td>
                                     <td>@item.Bed?.Ward.Name</td>
                                     <td>@item.Bed.BedNumber</td>
-                                    <td>
-                                        @((AdmissionType)item.Status == AdmissionType.Emergency ? "Emergency"
-                                        : (AdmissionType)item.Status == AdmissionType.Routine ? "Routine"
-                                        : (AdmissionType)item.Status == AdmissionType.Maternity ? "Maternity"
-                                        : (AdmissionType)item.Status == AdmissionType.Surgical ? "Surgical"
-                                        : (AdmissionType)item.Status == AdmissionType.Observation ? "Observation"
-                                        : (AdmissionType)item.Status == AdmissionType.Transfer ? "Transfer"
-                                        : (AdmissionType)item.Status == AdmissionType.ICU ? "ICU"
-                                        : (AdmissionType)item.Status == AdmissionType.DayCare ? "Day Care"
-                                        : (AdmissionType)item.Status == AdmissionType.Accident ? "Accident"
-                                        : (AdmissionType)item.Status == AdmissionType.Referral ? "Referral"
-                                        : "Unknown")
-                                    </td>
+                                    <td>@(item.Status == 1 ? "Active" : "Inactive")</td>
                                     <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 
@@ -83,3 +72,59 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function(){
+
+        $("#SearchBox").on('keyup',function(){
+            var name=$(this).val();
+
+            $.ajax({
+                url:'/Admission/GetSearch',
+                data:{name:name},
+                success:function(data){
+                    let rows='';
+                    data.forEach(item=>{
+
+                          let date = item.date
+                             ? new Date(item.date).toLocaleDateString('en-GB', {
+                                   day: 'numeric',
+                                   month: 'short',
+                                   year: 'numeric'
+                               })
+                             : "N/A";
+
+
+                        rows+=`<tr>
+                            <td>${item.id}</td>
+                            <td>${date}</td>
+                            <td>${item.invoiceNo}</td>
+                            <td>${item.name}</td>
+                            <td>${item.number}</td>
+                            <td>${item.wardName}</td>
+                            <td>${item.bedName}</td>
+                            <td>${item.status==1? "Active":"Inactive"}</td>
+                            <td>
+                                 <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-danger ms-2" href="/Admission/Delete/${item.id}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                            <a class="btn btn-success ms-2" href="/Admission/Details/${item.id}">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                 </div>
+                            </td>
+                        
+                        
+                        </tr>`
+                    });
+                    $("#dataShow").html(rows);
+                }
+            
+            });
+        
+        });
+    })
+</script>

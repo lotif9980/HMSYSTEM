@@ -151,7 +151,14 @@ namespace HMSYSTEM.Controllers
                             (((d.Patient.FirstName ?? "") + " " + (d.Patient.LastName ?? "")).Trim().ToLower().Contains(name))
                         ).Select(p => new
                         {
-
+                            Id=p.Id,
+                            Date=p.AdmitDate,
+                            InvoiceNo =p.InvoiceNo,
+                            Name=p.Patient.FirstName+" "+ p.Patient.LastName,
+                            Number=p.Patient.Phone,
+                            WardName=p.Bed?.Ward.Name,
+                            BedName=p.Bed.BedNumber,
+                            Status=p.Status
                         }).ToList();
 
             return Json (result);
