@@ -140,7 +140,23 @@ namespace HMSYSTEM.Controllers
             return PartialView("_PartialPrintAdmission", data);
         }
 
+        public IActionResult GetSearch(string name)
+        {
+            name = name?.Trim().ToLower() ?? "";
 
+            var result = _unitOfWork.admissionRepository.getAll()
+                        .Where(d =>
+                            ((d.Patient.FirstName ?? "").Trim().ToLower().Contains(name)) ||
+                            ((d.Patient.LastName ?? "").Trim().ToLower().Contains(name)) ||
+                            (((d.Patient.FirstName ?? "") + " " + (d.Patient.LastName ?? "")).Trim().ToLower().Contains(name))
+                        ).Select(p => new
+                        {
+
+                        }).ToList();
+
+            return Json (result);
+
+        }
 
 
         #region saveDetails Describe

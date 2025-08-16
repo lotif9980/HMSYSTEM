@@ -122,30 +122,32 @@
                        
 
                        data.forEach(item=>{
-                           let timeText = item.startTime
-                        ? new Date(item.startTime).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                          })
-                        : 'N/A';
+                          
+
+                        let date = item.date
+                             ? new Date(item.date).toLocaleDateString('en-GB', {
+                                   day: 'numeric',
+                                   month: 'short',
+                                   year: 'numeric'
+                               })
+                             : "N/A";
                            rows+=`<tr>
                                 <td>${item.id}</td>
-                                <td>${timeText}</td>
+                                <td>${date}</td>
                                 <td>${item.name}</td>
                                 <td>${item.departmentName}</td>
                                 <td>${item.dayOfWeek}</td>
-                                <td>${timeText}</td>
-                                <td>${timeText}</td>
-                                <td>${timeText}</td>
+                                <td>${convertToAMPM(item.startTime)}</td>
+                                <td>${convertToAMPM(item.endTime)}</td>
+                                <td>${item.isAvailable==true ? "Active" : "Inactive"}</td>
                                 <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 
-                                            <a class="btn btn-primary ms-2" asp-route-id=${item.ScheduleId} asp-controller="Schedule" asp-action="Edit">
+                                            <a class="btn btn-primary ms-2" href="/Schedule/Edit/${item.id}">
                                                 <i class="fa fa-edit"></i>
                                             </a>
 
-                                            <a class="btn btn-danger ms-2" asp-route-id=${item.ScheduleId} asp-controller="Schedule" asp-action="Delete">
+                                            <a class="btn btn-danger ms-2" href="/Schedule/Delete/${item.id}">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         </div>
@@ -163,4 +165,14 @@
         });
 
     })
+
+    function convertToAMPM(time) {
+        if (!time) return "N/A";
+
+        let [hours, minutes] = time.split(":");
+        hours = parseInt(hours);
+        let ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12;
+        return hours + ":" + minutes + " " + ampm;
+    }
 </script>

@@ -64,8 +64,7 @@ namespace HMSYSTEM.Controllers
 
             ViewBag.Doctors = _unitofWork.doctorRepo.getAll().Where(c => c.Status == true);
             ViewBag.Department = _unitofWork.departmentRepo.getAll().Where(c => c.Status == true);
-            TempData["Message"] = "✅ Successfully Added!";
-            TempData["MessageType"] = "primary";
+      
 
 
             return View(data);
@@ -75,6 +74,8 @@ namespace HMSYSTEM.Controllers
         public IActionResult Update(Schedule schedule)
         {
             var data = _unitofWork.scheduleRepo.Update(schedule);
+            TempData["Message"] = "✅ Successfully Added!";
+            TempData["MessageType"] = "primary";
             return RedirectToAction("Index", data);
         }
 
@@ -106,6 +107,8 @@ namespace HMSYSTEM.Controllers
                     DayOfWeek=p.DayOfWeek,
                     Id=p.ScheduleId,
                     StartTime=p.StartTime,
+                    EndTime=p.EndTime,
+                    IsAvailable= p.IsAvailable
 
                 }).ToList();
 
