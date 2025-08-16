@@ -120,7 +120,7 @@
 
                      let rows='';
 
-                     data.forEach(item=>{
+                     data.forEach((item,index)=>{
                           let date = item.date
                              ? new Date(item.date).toLocaleDateString('en-GB', {
                                    day: 'numeric',
@@ -131,7 +131,7 @@
 
 
                          rows+=`<tr>
-                             <td>${item.id}</td>
+                              <td>${index + 1}</td>
                              <td>${date}</td>
                              <td>${item.patientName}</td>
                              <td>${item.doctorName}</td>

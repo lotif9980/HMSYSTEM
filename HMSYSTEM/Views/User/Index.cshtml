@@ -117,9 +117,9 @@
                 success:function(data){
                     let rows='';
 
-                    data.forEach(item=>{
+                    data.forEach((item,index)=>{
                         rows+=`<tr>
-                        <td>${item.id}</td>
+                        <td>${index + 1}</td>
                         <td>${item.name}</td>
                         <td>${item.mobileNo}</td>
                         <td>${item.userName}</td>

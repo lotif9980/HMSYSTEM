@@ -16,7 +16,7 @@ namespace HMSYSTEM.Controllers
 
         public IActionResult Index( int pageSize=10 , int page=1)
         {
-            var totalPrescription=  _unitOfWork.PrescriptioRepository.GetAll();
+            var totalPrescription=  _unitOfWork.PrescriptioRepository.GetAll().OrderByDescending(p=>p.Id);
             var totalItem= totalPrescription.Count();
             var totalPage=(int)Math.Ceiling((decimal)totalItem/pageSize);
             var prescription = totalPrescription

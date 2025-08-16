@@ -99,9 +99,9 @@
                 success: function(data){
                     var rows='';
 
-                    data.forEach(item=>{
+                    data.forEach((item,index)=>{
                         rows+=`<tr>
-                        <td>${item.designationId}</td>
+                        <td>${index + 1}</td>
                         <td>${item.designationName}</td>
                         <td>${item.status?"Active":"Inactive"}</td>
                         <td>

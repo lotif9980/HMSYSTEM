@@ -102,19 +102,19 @@
                 let rows='';
                 console.log(data)
 
-                data.forEach(item=>{
+                data.forEach((item,index)=>{
                     rows +=`<tr>
-                        <td>${item.departmentId}</td>
+                        <td>${index + 1}</td>
                         <td>${item.departmentName}</td>
                         <td>${item.status == true ? "Active" : "Inactive"}</td>
                         <td>
                                         <div class="d-flex justify-content-center btn-group-sm ">
 
-                                            <a class="btn btn-primary ms-2" asp-route-id=${item.DepartmentId} asp-controller="Department" asp-action="Edit">
+                                            <a class="btn btn-primary ms-2" href="/Department/Edit/${item.departmentId}">
                                                 <i class="fa fa-edit"></i>
                                             </a>
 
-                                            <a class="btn btn-danger ms-2" asp-route-id="item.DepartmentId" asp-controller="Department" asp-action="Delete">
+                                            <a class="btn btn-danger ms-2" href="/Department/Delete/${item.departmentId}">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         </div>

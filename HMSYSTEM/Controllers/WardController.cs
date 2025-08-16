@@ -121,7 +121,7 @@ namespace HMSYSTEM.Controllers
                             DepartmentName=p.Department.DepartmentName,
                             p.TotalBeds,
                             p.FloorNo,
-                            p.Type
+                            type= p.Type.ToString(),
                         }).ToList();
 
             return Json(result);

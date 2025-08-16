@@ -25,8 +25,8 @@ namespace HMSYSTEM.Models
         public DateTime? DateOfBirth { get; set; }
         public string ? Address { get; set; }
         public string ? EmergencyContact { get; set; }
-        public string ? Picture { get; set; } 
-        public bool ? Status { get; set; }
+        public string ? Picture { get; set; }
+        public bool? Status { get; set; } = true;
 
         [NotMapped] 
         public IFormFile ImageFile { get; set; }

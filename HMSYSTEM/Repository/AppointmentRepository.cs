@@ -32,8 +32,8 @@ namespace HMSYSTEM.Repository
 
             // Filter by only date part
             query = query.Where(a =>
-                a.AppoinmentDate.Value.Date >= fromDate.Value.Date &&
-                a.AppoinmentDate.Value.Date <= toDate.Value.Date);
+                a.AppoinmentDate.Date >= fromDate.Value.Date &&
+                a.AppoinmentDate.Date <= toDate.Value.Date);
 
             return query;
         }
@@ -97,8 +97,8 @@ namespace HMSYSTEM.Repository
 
         public int GetAppointmentsCount()
         {
-            DateTime date = DateTime.Today;
-            return _db.Appointments.Count(p => p.AppoinmentDate == date);
+            DateTime today = DateTime.Today;
+            return _db.Appointments.Count(p => p.AppoinmentDate.Date == today);
         }
     }
 

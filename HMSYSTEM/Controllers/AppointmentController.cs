@@ -31,7 +31,7 @@ namespace HMSYSTEM.Controllers
             var query = _unitofWork.AppointmentRepository.GetAllAppointments(fromDate, toDate);
 
             var pagedData = query
-                .OrderBy(a => a.AppointmentId)
+                .OrderByDescending(p => p.AppointmentId)
                 .ToPagedList(page, pageSize);
 
 
@@ -136,7 +136,7 @@ namespace HMSYSTEM.Controllers
                 PatientPhoneNumber = appointment.PatientPhoneNumber,
                 DepartmentId = appointment.DepartmentId,
                 DoctorId = appointment.DoctorId,
-                AppoinmentDate = appointment.AppoinmentDate,
+                AppoinmentDate = appointment.AppoinmentDate.Value,
                 SerialNumber = appointment.SerialNumber,
                 Problem = appointment.Problem,
                 Status = appointment.Status
