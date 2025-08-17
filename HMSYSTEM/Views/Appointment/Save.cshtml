@@ -20,7 +20,7 @@
                     <div class="card-header d-flex justify-content-center  fs-1"><div class="">Appointment Information</div></div>
                     <!--end::Header-->
                     <!--begin::Form-->
-                    <form asp-action="Save" method="post" enctype="multipart/form-data">
+                    <form asp-action="Save" method="post" id="myForm" enctype="multipart/form-data">
                         <!--begin::Body-->
                         <div class="card-body">
 
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="col-md-6 col-12">
                                     <label asp-for="SerialNumber" class="form-label">Serial Number</label>
-                                    <input asp-for="SerialNumber" class="form-control" value="@ViewBag.NextSerial" readonly />
+                                    <input asp-for="SerialNumber" class="form-control" value="@ViewBag.NextSerial" readonly id="serial" />
                                 </div>
                             </div>
 
@@ -169,6 +169,31 @@
     });
 
 
+    $(document).ready(function(){
+        $("#myForm").on('submit',function(){
+            var patientName=$("#patientName").val().trim();
+            var departmentId=$("#DepartmentId").val().trim();
+            var doctorId=$("#DoctorId").val().trim();
+            var appoinmentDate=$("#AppoinmentDate").val().trim();
+            var serial=$("#serial").val().trim();
+           
+
+            var container=$("body");
+            var offset=20;
+
+            if(patientName==="")offset=createAlert("❌ Patient Name Required",container,offset);
+            if(doctorId==="")offset=createAlert("❌ Doctor Required",container,offset);
+            if(departmentId==="")offset=createAlert("❌ Departent is Required",container,offset);
+            if(appoinmentDate==="")offset=createAlert("❌ Appoinment Date is Required",container,offset);
+            if(serial==="")offset=createAlert("❌ Serial is Required",container,offset);
+           
+
+
+            if($(".field-alert").length >0) return false;
+            this.submit();
+
+        })
+    })
 
 
 </script>

@@ -100,55 +100,47 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(AppointmentVM appointment)
         {
-            if (string.IsNullOrEmpty(appointment.PatientPhoneNumber) ||
-            appointment.DepartmentId == null ||
-            appointment.DoctorId == null ||
-            appointment.PatientID== 0 ||
-            appointment.AppoinmentDate == null)
+
+            ViewBag.Department = _unitofWork.departmentRepo.getAll();
+            ViewBag.Doctor = _unitofWork.doctorRepo.getAll();
+
+            var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
+                            .OrderByDescending(a => a.SerialNumber)
+                            .Select(a => a.SerialNumber)
+                            .FirstOrDefault();
+
+            int nextSerial = (lastSerial ?? 0) + 1;
+            ViewBag.NextSerial = nextSerial;
+
+            if (ModelState.IsValid)
             {
-                TempData["Message"] = "❌ Please fill all required fields!";
-                TempData["MessageType"] = "danger";
-
-                ViewBag.Department = _unitofWork.departmentRepo.getAll();
-                ViewBag.Doctor = _unitofWork.doctorRepo.getAll();
-
-                    var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
-                .OrderByDescending(a => a.SerialNumber)
-                .Select(a => a.SerialNumber)
-                .FirstOrDefault();
-
-                int nextSerial = (lastSerial ?? 0) + 1;
-                ViewBag.NextSerial = nextSerial;
-
                 var patient =GetPatientNameByPhone(appointment.PatientPhoneNumber);
                 if (patient != null)
                 {
                     appointment.PatientName = appointment.PatientName ; 
                 }
 
+                Appointment appointments = new Appointment
+                {
+                    PatientID = appointment.PatientID,
+                    PatientPhoneNumber = appointment.PatientPhoneNumber,
+                    DepartmentId = appointment.DepartmentId,
+                    DoctorId = appointment.DoctorId,
+                    AppoinmentDate = appointment.AppoinmentDate.Value,
+                    SerialNumber = appointment.SerialNumber,
+                    Problem = appointment.Problem,
+                    Status = appointment.Status
+                };
 
-                return View(appointment);
+
+                _unitofWork.AppointmentRepository.Save(appointments);
+                TempData["Message"] = "✅ Successfully Added!";
+                TempData["MessageType"] = "primary";
+
+
+                return RedirectToAction("Save");
             }
-
-            Appointment appointments = new Appointment
-            {
-                PatientID = appointment.PatientID,
-                PatientPhoneNumber = appointment.PatientPhoneNumber,
-                DepartmentId = appointment.DepartmentId,
-                DoctorId = appointment.DoctorId,
-                AppoinmentDate = appointment.AppoinmentDate.Value,
-                SerialNumber = appointment.SerialNumber,
-                Problem = appointment.Problem,
-                Status = appointment.Status
-            };
-
-
-            _unitofWork.AppointmentRepository.Save(appointments);
-            TempData["Message"] = "✅ Successfully Added!";
-            TempData["MessageType"] = "primary";
-
-
-            return RedirectToAction("Save");
+            return View(appointment);
         }
 
         public IActionResult Delete(int Id)

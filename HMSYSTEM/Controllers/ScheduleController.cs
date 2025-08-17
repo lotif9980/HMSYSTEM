@@ -79,7 +79,7 @@ namespace HMSYSTEM.Controllers
         public IActionResult Update(Schedule schedule)
         {
             var data = _unitofWork.scheduleRepo.Update(schedule);
-            TempData["Message"] = "✅ Successfully Added!";
+            TempData["Message"] = "✅ Successfully Update!";
             TempData["MessageType"] = "primary";
             return RedirectToAction("Index", data);
         }
