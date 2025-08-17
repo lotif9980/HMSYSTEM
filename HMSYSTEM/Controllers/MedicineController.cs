@@ -56,12 +56,16 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Medicine medicine)
         {
-            _unitOfWork.MedicineRepo.Save(medicine);
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.MedicineRepo.Save(medicine);
 
-            TempData["Message"] = "✅ Successfully Added!";
-            TempData["MessageType"] = "primary";
-                
-            return RedirectToAction("Save");
+                TempData["Message"] = "✅ Successfully Added!";
+                TempData["MessageType"] = "primary";
+
+                return RedirectToAction("Save");
+            }
+            return View(medicine);
         }
 
         public IActionResult Delete(int Id)

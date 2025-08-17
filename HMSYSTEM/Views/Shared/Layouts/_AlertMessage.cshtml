@@ -1,16 +1,60 @@
-﻿@{
+﻿<style>
+
+    #saveMessage {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 350px;
+        z-index: 1050;
+        pointer-events: none; /* span interaction block হবে না */
+    }
+</style>
+
+@{
     var message = TempData["Message"] as string;
     var messageType = TempData["MessageType"] as string ?? "info";
 }
 
-@if (!string.IsNullOrEmpty(message))
-{
-    <div class="position-fixed top-0 end-0 m-3" style="z-index: 9999; width:350px">
-        <div id="saveMessage" class="alert alert-@messageType alert-dismissible d-none" role="alert">
-            @message
-        </div>
+<div class="position-fixed top-0 end-0 m-3" style="z-index: 9999; width:350px">
+    <div id="saveMessage" class="alert alert-@messageType alert-dismissible d-none" role="alert">
+        @message
     </div>
+</div>
+
+<script>
+    // function showMessage(text, type = "info", duration = 2000) {
+    //     const msgDiv = $("#saveMessage");
+
+    //     if (!msgDiv.length) return;
+
+    //     msgDiv
+    //         .removeClass("d-none alert-info alert-success alert-danger")
+    //         .addClass("alert-" + type)
+    //         .text(text)
+    //         .fadeIn();
+
+    //     setTimeout(function () {
+    //         msgDiv.fadeOut();
+    //     }, duration);
+    // }
 
 
-   
-}
+    function createAlert(message, container, offset, duration = 2000) {
+        let alertDiv = $(`
+            <div class="alert alert-danger field-alert position-fixed" style="top:${offset}px; right:20px; width:350px; z-index:1050;">
+                ${message}
+            </div>
+        `);
+        container.append(alertDiv);
+        alertDiv.fadeIn();
+
+        setTimeout(function () {
+            alertDiv.fadeOut(function () {
+                $(this).remove();
+            });
+        }, duration);
+       
+        return offset + alertDiv.outerHeight() + 10; 
+    }
+
+</script>

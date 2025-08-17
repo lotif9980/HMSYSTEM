@@ -83,28 +83,32 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Patient patient)
         {
-            if (patient.ImageFile != null && patient.ImageFile.Length > 0)
-            {
-                string wwwRootPath = _webHostEnvironment.WebRootPath;
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(patient.ImageFile.FileName);
-                string path = Path.Combine(wwwRootPath, "Patients", fileName);
-
-                using (var stream = new FileStream(path, FileMode.Create))
+            
+                if (patient.ImageFile != null && patient.ImageFile.Length > 0)
                 {
-                    patient.ImageFile.CopyTo(stream);
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(patient.ImageFile.FileName);
+                    string path = Path.Combine(wwwRootPath, "Patients", fileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        patient.ImageFile.CopyTo(stream);
+                    }
+
+
+                    patient.Picture = fileName;
                 }
 
-                
-                patient.Picture = fileName;
-            }
+                _unit.PatienRepo.Save(patient);
 
-            _unit.PatienRepo.Save(patient);
-
-            TempData["Message"] = "✅ Successfully Added!";
-            TempData["MessageType"] = "primary";
+                TempData["Message"] = "✅ Successfully Added!";
+                TempData["MessageType"] = "primary";
 
 
-            return RedirectToAction("Save");
+                return RedirectToAction("Save");
+           
+
+     
         }
 
 

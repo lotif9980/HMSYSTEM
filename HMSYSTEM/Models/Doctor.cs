@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HMSYSTEM.Models
 {
     public class Doctor
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage ="Name is Required")]
         public string? FirstName { get; set; } 
         public string? LastName { get; set; }
         public string? EmailAddress { get; set; }

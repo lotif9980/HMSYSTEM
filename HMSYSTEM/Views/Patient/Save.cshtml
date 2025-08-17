@@ -17,12 +17,12 @@
                         </div>
                     </div>
 
-                    <form asp-action="Save" method="post" enctype="multipart/form-data">
+                    <form asp-action="Save" method="post" id="myForm" enctype="multipart/form-data">
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label asp-for="FirstName" class="form-label">First Name</label>
-                                    <input asp-for="FirstName" class="form-control" />
+                                    <input asp-for="FirstName" class="form-control" id="name" />
                                 </div>
                                 <div class="col-md-6">
                                     <label asp-for="LastName" class="form-label">Last Name</label>
@@ -49,11 +49,11 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label asp-for="Phone" class="form-label">Phone</label>
-                                    <input asp-for="Phone" class="form-control" />
+                                    <input asp-for="Phone" class="form-control" id="phone" />
                                 </div>
                                 <div class="col-md-6">
                                     <label asp-for="BloodGroup" class="form-label">Blood Group</label>
-                                    <select asp-for="BloodGroup" class="form-select">
+                                    <select asp-for="BloodGroup" class="form-select" id="blood">
                                         <option value="">-- Select Blood Group --</option>
                                         <option value="A+">A+</option>
                                         <option value="A-">A-</option>
@@ -70,7 +70,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label asp-for="Sex" class="form-label">Sex</label>
-                                    <select asp-for="Sex" class="form-select">
+                                    <select asp-for="Sex" class="form-select" id="gender">
                                         <option value="">-- Select Gender --</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
@@ -89,7 +89,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label asp-for="Address" class="form-label">Address</label>
-                                    <input asp-for="Address" class="form-control" />
+                                    <input asp-for="Address" class="form-control" id="address" />
                                 </div>
                                 <div class="col-md-6">
                                     <label asp-for="FatherName" class="form-label">Father Name</label>
@@ -102,14 +102,12 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label asp-for="EmergencyContact" class="form-label">Emergency Contact</label>
-                                    <input asp-for="EmergencyContact" class="form-control" />
+                                    <input asp-for="EmergencyContact" class="form-control" id="eContactNo"/>
                                 </div>
                                 <div class="col-md-6">
                                  
                                         <label asp-for="ImageFile" class="form-label">Profile Picture</label>
                                         <input asp-for="ImageFile" class="form-control" type="file" />
-                                
-                                       
                                 </div>
 
                             </div>
@@ -150,4 +148,30 @@
       toggleIcon.classList.toggle('fa-eye');
       toggleIcon.classList.toggle('fa-eye-slash');
     }
+
+    $(document).ready(function(){
+        $("#myForm").on('submit',function(){
+            var name=$("#name").val().trim();
+            var phone=$("#phone").val().trim();
+            var blood=$("#blood").val().trim();
+            var gender=$("#gender").val().trim();
+            var address=$("#address").val().trim();
+            var eContactNo=$("#eContactNo").val().trim();
+
+            var container=$("body");
+            var offset=20;
+
+            if(name==="")offset=createAlert("❌ Name is Required",container,offset);
+            if(phone==="")offset=createAlert("❌ Phone number Required",container,offset);
+            if(blood==="")offset=createAlert("❌ Blood is Required",container,offset);
+            if(gender==="")offset=createAlert("❌ Gender is Required",container,offset);
+            if(address==="")offset=createAlert("❌ Address is Required",container,offset);
+            if(eContactNo==="")offset=createAlert("❌ Contact No is Required",container,offset);
+
+
+            if($(".field-alert").length >0) return false;
+            this.submit();
+
+        })
+    })
 </script>

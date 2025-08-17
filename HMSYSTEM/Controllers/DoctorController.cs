@@ -174,29 +174,49 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public async Task<IActionResult> Save(Doctor doctor)
         {
-            _unitOf.doctorRepo.Save(doctor);
-            await _unitOf.Save();
-
-            if (doctor.ImageFile != null)
+            if (ModelState.IsValid)
             {
-                string firstName = doctor.FirstName.Replace(" ", "_");
-                string secendName = doctor.LastName.Replace(" ", "_");
-                string convertName =firstName+"_"+secendName;
-                string fileName = $"{doctor.Id}_{convertName}{Path.GetExtension(doctor.ImageFile.FileName)}";
-
-                SavePhoto(doctor.ImageFile, fileName);
-
-                doctor.Picture = fileName;
-
-                _unitOf.doctorRepo.Update(doctor);
+                _unitOf.doctorRepo.Save(doctor);
                 await _unitOf.Save();
+
+                if (doctor.ImageFile != null)
+                {
+                    string firstName = doctor.FirstName.Replace(" ", "_");
+                    string secendName = doctor.LastName.Replace(" ", "_");
+                    string convertName = firstName + "_" + secendName;
+                    string fileName = $"{doctor.Id}_{convertName}{Path.GetExtension(doctor.ImageFile.FileName)}";
+
+                    SavePhoto(doctor.ImageFile, fileName);
+
+                    doctor.Picture = fileName;
+
+                    _unitOf.doctorRepo.Update(doctor);
+                    await _unitOf.Save();
+                }
+
+                TempData["Message"] = "✅ Successfully Added!";
+                TempData["MessageType"] = "primary";
+
+                return RedirectToAction("Save");
             }
 
-            TempData["Message"] = "✅ Successfully Added!";
-            TempData["MessageType"] = "primary";
+            var designation = _unitOf.designationRepo.getAll()
+            .Where(c => c.Status == true)
+            .Select(c => new { c.DesignationId, c.DesignationName })
+            .ToList();
 
-            return RedirectToAction("Save");
+
+            var department = _unitOf.departmentRepo.getAll()
+                .Where(c => c.Status == true)
+                .Select(c => new { c.DepartmentId, c.DepartmentName })
+                .ToList();
+
+            ViewBag.Designation = designation;
+            ViewBag.Department = department;
+
+            return View(doctor);
         }
+
 
         private void SavePhoto(IFormFile file, string name)
         {

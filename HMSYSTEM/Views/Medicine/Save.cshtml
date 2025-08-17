@@ -15,14 +15,15 @@
             <div class="card-header"><div class="card-title">Medicine Information</div></div>
             <!--end::Header-->
             <!--begin::Form-->
-            <form asp-action="Save" method="post">
+            <form asp-action="Save" id="myForm" method="post">
                 <!--begin::Body-->
                 <div class="card-body">
 
                     <div class="row mb-3">
                         <label asp-for="Name" class="col-sm-3 col-form-label">Name</label>
                         <div class="col-sm-9">
-                            <input asp-for="Name" class="form-control" id="departmentName">
+                            <input asp-for="Name" class="form-control" id="name">
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
                     </div>
 
@@ -78,3 +79,31 @@
         <!--end::Horizontal Form-->
     </div>
 </div>
+
+<script>
+  $(document).ready(function () {
+      $("#myForm").on('submit', function (e) {
+          e.preventDefault(); 
+
+          let name = $("#name").val().trim();
+          let genericName = $("#genericName").val().trim();
+          let strength = $("#strength").val().trim();
+          let form = $("#form").val().trim();
+
+          let container = $("body"); 
+          let offset = 20; 
+
+          if (name === "") offset = createAlert("❌ Name is required!", container, offset);
+          if (genericName === "") offset = createAlert("❌ Generic Name is required!", container, offset);
+          if (strength === "") offset = createAlert("❌ Strength is required!", container, offset);
+          if (form === "") offset = createAlert("❌ Form is required!", container, offset);
+
+          
+          if ($(".field-alert").length > 0) return false;
+
+         
+          this.submit();
+      });
+  });
+
+</script>

@@ -16,7 +16,7 @@
                     <div class="card-header d-flex justify-content-center  fs-1"><div class="">Schedule Information</div></div>
                     <!--end::Header-->
                     <!--begin::Form-->
-                    <form asp-action="Save" method="post">
+                    <form asp-action="Save" method="post" id="myForm">
                         <!--begin::Body-->
                         <div class="card-body">
 
@@ -62,7 +62,7 @@
                             <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Day</label>
                                 <div class="col-sm-9">
-                                    <select asp-for="DayOfWeek" class="form-select">
+                                    <select asp-for="DayOfWeek" class="form-select" id="dayWeek">
                                         <option value="">-- Select Day --</option>
                                         <option value="Saturday">Saturday</option>
                                         <option value="Sunday">Sunday</option>
@@ -148,4 +148,32 @@
             $("#dateTO").focus();
         });
     });
+
+    $(document).ready(function(){
+        $("#myForm").on('submit',function(){
+            var dateTO=$("#dateTO").val().trim();
+            var doctorId=$("#DoctorId").val().trim();
+            var departmentId=$("#DepartmentId").val().trim();
+            var dayWeek=$("#dayWeek").val().trim();
+            var startTime=$("#StartTime").val().trim();
+            var endTime=$("#EndTime").val().trim();
+
+            var container=$("body");
+            var offset=20;
+
+            if(dateTO==="")offset=createAlert("❌ Date Required",container,offset);
+            if(doctorId==="")offset=createAlert("❌ Doctor Required",container,offset);
+            if(departmentId==="")offset=createAlert("❌ Departent is Required",container,offset);
+            if(dayWeek==="")offset=createAlert("❌ Day Week is Required",container,offset);
+            if(startTime==="")offset=createAlert("❌ Start time is Required",container,offset);
+            if(endTime==="")offset=createAlert("❌ End time  is Required",container,offset);
+
+
+            if($(".field-alert").length >0) return false;
+            this.submit();
+
+        })
+    })
+
+
 </script>

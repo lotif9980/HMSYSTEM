@@ -15,7 +15,7 @@
             <div class="card-header"><div class="card-title">Designation Information</div></div>
             <!--end::Header-->
             <!--begin::Form-->
-            <form asp-action="Save" method="post" enctype="multipart/form-data">
+            <form asp-action="Save" id="myForm" method="post" enctype="multipart/form-data">
                 <!--begin::Body-->
                 <div class="card-body">
 
@@ -23,6 +23,7 @@
                         <label asp-for="DesignationName" class="col-sm-3 col-form-label">Designation</label>
                         <div class="col-sm-9">
                             <input asp-for="DesignationName" class="form-control" id="designationName">
+                           <span asp-validation-for="DesignationName" class="text-danger"></span> 
                         </div>
                     </div>
 
@@ -56,3 +57,24 @@
         <!--end::Horizontal Form-->
     </div>
 </div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#myForm").on('submit', function (e) {
+            let name = $("#designationName").val().trim();
+
+            let container = $("body");
+            let offset = 20;
+
+            if (name === "") offset = createAlert("❌ Name is required!", container, offset);
+            if ($(".field-alert").length > 0) return false;
+
+
+            this.submit();
+           
+        });
+    });
+</script>

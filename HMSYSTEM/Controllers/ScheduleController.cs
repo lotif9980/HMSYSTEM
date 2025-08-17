@@ -52,9 +52,15 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Schedule schedule)
         {
-            _unitofWork.scheduleRepo.Save(schedule);
+            if (ModelState.IsValid)
+            { 
+                _unitofWork.scheduleRepo.Save(schedule);
 
-            return RedirectToAction("Save");
+                TempData["Message"] = "✅ Successfully Added!";
+                TempData["MessageType"] = "primary";
+                return RedirectToAction("Save");
+            }
+            return View(schedule);
         }
 
         [HttpGet]
@@ -65,10 +71,9 @@ namespace HMSYSTEM.Controllers
             ViewBag.Doctors = _unitofWork.doctorRepo.getAll().Where(c => c.Status == true);
             ViewBag.Department = _unitofWork.departmentRepo.getAll().Where(c => c.Status == true);
       
-
-
             return View(data);
         }
+
 
         [HttpPost]
         public IActionResult Update(Schedule schedule)

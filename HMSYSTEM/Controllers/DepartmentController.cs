@@ -53,10 +53,14 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Department department)
         {
-            _unitOf.departmentRepo.Save(department);
-            TempData["Message"] = "✅ Successfully Added!";
-            TempData["MessageType"] = "primary";
-            return RedirectToAction("Save");
+            if (ModelState.IsValid) 
+            { 
+                _unitOf.departmentRepo.Save(department);
+                TempData["Message"] = "✅ Successfully Added!";
+                TempData["MessageType"] = "primary";
+                return RedirectToAction("Save");
+            }
+            return View(department);
         }
 
         [HttpGet]

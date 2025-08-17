@@ -48,13 +48,16 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Designation designation)
         {
-            _unitOf.designationRepo.Save(designation);
+            if (ModelState.IsValid) 
+            { 
+                _unitOf.designationRepo.Save(designation);
 
-            TempData["Message"] = "✅ Successfully Added!";
-            TempData["MessageType"] = "primary";
-
-
-            return RedirectToAction("Save");
+                TempData["Message"] = "✅ Successfully Added!";
+                TempData["MessageType"] = "primary";
+                return RedirectToAction("Save");
+            }
+           
+            return View(designation);  
         }
 
         [HttpGet]
