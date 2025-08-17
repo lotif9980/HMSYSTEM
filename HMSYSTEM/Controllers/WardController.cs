@@ -39,6 +39,7 @@ namespace HMSYSTEM.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
         public IActionResult Save()
         {
             var department=_unitOfWork.departmentRepo.getAll();
@@ -50,8 +51,20 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Ward ward)
         {
-            _unitOfWork.wardRepository.Save(ward);
-            return RedirectToAction("Index");
+            var department = _unitOfWork.departmentRepo.getAll();
+            ViewBag.Department = department;
+
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.wardRepository.Save(ward);
+                TempData["Message"] = "✅ Successfully Added";
+                TempData["MessageType"] = "success";
+
+                return RedirectToAction("Index");
+            }
+            TempData["Message"] = "❌ Invalid  data submitted.";
+            TempData["MessageType"] = "danger";
+            return View(ward);
         }
 
         public async Task<IActionResult> Delete(int id)

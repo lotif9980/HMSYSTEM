@@ -13,7 +13,7 @@ namespace HMSYSTEM.Models
         public string ? UserName { get; set; }
         [Required]
         public string ? Password { get; set; }
-        public bool? Status { get; set; }
+        public bool? Status { get; set; } = true;
         [Required(ErrorMessage ="Role Required")]
         public int ? RoleId { get; set; }
         public Role? Role { get; set; }

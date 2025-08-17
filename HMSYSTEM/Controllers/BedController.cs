@@ -63,10 +63,23 @@ namespace HMSYSTEM.Controllers
                 return RedirectToAction("Save");
             }
 
-             _unitOfWork.bedRepository.Save(bed);
-            TempData["Message"] = "✅ Save Successful";
+            if (ModelState.IsValid)
+            {
+                _unitOfWork.bedRepository.Save(bed);
+                TempData["Message"] = "✅ Save Successful";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Save");
+            }
+
+            var department = _unitOfWork.departmentRepo.getAll();
+            ViewBag.Department = department;
+
+            var ward = _unitOfWork.wardRepository.GetAll();
+            ViewBag.Ward = ward;
+
+            TempData["Message"] = "❌ Invalid data submitted";
             TempData["MessageType"] = "danger";
-            return RedirectToAction("Save");
+            return View(bed);
         }
 
         public IActionResult StatusUpdate(int id)
