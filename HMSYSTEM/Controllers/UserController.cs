@@ -51,16 +51,17 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(User user)
         {
-            if (user == null)
+            if (!ModelState.IsValid)  
             {
                 TempData["Message"] = "❌ Invalid user data submitted.";
-                TempData["MessageType"] = "error";
-                return View();
+                TempData["MessageType"] = "danger";
+                ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
+                return View(user);
             }
 
             try
             {
-                unitofwork.UserRepository.Save(user); 
+                unitofwork.UserRepository.Save(user);
                 TempData["Message"] = "✅ Successfully added!";
                 TempData["MessageType"] = "success";
                 return RedirectToAction("Index");
@@ -70,11 +71,12 @@ namespace HMSYSTEM.Controllers
                 TempData["Message"] = "❌ " + (ex?.Message ?? "An error occurred.");
                 TempData["MessageType"] = "danger";
                 ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
-                return View(user); 
+                return View(user);
             }
         }
 
-       
+
+
         public IActionResult Delete(int Id)
         {
             unitofwork.UserRepository.Delete(Id);
