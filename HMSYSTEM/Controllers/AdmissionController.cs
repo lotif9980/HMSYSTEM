@@ -49,21 +49,48 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Save(Admission admission)
+        public async Task<IActionResult> Save(AdmissionViewModel vm)
         {
-            var data =await _unitOfWork.admissionRepository.PatientStatusCheck(admission.PatientId);
-            if (data)
+            if (ModelState.IsValid)
             {
-               
-                TempData["Message"] = "✅ Patient Already Aded";
-                TempData["MessageType"] = "danger";
-                return  View (admission);
-            }
-           
-            _unitOfWork.bedRepository.StatusUpdate(admission.BedId);
-            _unitOfWork.admissionRepository.Save(admission);
+                var exists = await _unitOfWork.admissionRepository.PatientStatusCheck(vm.PatientId);
+                if (exists)
+                {
+                    TempData["Message"] = "✅ Patient Already Added";
+                    TempData["MessageType"] = "danger";
+                    return View(vm);
+                }
 
-            return RedirectToAction("Index");
+                _unitOfWork.bedRepository.StatusUpdate(vm.BedId);
+
+                var admission = new Admission
+                {
+                    Id = vm.Id,
+                    PatientId = vm.PatientId,
+                    DoctorId = vm.DoctorId,
+                    BedId = vm.BedId,
+                    AdmitDate = vm.AdmitDate,
+                    Status = vm.Status,
+                    InvoiceNo = vm.InvoiceNo,
+                    AttendentName = vm.AttendentName,
+                    AttendentRelation = vm.AttendentRelation,
+                    AttendentPhone = vm.AttendentPhone,
+                    ForReason = vm.ForReason,
+                    Declaration = vm.Declaration
+                };
+
+                _unitOfWork.admissionRepository.Save(admission);
+                return RedirectToAction("Index");
+            }
+
+       
+            ViewBag.Doctor = _unitOfWork.doctorRepo.getAll();
+            ViewBag.Bed = _unitOfWork.bedRepository.getAllBed().Where(p => p.IsOccupied == true).ToList();
+            ViewBag.Ward = _unitOfWork.wardRepository.GetAll().ToList();
+            int lastSerial = _unitOfWork.admissionRepository.GetLastInvoiceNo();
+            ViewBag.NextSerial = lastSerial + 1;
+
+            return View(vm);
         }
 
         public async Task<IActionResult> GetPatientPhoneNumber(string phoneNumber)
@@ -73,9 +100,9 @@ namespace HMSYSTEM.Controllers
 
             if (patient != null)
             {
-                // 👉 Check if patient already admitted
+               
                 var isAdmitted =await _unitOfWork.admissionRepository
-                    .PatientStatusCheck(patient.PatientID);  // assume this returns bool
+                    .PatientStatusCheck(patient.PatientID);  
 
                 if (isAdmitted)
                 {

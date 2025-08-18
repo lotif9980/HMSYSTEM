@@ -228,27 +228,41 @@
         });
     });
 
-   $(document).ready(function() {
-      $("#admissionForm").on('submit', function(e) {
+    $(document).ready(function() {
+        $("#admissionForm").on('submit', function(e) {
 
-              var container=$("body");
-             var offset=20;
+            var admitDate = $("#AdmitDate").val().trim();
+            var patientPhoneNumber = $("#patientPhoneNumber").val().trim();
+            var patientName = $("#patientName").val().trim();
+            var DoctorId = $("#DoctorId").val().trim();
+            var wardDropdown = $("#wardDropdown").val().trim();
+            var bedDropdown = $("#bedDropdown").val().trim();
+            var AttendentName = $("#AttendentName").val().trim();
+            var AttendentRelation = $("#AttendentRelation").val().trim();
+            var AttendentPhone = $("#AttendentPhone").val().trim();
+            var ForReason = $("#ForReason").val().trim();
 
-            if ($("#AdmitDate").val().trim() === "") createAlert("❌ Admit Date is Required", $("#AdmitDate"));
-            if ($("#patientPhoneNumber").val().trim() === "") createAlert("❌ Patient Phone is Required", $("#patientPhoneNumber"));
-            if ($("#patientName").val().trim() === "") createAlert("❌ Patient Name is Required", $("#patientName"));
-            if ($("#DoctorId").val() === "") createAlert("❌ Doctor Selection is Required", $("#DoctorId"));
-            if ($("#wardDropdown").val() === "") createAlert("❌ Ward Selection is Required", $("#wardDropdown"));
-            if ($("#bedDropdown").val() === "") createAlert("❌ Bed Selection is Required", $("#bedDropdown"));
-            if ($("#AttendentName").val().trim() === "") createAlert("❌ Attendant Name is Required", $("#AttendentName"));
-            if ($("#AttendentRelation").val().trim() === "") createAlert("❌ Attendant Relation is Required", $("#AttendentRelation"));
-            if ($("#AttendentPhone").val().trim() === "") createAlert("❌ Attendant Phone is Required", $("#AttendentPhone"));
-            if ($("#ForReason").val().trim() === "") createAlert("❌ Reason is Required", $("#ForReason"));
-            if (!$("#Declaration").is(":checked")) createAlert("❌ You must accept hospital policies", $("#Declaration"));
+            var container = $("body");
+            var offset = 20;
 
-               if($(".field-alert").length >0) return false;
-             this.submit();
+            $(".field-alert").remove(); // পুরোনো এলার্ট মুছে ফেলা
+
+            if(admitDate==="") offset = createAlert("❌ Admit Date is Required", container, offset);
+            if(patientPhoneNumber==="") offset = createAlert("❌ Patient Phone is Required", container, offset);
+            if(patientName==="") offset = createAlert("❌ Patient Name is Required", container, offset);
+            if(DoctorId==="") offset = createAlert("❌ Doctor Selection is Required", container, offset);
+            if(wardDropdown==="") offset = createAlert("❌ Ward Selection is Required", container, offset);
+            if(bedDropdown==="") offset = createAlert("❌ Bed Selection is Required", container, offset);
+            if(AttendentName==="") offset = createAlert("❌ Attendant Name is Required", container, offset);
+            if(AttendentRelation==="") offset = createAlert("❌ Attendant Relation is Required", container, offset);
+            if(AttendentPhone==="") offset = createAlert("❌ Attendant Phone is Required", container, offset);
+            if(ForReason==="") offset = createAlert("❌ Reason is Required", container, offset);
+
+            if($(".field-alert").length > 0) {
+                e.preventDefault();
+                return false;
+            }
+
         });
     });
-
 </script>

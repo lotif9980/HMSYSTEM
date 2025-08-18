@@ -1,10 +1,16 @@
-﻿namespace HMSYSTEM.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HMSYSTEM.Models
 {
     public class Admission
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Patient is required")]
         public int PatientId { get; set; }
+        [Required(ErrorMessage = "Patient is required")]
         public int DoctorId { get; set; }
+        [Required(ErrorMessage = "Patient is required")]
         public int BedId { get; set; }
         public DateTime? AdmitDate { get; set; }
         public int Status { get; set; } = 1;
