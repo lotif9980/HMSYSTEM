@@ -15,10 +15,10 @@ namespace HMSYSTEM.Models
 
         [Required]
         public decimal? RatePerDay {  get; set; }
-        //public string? BedType {  get; set; }
+      
         public bool IsOccupied { get; set; }=true;
 
-        [Required(ErrorMessage = "Ward Name Required")]
+       
         public Ward? Ward { get; set; }
 
         [Required]

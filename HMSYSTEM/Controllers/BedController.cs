@@ -67,7 +67,7 @@ namespace HMSYSTEM.Controllers
             {
                 _unitOfWork.bedRepository.Save(bed);
                 TempData["Message"] = "✅ Save Successful";
-                TempData["MessageType"] = "danger";
+                TempData["MessageType"] = "success";
                 return RedirectToAction("Save");
             }
 
