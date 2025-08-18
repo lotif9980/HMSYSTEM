@@ -32,7 +32,7 @@
                             <div class="row mb-3">
                                 <label for="DoctorId" class="col-sm-3 col-form-label">Doctor</label>
                                 <div class="col-sm-9 position-relative">
-                                    <select name="DoctorId" id="DoctorId" class="form-control form-select">
+                                    <select name="DoctorId" id="DoctorId" class="form-control form-select role-dropdown">
                                         <option value="">-- Select Doctor --</option>
                                         @foreach (var item in ViewBag.Doctors)
                                         {
@@ -47,7 +47,7 @@
                             <div class="row mb-3">
                                 <label for="DepartmentId" class="col-sm-3 col-form-label">Department</label>
                                 <div class="col-sm-9 position-relative">
-                                    <select name="DepartmentId" id="DepartmentId" class="form-control form-select">
+                                    <select name="DepartmentId" id="DepartmentId" class="form-control form-select role-dropdown">
                                         <option value="">-- Select Department --</option>
                                         @foreach (var item in ViewBag.Department)
                                         {
@@ -137,6 +137,21 @@
 </div>
 
 <script>
+
+    $(document).ready(function () {
+         $(".role-dropdown").select2({
+             placeholder: "--Select Role--",
+             allowClear: true,
+             width: '100%'
+         });
+
+
+         $(document).on('select2:open', () => {
+             document.querySelector('.select2-search__field').focus();
+         });
+    });
+
+
     $(function () {
         $("#dateTO").datepicker({
             dateFormat: "dd-mm-yy",

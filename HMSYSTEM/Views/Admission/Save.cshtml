@@ -60,7 +60,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Doctor Name</label>
-                                <select name="DoctorId" id="DoctorId" class="form-select">
+                                <select name="DoctorId" id="DoctorId" class="form-select role-dropdown">
                                     <option value="">--- Select Doctor ---</option>
                                     @foreach (var item in doctor)
                                     {
@@ -74,7 +74,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Select Ward</label>
-                                <select id="wardDropdown" name="WardId" class="form-select">
+                                <select id="wardDropdown" name="WardId" class="form-select role-dropdown">
                                     <option value="">-- Select Ward --</option>
                                     @foreach (var ward in words)
                                     {
@@ -84,7 +84,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Select Bed</label>
-                                <select id="bedDropdown" name="BedId" class="form-select">
+                                <select id="bedDropdown" name="BedId" class="form-select role-dropdown">
                                     <option value="">-- Select Bed --</option>
                                 </select>
                             </div>
@@ -140,6 +140,19 @@
 </div>
 
 <script>
+
+    $(document).ready(function () {
+         $(".role-dropdown").select2({
+             placeholder: "--Select Role--",
+             allowClear: true,
+             width: '100%'
+         });
+
+
+         $(document).on('select2:open', () => {
+             document.querySelector('.select2-search__field').focus();
+         });
+    });
 
     $(function () {
         $("#AdmitDate").datepicker({

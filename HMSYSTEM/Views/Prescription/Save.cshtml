@@ -1,5 +1,25 @@
 ﻿@model HMSYSTEM.ViewModels.PrescriptionViewModel
 
+
+<style>
+    #detailsTable .select2-container {
+        width: 100% !important; 
+    }
+
+    
+    #detailsTable .select2-selection--single {
+        height: 38px; 
+    }
+
+    #detailsTable .select2-selection__rendered {
+        line-height: 38px;
+    }
+
+    #detailsTable .select2-selection__arrow {
+        height: 38px;
+    }
+</style>
+
 @{
     var medicineList = ViewBag.Medicine as List<HMSYSTEM.Models.Medicine>;
 }
@@ -31,7 +51,7 @@
             </div>
             <div class="col-md-6">
                 <label for="PatientID" class="form-label">Patient</label>
-                <select name="PatientID" id="PatientID" class="form-select">
+                <select name="PatientID" id="PatientID" class="form-select medicineSelect">
                     <option value="">-- Select Patient --</option>
                     @foreach (var item in ViewBag.Patient)
                     {
@@ -41,7 +61,7 @@
             </div>
             <div class="col-md-6">
                 <label for="DoctorId" class="form-label">Doctor</label>
-                <select name="DoctorId" id="DoctorId" class="form-select">
+                <select name="DoctorId" id="DoctorId" class="form-select medicineSelect">
                     <option value="">-- Select Doctor --</option>
                     @foreach (var item in ViewBag.Doctor)
                     {
@@ -51,7 +71,7 @@
             </div>
             <div class="col-md-6">
                 <label for="DepartmentId" class="form-label">Department</label>
-                <select name="DepartmentId" id="DepartmentId" class="form-select">
+                <select name="DepartmentId" id="DepartmentId" class="form-select medicineSelect">
                     <option value="">-- Select Department --</option>
                     @foreach (var item in ViewBag.Department)
                     {
@@ -133,14 +153,15 @@
 </style>
 
 <script>
-    let rowIndex = 0;
+       let rowIndex = 0;
 
     function createRow(index) {
+        // Copy template options
         let medicineDropdown = $("#medicineTemplate").html();
 
-        return `<tr>
+        let row = `<tr>
             <td>
-                <select name="PrescriptionDetails[${index}].MedicineId" class="form-select">
+                <select name="PrescriptionDetails[${index}].MedicineId" class="form-select medicineSelect">
                     ${medicineDropdown}
                 </select>
             </td>
@@ -149,36 +170,50 @@
             <td><input type="checkbox" name="PrescriptionDetails[${index}].Instructions" value="true" /></td>
             <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
         </tr>`;
+
+        return row;
     }
 
+    function initSelect2() {
+        $(".medicineSelect").select2({
+            placeholder: "--Select Medicine--",
+            allowClear: true,
+            width: '100%',  
+            dropdownAutoWidth: true 
+        });
+
+       
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+    }
+
+
+  
     $(document).ready(function () {
-        // প্রথম রো ডিফল্ট অ্যাড করো
+       
         $("#detailsTable tbody").append(createRow(rowIndex));
         rowIndex++;
+        initSelect2();
+
+        // Add row button
+        $("#addRowBtn").click(function () {
+            $("#detailsTable tbody").append(createRow(rowIndex));
+            rowIndex++;
+            initSelect2(); // নতুন row-এ Select2 ইনিশিয়ালাইজ
+
+            $("#alertMessage").removeClass("d-none").fadeIn();
+            setTimeout(() => { $("#alertMessage").fadeOut(); }, 2000);
+        });
+
+        // Remove row button
+        $("#detailsTable").on("click", ".removeRowBtn", function () {
+            $(this).closest("tr").remove();
+
+            $("#removedMessage").removeClass("d-none").fadeIn();
+            setTimeout(() => { $("#removedMessage").fadeOut(); }, 2000);
+        });
     });
-
-  
-
-    $("#addRowBtn").click(function () {
-        $("#detailsTable tbody").append(createRow(rowIndex));
-        rowIndex++;
-
-        $("#alertMessage").removeClass("d-none").fadeIn();
-        setTimeout(() => {
-            $("#alertMessage").fadeOut();
-        }, 2000);
-    });
-  
-
-    $("#detailsTable").on("click", ".removeRowBtn", function () {
-        $(this).closest("tr").remove();
-
-        $("#removedMessage").removeClass("d-none").fadeIn();
-        setTimeout(() => {
-            $("#removedMessage").fadeOut();
-        }, 2000);
-    });
-
     
 
 

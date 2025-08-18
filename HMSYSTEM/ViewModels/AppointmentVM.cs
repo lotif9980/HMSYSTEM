@@ -18,7 +18,7 @@ namespace HMSYSTEM.ViewModels
         public DateTime? AppoinmentDate { get; set; }
         [Required]
         public int? SerialNumber { get; set; }
-        [Required]
+      
         public string? Problem { get; set; }
 
 
