@@ -7,10 +7,10 @@ namespace HMSYSTEM.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required (ErrorMessage ="Bed Number Required")]
         public string BedNumber { get; set; }
 
-        [Required]
+        
         public int WardId { get; set; }
 
         [Required]
@@ -18,6 +18,7 @@ namespace HMSYSTEM.Models
         //public string? BedType {  get; set; }
         public bool IsOccupied { get; set; }=true;
 
+        [Required(ErrorMessage = "Ward Name Required")]
         public Ward? Ward { get; set; }
 
         [Required]

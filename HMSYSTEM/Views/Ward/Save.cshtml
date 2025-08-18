@@ -6,7 +6,7 @@
     var wardTypes = Enum.GetValues(typeof(WardType)).Cast<WardType>();
 }
 
-<form asp-action="Save" method="post" enctype="multipart/form-data">
+<form asp-action="Save" method="post" enctype="multipart/form-data" id="myForm">
     <div class="d-flex justify-content-center mt-3">
         <div class="col-md-6">
 
@@ -24,7 +24,7 @@
                     <div class="row mb-3">
                         <label asp-for="Name" class="col-sm-3 col-form-label">Name</label>
                         <div class="col-sm-9">
-                            <input asp-for="Name" class="form-control" />
+                            <input asp-for="Name" class="form-control" id="Name" />
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                     <div class="row mb-3">
                         <label asp-for="FloorNo" class="col-sm-3 col-form-label">Floor No</label>
                         <div class="col-sm-9">
-                            <input asp-for="FloorNo" class="form-control" />
+                            <input asp-for="FloorNo" class="form-control" id="floorNo" />
                             <span asp-validation-for="FloorNo" class="text-danger"></span>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="row mb-3">
                         <label asp-for="Type" class="form-label col-sm-3">Ward Type</label>
                         <div class="col-sm-9">
-                            <select asp-for="Type" class="form-select">
+                            <select asp-for="Type" class="form-select" id="type">
                                 <option value="">-- Select Ward Type --</option>
                                 @foreach (var type in wardTypes)
                                 {
@@ -54,7 +54,7 @@
                     <div class="row mb-3">
                         <label asp-for="DepartmentId" class="form-label col-sm-3">Department</label>
                         <div class="col-sm-9">
-                            <select asp-for="DepartmentId" class="form-select">
+                            <select asp-for="DepartmentId" class="form-select" id="DepartmentId">
                                 <option value="">-- Select Department --</option>
                                 @foreach (var med in departments)
                                 {
@@ -68,7 +68,7 @@
                     <div class="row mb-3">
                         <label asp-for="TotalBeds" class="col-sm-3 col-form-label">Total Beds</label>
                         <div class="col-sm-9">
-                            <input asp-for="TotalBeds" class="form-control" type="number" />
+                            <input asp-for="TotalBeds" class="form-control" type="number" id="number" />
                             <span asp-validation-for="TotalBeds" class="text-danger"></span>
                         </div>
                     </div>
@@ -82,3 +82,28 @@
         </div>
     </div>
 </form>
+
+<script>
+  $(document).ready(function(){
+    $("#myForm").on('submit', function(e){
+       
+        var offset = 20;
+        var container = $("body");
+
+        var name = $("#Name").val().trim();
+        var floorNo = $("#floorNo").val().trim();
+        var type = $("#type").val().trim();
+        var DepartmentId = $("#DepartmentId").val().trim();
+        var number = $("#number").val().trim();
+
+        if(name==="") offset = createAlert("❌ Name Required", container, offset);
+        if(floorNo==="") offset = createAlert("❌ Floor Required", container, offset);
+        if(type==="") offset = createAlert("❌ Type is Required", container, offset);
+        if(DepartmentId==="") offset = createAlert("❌ Department Required", container, offset);
+        if(number==="" || isNaN(number) || parseInt(number)<=0) offset = createAlert("❌ Total Beds Required", container, offset);
+
+        if($(".field-alert").length > 0) e.preventDefault(); 
+    });
+  });
+
+</script>

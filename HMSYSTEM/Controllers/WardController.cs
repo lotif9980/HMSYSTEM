@@ -51,20 +51,10 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Ward ward)
         {
-            var department = _unitOfWork.departmentRepo.getAll();
-            ViewBag.Department = department;
-
-            if (ModelState.IsValid)
-            {
                 _unitOfWork.wardRepository.Save(ward);
                 TempData["Message"] = "✅ Successfully Added";
                 TempData["MessageType"] = "success";
-
                 return RedirectToAction("Index");
-            }
-            TempData["Message"] = "❌ Invalid  data submitted.";
-            TempData["MessageType"] = "danger";
-            return View(ward);
         }
 
         public async Task<IActionResult> Delete(int id)

@@ -22,9 +22,6 @@
                     <div class="card-title">Bed Information</div>
                 </div>
 
-
-                
-
                 <div class="card-body">
 
                     <div class="row mb-3">
@@ -38,6 +35,7 @@
 
                                 }
                             </select>
+                            <span asp-validation-for="WardId" class="text-danger"></span>
                         </div>
                     </div>
 
@@ -51,6 +49,7 @@
                                     <option value="@(Convert.ToInt32(type))">@type</option>
                                 }
                             </select>
+                            <span asp-validation-for="BedType" class="text-danger"></span>
                         </div>
                     </div>
 
@@ -58,19 +57,16 @@
                         <label asp-for="BedNumber" class="col-sm-3 col-form-label">Bed Number</label>
                         <div class="col-sm-9">
                             <input asp-for="BedNumber" class="form-control" />
+                            <span asp-validation-for="BedNumber" class="text-danger"></span>
                         </div>
                     </div>
 
                     
-
-                    
-
-                    
-
                     <div class="row mb-3">
                         <label asp-for="RatePerDay" class="col-sm-3 col-form-label">Rate Per Day</label>
                         <div class="col-sm-9">
                             <input asp-for="RatePerDay" class="form-control" type="number" />
+                            <span asp-validation-for="RatePerDay" class="text-danger"></span>
                         </div>
                     </div>
                     
