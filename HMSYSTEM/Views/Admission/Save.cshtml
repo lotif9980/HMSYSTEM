@@ -150,10 +150,15 @@
          });
     });
 
-    $(function () {
+
+
+        $(function () {
         $("#AdmitDate").datepicker({
-            dateFormat: "dd-mm-yy"
-        });
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date()   // আজকের তারিখ default হবে
+        }).datepicker("setDate", new Date()); // input এও বসিয়ে দেবে
 
         $(".input-group-text").click(function () {
             $("#AdmitDate").focus();
