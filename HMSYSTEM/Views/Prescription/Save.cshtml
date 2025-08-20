@@ -37,7 +37,7 @@
 </div>
 
 
-<form asp-action="Save" method="post" enctype="multipart/form-data">
+<form asp-action="Save" method="post" id="myForm" enctype="multipart/form-data">
 
     <!-- Prescription Info Card -->
     <div class="card shadow p-4 mb-5 m-4">
@@ -71,7 +71,7 @@
             </div>
             <div class="col-md-6">
                 <label for="DepartmentId" class="form-label">Department</label>
-                <select name="DepartmentId" id="DepartmentId" class="form-select medicineSelect">
+                <select name="DepartmentId" id="departmentId" class="form-select medicineSelect">
                     <option value="">-- Select Department --</option>
                     @foreach (var item in ViewBag.Department)
                     {
@@ -86,7 +86,7 @@
     <div class="card shadow p-4 m-4">
         <div class="mb-3">
             <!-- Hidden medicine dropdown template -->
-            <select id="medicineTemplate" class="form-select d-none">
+            <select id="medicineTemplate"  class="form-select d-none">
                 <option value="">-- Select Medicine --</option>
                 @foreach (var med in medicineList)
                 {
@@ -196,17 +196,17 @@
         rowIndex++;
         initSelect2();
 
-        // Add row button
+    
         $("#addRowBtn").click(function () {
             $("#detailsTable tbody").append(createRow(rowIndex));
             rowIndex++;
-            initSelect2(); // নতুন row-এ Select2 ইনিশিয়ালাইজ
+            initSelect2(); 
 
             $("#alertMessage").removeClass("d-none").fadeIn();
             setTimeout(() => { $("#alertMessage").fadeOut(); }, 2000);
         });
 
-        // Remove row button
+     
         $("#detailsTable").on("click", ".removeRowBtn", function () {
             $(this).closest("tr").remove();
 
@@ -214,7 +214,47 @@
             setTimeout(() => { $("#removedMessage").fadeOut(); }, 2000);
         });
     });
-    
 
+
+
+    $(document).ready(function () {
+        $("#myForm").on('submit', function (e) {
+            e.preventDefault(); // আগে থামাই
+            var date = $("#date").val().trim();
+            var doctorId = $("#DoctorId").val().trim();
+            var patientID = $("#PatientID").val().trim();
+            var department = $("#departmentId").val().trim();
+
+            var container = $("body");
+            var offset = 20;
+
+            if (date === "") offset = createAlert("❌ Date Required", container, offset);
+            if (doctorId === "") offset = createAlert("❌ Doctor Required", container, offset);
+            if (patientID === "") offset = createAlert("❌ Patient is Required", container, offset);
+            if (department === "") offset = createAlert("❌ Department is Required", container, offset);
+
+            // Medicine Details Validation
+            $("#detailsTable tbody tr").each(function (index, row) {
+                var medicine = $(row).find("select[name*='.MedicineId']").val();
+                var dose = $(row).find("input[name*='.Dose']").val().trim();
+                var duration = $(row).find("input[name*='.Duration']").val().trim();
+
+                if (medicine === "" || medicine === null) {
+                    offset = createAlert(`❌ Medicine is required`, container, offset);
+                }
+                if (dose === "") {
+                    offset = createAlert(`❌ Dose is required`, container, offset);
+                }
+                if (duration === "") {
+                    offset = createAlert(`❌ Duration is required`, container, offset);
+                }
+            });
+
+        
+            if ($(".field-alert").length > 0) return false;
+
+            this.submit();
+        });
+    });
 
 </script>

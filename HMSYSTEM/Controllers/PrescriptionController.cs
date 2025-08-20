@@ -84,8 +84,6 @@ namespace HMSYSTEM.Controllers
                 Status = model.Status,
                 Note=model.Note,
                 NextFlowUp=model.NextFlowUp
-
-
             };
 
             
