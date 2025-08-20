@@ -45,7 +45,7 @@
             <div class="col-md-6">
                 <label for="Date" class="form-label">Date</label>
                 <div class="input-group">
-                    <input type="text" id="date" name="date" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+                    <input type="text" id="dateTO" name="Date" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
@@ -126,10 +126,12 @@
                 </div>
             </div>
 
+
             <div class="col-md-6">
-                <label for="NextFlowUp">Fllow Up</label>
-                <div>
-                    <input type="date" name="NextFlowUp" class="form-control" />
+                <label for="NextFlowUp" class="form-label">Fllow Up</label>
+                <div class="input-group">
+                    <input type="text" id="dateTOs" name="NextFlowUp" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
         </div>
@@ -166,6 +168,32 @@
 </style>
 
 <script>
+    $(function () {
+        $("#dateTO").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $(".input-group-text").click(function () {
+            $("#dateTO").focus();
+        });
+    });
+
+
+    $(function () {
+        $("#dateTOs").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $(".input-group-text").click(function () {
+            $("#dateTOs").focus();
+        });
+    });
+
+
        let rowIndex = 0;
 
     function createRow(index) {
@@ -276,16 +304,19 @@
 
 
 
-    $(document).ready(function () {
+        $(document).ready(function () {
         $("#myForm").on('submit', function (e) {
-            e.preventDefault(); // আগে থামাই
-            var date = $("#date").val().trim();
+            e.preventDefault(); // থামাই
+
+            var date = $("#dateTO").val().trim();
             var doctorId = $("#DoctorId").val().trim();
             var patientID = $("#PatientID").val().trim();
             var department = $("#departmentId").val().trim();
 
             var container = $("body");
             var offset = 20;
+
+            $(".field-alert").remove(); // আগের alert remove
 
             if (date === "") offset = createAlert("❌ Date Required", container, offset);
             if (doctorId === "") offset = createAlert("❌ Doctor Required", container, offset);
@@ -309,9 +340,10 @@
                 }
             });
 
-        
+            // যদি কোনো alert আছে, submit হবে না
             if ($(".field-alert").length > 0) return false;
 
+            // সব validation ঠিক থাকলে submit
             this.submit();
         });
     });
