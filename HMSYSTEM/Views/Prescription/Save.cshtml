@@ -61,7 +61,7 @@
             </div>
             <div class="col-md-6">
                 <label for="DoctorId" class="form-label">Doctor</label>
-                <select name="DoctorId" id="DoctorId" class="form-select medicineSelect">
+                <select name="DoctorId" id="DoctorId" class="form-select ">
                     <option value="">-- Select Doctor --</option>
                     @foreach (var item in ViewBag.Doctor)
                     {
@@ -147,9 +147,22 @@
 
 </form>
 <style>
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        line-height: 38px;
+        padding: 0 12px;
+        border-radius: 0.375rem;
+        border: 1px solid #ced4da;
+    }
 
-  
+    .select2-container--default .select2-selection__arrow {
+        height: 38px;
+    }
 
+    .select2-container--default .select2-selection__rendered {
+        line-height: 38px;
+    }
+    /* Remove width:100% !important; to prevent full page width */
 </style>
 
 <script>
@@ -188,6 +201,49 @@
         });
     }
 
+    function initDoctor() {
+        $("#DoctorId").select2({
+            placeholder: "--Select Doctor--",
+            allowClear: true,
+            width: '100%',
+            dropdownAutoWidth: true
+        });
+
+
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+    }
+
+
+    function initPatient() {
+        $("#PatientID").select2({
+            placeholder: "--Select Patient--",
+            allowClear: true,
+            width: '100%',
+            dropdownAutoWidth: true
+        });
+
+
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+    }
+
+    function initDepartment() {
+        $("#departmentId").select2({
+            placeholder: "--Select Department--",
+            allowClear: true,
+            width: '100%',
+            dropdownAutoWidth: true
+        });
+
+
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+    }
+
 
   
     $(document).ready(function () {
@@ -195,6 +251,9 @@
         $("#detailsTable tbody").append(createRow(rowIndex));
         rowIndex++;
         initSelect2();
+        initDoctor();
+        initPatient();
+        initDepartment();
 
     
         $("#addRowBtn").click(function () {
