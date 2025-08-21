@@ -26,7 +26,7 @@
     <input type="hidden" asp-for="DepartmentId" />
     <input type="hidden" asp-for="DesignationId" />
     <!-- Prescription Info Card -->
-    <div class="card shadow p-4 mb-5 m-4">
+    <div class="card shadow p-4  m-4">
         <div class="row g-3">
             <div class="col-md-6">
                 <label for="Date" class="form-label">Date</label>
@@ -35,48 +35,16 @@
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
-            @* <div class="col-md-6">
-                <label for="PatientID" class="form-label">Patient</label>
-                <select name="PatientID" id="PatientID" class="form-select medicineSelect">
-                    <option value="">-- Select Patient --</option>
-                    @foreach (var item in ViewBag.Patient)
-                    {
-                        <option value="@item.PatientID">@item.FirstName @item.LastName</option>
-                    }
-                </select>
-            </div>
             <div class="col-md-6">
-                <label for="DoctorId" class="form-label">Doctor</label>
-                <select name="DoctorId" id="DoctorId" class="form-select ">
-                    <option value="">-- Select Doctor --</option>
-                    @foreach (var item in ViewBag.Doctor)
-                    {
-                        <option value="@item.Id">@item.FirstName @item.LastName</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="DepartmentId" class="form-label">Department</label>
-                <select name="DepartmentId" id="departmentId" class="form-select medicineSelect">
-                    <option value="">-- Select Department --</option>
-                    @foreach (var item in ViewBag.Department)
-                    {
-                        <option value="@item.DepartmentId">@item.DepartmentName</option>
-                    }
-                </select>
-            </div> *@
-
-            <div>
-                <label>Patient</label>
+                 <label>Patient</label>
                 <input type="text" asp-for="PatientName" readonly class="form-control" />
             </div>
 
-            <div>
+            <div class="col-md-6">
                 <label>Doctor</label>
                 <input type="text" asp-for="DoctorName" readonly class="form-control" />
             </div>
-
-            <div>
+            <div class="col-md-6">
                 <label>Department</label>
                 <input type="text" asp-for="DepartmentName" readonly class="form-control" />
             </div>
@@ -85,7 +53,7 @@
 
     <!-- Dynamic Prescription Details Card -->
     <div class="card shadow p-4 m-4">
-        <div class="mb-3">
+        <div class="">
             <!-- Hidden medicine dropdown template -->
             <select id="medicineTemplate"  class="form-select d-none">
                 <option value="">-- Select Medicine --</option>
@@ -216,19 +184,19 @@
         });
     }
 
-    function initDoctor() {
-        $("#DoctorId").select2({
-            placeholder: "--Select Doctor--",
-            allowClear: true,
-            width: '100%',
-            dropdownAutoWidth: true
-        });
+    // function initDoctor() {
+    //     $("#DoctorId").select2({
+    //         placeholder: "--Select Doctor--",
+    //         allowClear: true,
+    //         width: '100%',
+    //         dropdownAutoWidth: true
+    //     });
 
 
-        $(document).on('select2:open', () => {
-            document.querySelector('.select2-search__field').focus();
-        });
-    }
+    //     $(document).on('select2:open', () => {
+    //         document.querySelector('.select2-search__field').focus();
+    //     });
+    // }
 
 
     function initPatient() {
