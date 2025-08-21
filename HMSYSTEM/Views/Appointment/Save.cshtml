@@ -30,7 +30,7 @@
                             <!-- Phone Number & Patient Name -->
                             <div class="row mb-3">
                                 <div class="col-md-6 col-12">
-                                    <label asp-for="PatientPhoneNumber" class="form-label">P. Phone Number</label>
+                                    <label asp-for="PatientPhoneNumber" class="form-label">Search Phone Number</label>
                                     <input asp-for="PatientPhoneNumber" class="form-control" id="patientPhoneNumber">
                                 </div>
                                 <div class="col-md-6 col-12">
@@ -164,21 +164,33 @@
                 fetch(`/Appointment/GetPatientNameByPhone?phoneNumber=${phoneNumber}`)
                     .then(response => response.json())
                     .then(data => {
+                         var container=$("body");
+                         var offset=20;
                         if (data.success) {
                             // Patient found
                             document.getElementById("patientName").value = data.name;
                             document.getElementById('patientId').value = data.id;
-                            alert("Patient Found with this Number");
+
+                           
+                            if (data.name) {
+                            offset = createAlertPrimary("✅ Patient Found with this Number", container, offset);
+                            }
                         } else if (data.alreadyAdded) {
                             // Patient already has Active/InProgress appointment
                             document.getElementById("patientName").value = "";
                             document.getElementById("patientId").value = "";
-                            alert(data.message); // ✅ This patient is already Appointmented
+
+                            if (data.alreadyAdded) {
+                            offset = createAlertPrimary("✅ This patient is already Appointmented", container, offset);
+                            } 
                         } else {
                             // No patient found
                             document.getElementById("patientName").value = "";
                             document.getElementById("patientId").value = "";
-                            alert("No patient found with this number.");
+                            // alert("No patient found with this number.");
+                             if (! data.name) {
+                            offset = createAlert("❌ No patient found with this number", container, offset);
+                            }
                         }
                     })
                     .catch(error => {

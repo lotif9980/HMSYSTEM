@@ -57,4 +57,24 @@
         return offset + alertDiv.outerHeight() + 10; 
     }
 
+
+
+    function createAlertPrimary(message, container, offset, duration = 2000) {
+        let alertDiv = $(`
+            <div class="alert alert-primary field-alert position-fixed" style="top:${offset}px; right:20px; width:350px; z-index:1050;">
+                ${message}
+            </div>
+        `);
+        container.append(alertDiv);
+        alertDiv.fadeIn();
+
+        setTimeout(function () {
+            alertDiv.fadeOut(function () {
+                $(this).remove();
+            });
+        }, duration);
+
+        return offset + alertDiv.outerHeight() + 10;
+    }
+
 </script>

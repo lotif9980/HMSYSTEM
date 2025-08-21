@@ -96,7 +96,7 @@ namespace HMSYSTEM.Controllers
                     {
                         success = false,
                         alreadyAdded = true,
-                        message = "✅ This patient is already Appointmented."
+                        
                     });
                 }
                 return Json(new { success = true, 
