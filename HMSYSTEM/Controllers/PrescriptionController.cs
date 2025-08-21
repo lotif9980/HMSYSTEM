@@ -192,6 +192,8 @@ namespace HMSYSTEM.Controllers
             TempData["Message"] = "✅ Successfully added!";
             TempData["MessageType"] = "success";
 
+            _unitOfWork.AppointmentRepository.UpdateStatus(model.AppointmentId, Enum.AppointmentStatus.Completed);
+
             return RedirectToAction("Index");
         }
 
