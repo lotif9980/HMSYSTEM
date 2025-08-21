@@ -48,7 +48,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="DesignationId" class="form-label">Designation</label>
-                                    <select name="DesignationId" id="DesignationId" class="form-select role-dropdown">
+                                    <select name="DesignationId" id="DesignationId" class="form-select designation-dropdown">
                                         <option value="">-- Select Designation --</option>
                                         @foreach (var item in ViewBag.Designation)
                                         {
@@ -58,7 +58,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="DepartmentId" class="form-label">Department</label>
-                                    <select name="DepartmentId" id="DepartmentId" class="form-select role-dropdown">
+                                    <select name="DepartmentId" id="DepartmentId" class="form-select department-dropdown">
                                         <option value="">-- Select Department --</option>
                                         @foreach (var item in ViewBag.Department)
                                         {
@@ -150,8 +150,21 @@
 <script>
 
     $(document).ready(function () {
-         $(".role-dropdown").select2({
-             placeholder: "--Select Role--",
+         $(".department-dropdown").select2({
+             placeholder: "--Select Department--",
+             allowClear: true,
+             width: '100%'
+         });
+
+
+         $(document).on('select2:open', () => {
+             document.querySelector('.select2-search__field').focus();
+         });
+    });
+
+      $(document).ready(function () {
+         $(".designation-dropdown").select2({
+             placeholder: "--Select Designation--",
              allowClear: true,
              width: '100%'
          });
