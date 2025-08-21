@@ -1,4 +1,11 @@
 -----------------------------------------------
+---------------21.08.2025-----------------
+----------------------------------------------- 
+
+  ALTER TABLE Patients
+ADD CONSTRAINT UQ_Patient_Mobile UNIQUE (Phone);
+
+-----------------------------------------------
 ---------------03.08.2025-----------------
 ----------------------------------------------- 
 /* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/

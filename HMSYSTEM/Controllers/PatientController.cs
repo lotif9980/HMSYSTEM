@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using HMSYSTEM.ViewModels;
 using HMSYSTEM.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace HMSYSTEM.Controllers
@@ -83,6 +84,7 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Patient patient)
         {
+                
             
                 if (patient.ImageFile != null && patient.ImageFile.Length > 0)
                 {
@@ -94,21 +96,34 @@ namespace HMSYSTEM.Controllers
                     {
                         patient.ImageFile.CopyTo(stream);
                     }
-
-
                     patient.Picture = fileName;
                 }
 
-                _unit.PatienRepo.Save(patient);
+                try
+                {
+                    _unit.PatienRepo.Save(patient);
+                    TempData["Message"] = "✅ Successfully Added!";
+                    TempData["MessageType"] = "primary";
 
-                TempData["Message"] = "✅ Successfully Added!";
-                TempData["MessageType"] = "primary";
+                    return RedirectToAction("Save");
+                }
+                catch (DbUpdateException ex)
+                {
 
+                    if (ex.InnerException != null && ex.InnerException.Message.Contains("UQ_Patient_Mobile"))
+                    {
+                        TempData["Message"] = "❌ This mobile number already exists!";
+                        TempData["MessageType"] = "danger";
+                    }
+                    else
+                    {
+                        TempData["Message"] = "❌ Unexpected error occurred!";
+                        TempData["MessageType"] = "danger";
+                    }
 
-                return RedirectToAction("Save");
-           
+                    return View (patient);
+                }
 
-     
         }
 
 

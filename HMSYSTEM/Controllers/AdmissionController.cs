@@ -134,6 +134,9 @@ namespace HMSYSTEM.Controllers
         }
 
 
+
+
+
         [HttpGet]
         public IActionResult GetBedsByWardId(int wardId)
         {

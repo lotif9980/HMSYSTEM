@@ -5,6 +5,7 @@ using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HMSYSTEM.Controllers
 {
@@ -80,13 +81,24 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetPatientNameByPhone(string phoneNumber)
+        public async Task<IActionResult> GetPatientNameByPhone(string phoneNumber)
         {
             var patient = _unitofWork.PatienRepo.getAll()
                 .FirstOrDefault(p => p.Phone == phoneNumber && p.Status == true);
 
             if (patient != null)
             {
+                var isAppointment = await _unitofWork.AppointmentRepository.AppointmentCheck(patient.PatientID);
+
+                if (isAppointment)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        alreadyAdded = true,
+                        message = "✅ This patient is already Appointmented."
+                    });
+                }
                 return Json(new { success = true, 
                     name = patient.FirstName+" " + patient.LastName ,
                     id=patient.PatientID

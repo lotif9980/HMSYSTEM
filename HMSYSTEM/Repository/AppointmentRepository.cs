@@ -5,7 +5,6 @@ using System.Reflection.Metadata;
 using HMSYSTEM.Enum;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace HMSYSTEM.Repository
 {
     public class AppointmentRepository : IAppointmentRepository
@@ -99,6 +98,11 @@ namespace HMSYSTEM.Repository
         {
             DateTime today = DateTime.Today;
             return _db.Appointments.Count(p => p.AppoinmentDate.Date == today);
+        }
+
+        public async Task<bool> AppointmentCheck(int PatientId)
+        {
+           return await _db.Appointments.AnyAsync(p=>p.PatientID== PatientId && p.Status==AppointmentStatus.Active || p.Status== AppointmentStatus.InProgress);
         }
     }
 

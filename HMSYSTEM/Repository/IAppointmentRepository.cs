@@ -16,6 +16,7 @@ namespace HMSYSTEM.Repository
         List<Appointment> GetSerial();
 
         int GetAppointmentsCount();
+        public Task<bool> AppointmentCheck(int PatientId);
 
     }
 }
