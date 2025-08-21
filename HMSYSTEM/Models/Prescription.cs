@@ -5,6 +5,7 @@ namespace HMSYSTEM.Models
 {
     public class Prescription
     {
+
         public int Id { get; set; }             
         public DateTime? Date { get; set; }     
         public int PatientId { get; set; }       
@@ -13,7 +14,7 @@ namespace HMSYSTEM.Models
         public int? Status { get; set; }   
         public string ? Note { get; set; }
         public DateTime? NextFlowUp { get;set;}
-
+        public int AppointmentId { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreateDate {  get; set; }
 

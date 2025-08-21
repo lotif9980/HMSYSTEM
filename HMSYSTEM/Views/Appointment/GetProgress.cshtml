@@ -37,6 +37,7 @@
                                 <th>Department</th>
                                 <th>Doctor</th>
                                 <th>Status</th>
+                                <th>Prescription</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,6 +78,14 @@
                                                 </li>
                                             </ul>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-success"
+                                           asp-controller="Prescription"
+                                           asp-action="Save"
+                                           asp-route-appointmentId="@appointment.AppointmentId">
+                                            Prescription
+                                        </a>
                                     </td>
                                    
                                 </tr>

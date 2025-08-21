@@ -19,8 +19,12 @@
 </div>
 
 
-<form asp-action="Save" method="post" id="myForm" enctype="multipart/form-data">
-
+<form asp-action="Save" method="post"  enctype="multipart/form-data">
+    <input type="hidden" asp-for="AppointmentId" />
+    <input type="hidden" asp-for="PatientId" />
+    <input type="hidden" asp-for="DoctorId" />
+    <input type="hidden" asp-for="DepartmentId" />
+    <input type="hidden" asp-for="DesignationId" />
     <!-- Prescription Info Card -->
     <div class="card shadow p-4 mb-5 m-4">
         <div class="row g-3">
@@ -31,7 +35,7 @@
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
-            <div class="col-md-6">
+            @* <div class="col-md-6">
                 <label for="PatientID" class="form-label">Patient</label>
                 <select name="PatientID" id="PatientID" class="form-select medicineSelect">
                     <option value="">-- Select Patient --</option>
@@ -60,6 +64,21 @@
                         <option value="@item.DepartmentId">@item.DepartmentName</option>
                     }
                 </select>
+            </div> *@
+
+            <div>
+                <label>Patient</label>
+                <input type="text" asp-for="PatientName" readonly class="form-control" />
+            </div>
+
+            <div>
+                <label>Doctor</label>
+                <input type="text" asp-for="DoctorName" readonly class="form-control" />
+            </div>
+
+            <div>
+                <label>Department</label>
+                <input type="text" asp-for="DepartmentName" readonly class="form-control" />
             </div>
         </div>
     </div>

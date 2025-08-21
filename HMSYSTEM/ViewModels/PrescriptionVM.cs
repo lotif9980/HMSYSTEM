@@ -11,6 +11,7 @@ namespace HMSYSTEM.ViewModels
 
         [Required]
         public int PatientId { get; set; }
+        public int AppointmentId { get; set; }
         public string? PatientName { get; set; }
         public string? PatientMobileNo { get; set; }
         public String? PatientAddress { get; set; }

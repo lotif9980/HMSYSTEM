@@ -36,76 +36,163 @@ namespace HMSYSTEM.Controllers
         }
 
 
+        #region old save method
+        [HttpGet]
+        //public IActionResult Save()
+        //{
+        //    var department = _unitOfWork.departmentRepo.getAll()
+        //        .Where(c => c.Status == true)
+        //        .ToList();
+        //    var doctor = _unitOfWork.doctorRepo.getAll().
+        //        Where(c => c.Status == true)
+        //        .ToList();
+        //    var patient = _unitOfWork.PatienRepo.getAll().ToList();
+
+        //    var medicine = _unitOfWork.MedicineRepo.GetAllMedicines().ToList();
+
+        //    ViewBag.Department = department;
+        //    ViewBag.Doctor = doctor;
+        //    ViewBag.Patient = patient;
+        //    ViewBag.Medicine = medicine;
+
+
+        //    var model = new PrescriptionViewModel();
+        //    return View(model);
+        //}
+
+        #endregion
+
 
         [HttpGet]
-        public IActionResult Save()
+        public IActionResult Save(int appointmentId)
         {
-            var department = _unitOfWork.departmentRepo.getAll()
-                .Where(c => c.Status == true)
-                .ToList();
-            var doctor = _unitOfWork.doctorRepo.getAll().
-                Where(c => c.Status == true)
-                .ToList();
-            var patient = _unitOfWork.PatienRepo.getAll().ToList();
+            // Appointment fetch
+            var appointment = _unitOfWork.AppointmentRepository.GetProgress()
+                .FirstOrDefault(a => a.AppointmentId == appointmentId);
 
-            var medicine = _unitOfWork.MedicineRepo.GetAllMedicines().ToList();
+            if (appointment == null)
+                return NotFound();
 
-            ViewBag.Department = department;
-            ViewBag.Doctor = doctor;
-            ViewBag.Patient = patient;
-            ViewBag.Medicine = medicine;
+            // Prescription ViewModel fill
+            var model = new PrescriptionViewModel
+            {
+                AppointmentId = appointment.AppointmentId,
+                PatientId = appointment.PatientID,
+                PatientName = appointment.Patient.FirstName + " " + appointment.Patient.LastName,
+                PatientMobileNo = appointment.Patient.Phone,
+                DepartmentId = appointment.DepartmentId ?? 0,
+                DepartmentName = appointment.Department?.DepartmentName,
+                DoctorId = appointment.DoctorId ?? 0,
+                DoctorName = appointment.Doctor?.FirstName + " " + appointment.Doctor?.LastName,
+                DesignationId = appointment.Doctor?.DesignationId ?? 0,
+                DesignationName = appointment.Doctor?.Designation?.DesignationName,
+                Date = DateTime.Now
+            };
 
+            // Medicine list for dropdown
+            var medicineList = _unitOfWork.MedicineRepo.GetAllMedicines().ToList();
+            ViewBag.Medicine = medicineList;
 
-            var model = new PrescriptionViewModel();
             return View(model);
         }
+        #region
+        //[HttpPost]
+        //public IActionResult Save(PrescriptionViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
 
+        //        ViewBag.Patient = _unitOfWork.PatienRepo.getAll();
+        //        ViewBag.Doctor = _unitOfWork.doctorRepo.getAll();
+        //        ViewBag.Department = _unitOfWork.departmentRepo.getAll();
+        //        ViewBag.Medicine = _unitOfWork.MedicineRepo.GetAllMedicines();
+        //        return View(model);
+        //    }
+
+
+        //    var prescription = new Prescription
+        //    {
+        //        Date = model.Date ,
+        //        PatientId = model.PatientId,
+        //        DoctorId = model.DoctorId,
+        //        DepartmentId = model.DepartmentId,
+        //        Status = model.Status,
+        //        Note=model.Note,
+        //        NextFlowUp=model.NextFlowUp
+        //    };
+
+
+        //    if (model.PrescriptionDetails != null && model.PrescriptionDetails.Count > 0)
+        //    {
+        //        prescription.PrescriptionDetails = model.PrescriptionDetails.Select(d => new PrescriptionDetail
+        //        {
+        //            MedicineId = d.MedicineId,
+        //            Dose = d.Dose,
+        //            Duration = d.Duration,
+        //            Instructions = d.Instructions ?? false
+        //        }).ToList();
+        //    }
+
+
+        //    _unitOfWork.PrescriptioRepository.Save(prescription);
+
+        //    TempData["Message"] = "✅ Successfully added!";
+        //    TempData["MessageType"] = "success";
+
+
+        //    return RedirectToAction("Index"); 
+        //}
+        #endregion
 
         [HttpPost]
         public IActionResult Save(PrescriptionViewModel model)
         {
+            // Model validation check
             if (!ModelState.IsValid)
             {
-          
+                // Preserve dropdown / readonly data for re-display
                 ViewBag.Patient = _unitOfWork.PatienRepo.getAll();
                 ViewBag.Doctor = _unitOfWork.doctorRepo.getAll();
                 ViewBag.Department = _unitOfWork.departmentRepo.getAll();
                 ViewBag.Medicine = _unitOfWork.MedicineRepo.GetAllMedicines();
+
                 return View(model);
             }
 
-          
+            // Create Prescription master record
             var prescription = new Prescription
             {
-                Date = model.Date ,
+                AppointmentId=model.AppointmentId,
+                Date = model.Date ?? DateTime.Now,
                 PatientId = model.PatientId,
                 DoctorId = model.DoctorId,
                 DepartmentId = model.DepartmentId,
                 Status = model.Status,
-                Note=model.Note,
-                NextFlowUp=model.NextFlowUp
+                Note = model.Note,
+                NextFlowUp = model.NextFlowUp
             };
 
-            
+            // Map PrescriptionDetails if any
             if (model.PrescriptionDetails != null && model.PrescriptionDetails.Count > 0)
             {
-                prescription.PrescriptionDetails = model.PrescriptionDetails.Select(d => new PrescriptionDetail
-                {
-                    MedicineId = d.MedicineId,
-                    Dose = d.Dose,
-                    Duration = d.Duration,
-                    Instructions = d.Instructions ?? false
-                }).ToList();
+                prescription.PrescriptionDetails = model.PrescriptionDetails
+                    .Where(d => d.MedicineId.HasValue) // ignore empty rows
+                    .Select(d => new PrescriptionDetail
+                    {
+                        MedicineId = d.MedicineId.Value,
+                        Dose = d.Dose,
+                        Duration = d.Duration,
+                        Instructions = d.Instructions ?? false,
+                    }).ToList();
             }
 
-      
+            // Save using repository
             _unitOfWork.PrescriptioRepository.Save(prescription);
 
             TempData["Message"] = "✅ Successfully added!";
             TempData["MessageType"] = "success";
-          
 
-            return RedirectToAction("Index"); 
+            return RedirectToAction("Index");
         }
 
 
