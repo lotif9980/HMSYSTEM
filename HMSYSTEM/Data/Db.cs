@@ -49,6 +49,7 @@ namespace HMSYSTEM.Data
             public DbSet<Ward> Wards { get; set; }
             public DbSet<Bed> Beds { get; set; }
             public DbSet<Admission> Admissions { get; set; }
+            public DbSet<ServiceItem> ServiceItems { get; set; }
 
 
     }

@@ -24,7 +24,7 @@ namespace HMSYSTEM.Repository
         public IBedRepository bedRepository { get; set; }
         public IAdmissionRepository admissionRepository { get; set; }
         public IHomeRepository homeRepository { get; set; }
-
+        public IServiceItemRepository serviceItemRepository {  get; set; }
 
 
         public UnitOfWork( Db _db, IWebHostEnvironment _env)
@@ -47,6 +47,7 @@ namespace HMSYSTEM.Repository
             bedRepository = new BedRepository(db);
             admissionRepository = new AdmissionRepository(db);
             homeRepository= new HomeRepository(db);
+            serviceItemRepository= new ServiceItemRepository(db);
         }
 
         public async Task<int> Save()

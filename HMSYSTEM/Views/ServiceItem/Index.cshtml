@@ -1,0 +1,129 @@
+﻿@* @model IEnumerable<Bed> *@
+@using HMSYSTEM.ViewModels
+@* @model PaginationViewModel<ServiceItem> *@
+@model HMSYSTEM.ViewModels.PagedResult<ServiceItem>
+
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-evenly">
+                    <div> <h3 class="card-title">Existing Service List</h3></div>
+                   
+                    <div>
+                        <input type="text" class="form-control" id="searchBox" placeholder="Search Service Item" />
+                    </div>
+
+                    <div> <a class="btn btn-info" asp-controller="ServiceItem" asp-action="Save">Create</a></div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">sl</th>
+                                <th>Service Item</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th style="width:20px;text-align:center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataShow">
+                            @{
+                                int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
+                            }
+                            @foreach (ServiceItem item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.ItemName</td>
+                                    <td>@item.Amount</td>
+                                    
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            @(item.IsActive ? "Active" : "Inactive")
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="ServiceItem" asp-action="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                      count++;
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-end">
+                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@i">@i</a>
+                            </li>
+                        }
+
+                        <!-- Next Button -->
+                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function(){
+        $("#searchBox").on('keyup',function(){
+            var name=$(this).val();
+
+            $.ajax({
+                url:'/Bed/GetSearch',
+                data:{name:name},
+                success:function(data){
+                    let rows="";
+
+                    data.forEach(item=>{
+                        rows+=`<tr>
+                            <td>${item.id}</td>
+                            <td>${item.wardName}</td>
+                            <td>${item.bedName}</td>
+                            <td>${item.bedName}</td>
+                            <td>
+                                  <div class="d-flex justify-content-center">
+                                    ${item.isOccupied ? "Empty" : "Occupied"}
+                                  </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center btn-group-sm ">
+                                            <a class="btn btn-danger ms-2" href="/Bed/Delete/${item.id}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                </td>
+                        </tr>`
+                    })
+
+                    $("#dataShow").html(rows);
+                }
+            })
+        })
+    })
+</script>

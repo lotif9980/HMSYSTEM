@@ -20,6 +20,7 @@ namespace HMSYSTEM.Repository
         IBedRepository bedRepository { get; }
         IAdmissionRepository admissionRepository { get; }
         IHomeRepository homeRepository { get; }
+        IServiceItemRepository serviceItemRepository { get; }
 
 
         void Complete();
