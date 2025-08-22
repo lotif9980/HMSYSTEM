@@ -19,7 +19,7 @@
 </div>
 
 
-<form asp-action="Save" method="post"  enctype="multipart/form-data">
+<form asp-action="Save" method="post" id="myForm" enctype="multipart/form-data">
     <input type="hidden" asp-for="AppointmentId" />
     <input type="hidden" asp-for="PatientId" />
     <input type="hidden" asp-for="DoctorId" />
@@ -113,160 +113,114 @@
         </div>
     </div>
 
-    <!-- Submit and Reset Buttons -->
-    
+  
 
 </form>
-<style>
-    
-    /* Remove width:100% !important; to prevent full page width */
-</style>
 
 <script>
     $(function () {
-        $("#dateTO").datepicker({
+        // Datepickers
+        $("#dateTO, #dateTOs").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true
         });
 
         $(".input-group-text").click(function () {
-            $("#dateTO").focus();
-        });
-    });
-
-
-    $(function () {
-        $("#dateTOs").datepicker({
-            dateFormat: "dd-mm-yy",
-            changeMonth: true,
-            changeYear: true
+            var targetId = $(this).data('target'); // যদি প্রয়োজন হয়
+            $("#" + targetId).focus();
         });
 
-        $(".input-group-text").click(function () {
-            $("#dateTOs").focus();
-        });
-    });
+        // Row index
+        let rowIndex = 0;
 
+        // Create row function
+        function createRow(index) {
+            let medicineDropdown = $("#medicineTemplate").html();
 
-       let rowIndex = 0;
+            return `<tr>
+                <td>
+                    <select name="PrescriptionDetails[${index}].MedicineId" class="form-select medicineSelect">
+                        ${medicineDropdown}
+                    </select>
+                </td>
+                <td><input type="text" name="PrescriptionDetails[${index}].Dose" class="form-control" /></td>
+                <td><input type="text" name="PrescriptionDetails[${index}].Duration" class="form-control" /></td>
+                <td><input type="checkbox" name="PrescriptionDetails[${index}].Instructions" value="true" /></td>
+                <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
+            </tr>`;
+        }
 
-    function createRow(index) {
-        // Copy template options
-        let medicineDropdown = $("#medicineTemplate").html();
+        // Initialize Select2 for medicine dropdowns
+        function initSelect2(context) {
+            $(context).find(".medicineSelect").select2({
+                placeholder: "--Select Medicine--",
+                allowClear: true,
+                width: '100%',
+                dropdownAutoWidth: true
+            });
+        }
 
-        let row = `<tr>
-            <td>
-                <select name="PrescriptionDetails[${index}].MedicineId" class="form-select medicineSelect">
-                    ${medicineDropdown}
-                </select>
-            </td>
-            <td><input type="text" name="PrescriptionDetails[${index}].Dose" class="form-control" /></td>
-            <td><input type="text" name="PrescriptionDetails[${index}].Duration" class="form-control" /></td>
-            <td><input type="checkbox" name="PrescriptionDetails[${index}].Instructions" value="true" /></td>
-            <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
-        </tr>`;
+        // Initialize other select2 dropdowns (Doctor, Patient, Department)
+        // function initDoctor() {
+        //     $("#DoctorId").select2({
+        //         placeholder: "--Select Doctor--",
+        //         allowClear: true,
+        //         width: '100%',
+        //         dropdownAutoWidth: true
+        //     });
+        // }
 
-        return row;
-    }
+        function initPatient() {
+            $("#PatientID").select2({
+                placeholder: "--Select Patient--",
+                allowClear: true,
+                width: '100%',
+                dropdownAutoWidth: true
+            });
+        }
 
-    function initSelect2() {
-        $(".medicineSelect").select2({
-            placeholder: "--Select Medicine--",
-            allowClear: true,
-            width: '100%',  
-            dropdownAutoWidth: true 
-        });
+        function initDepartment() {
+            $("#departmentId").select2({
+                placeholder: "--Select Department--",
+                allowClear: true,
+                width: '100%',
+                dropdownAutoWidth: true
+            });
+        }
 
-       
-        $(document).on('select2:open', () => {
-            document.querySelector('.select2-search__field').focus();
-        });
-    }
-
-    // function initDoctor() {
-    //     $("#DoctorId").select2({
-    //         placeholder: "--Select Doctor--",
-    //         allowClear: true,
-    //         width: '100%',
-    //         dropdownAutoWidth: true
-    //     });
-
-
-    //     $(document).on('select2:open', () => {
-    //         document.querySelector('.select2-search__field').focus();
-    //     });
-    // }
-
-
-    function initPatient() {
-        $("#PatientID").select2({
-            placeholder: "--Select Patient--",
-            allowClear: true,
-            width: '100%',
-            dropdownAutoWidth: true
-        });
-
-
-        $(document).on('select2:open', () => {
-            document.querySelector('.select2-search__field').focus();
-        });
-    }
-
-    function initDepartment() {
-        $("#departmentId").select2({
-            placeholder: "--Select Department--",
-            allowClear: true,
-            width: '100%',
-            dropdownAutoWidth: true
-        });
-
-
-        $(document).on('select2:open', () => {
-            document.querySelector('.select2-search__field').focus();
-        });
-    }
-
-
-  
-    $(document).ready(function () {
-       
+        // Initial setup
         $("#detailsTable tbody").append(createRow(rowIndex));
+        initSelect2($("#detailsTable tbody tr:last"));
         rowIndex++;
-        initSelect2();
-        initDoctor();
+
+        // initDoctor();
         initPatient();
         initDepartment();
 
-    
+        // Add new row
         $("#addRowBtn").click(function () {
             $("#detailsTable tbody").append(createRow(rowIndex));
+            initSelect2($("#detailsTable tbody tr:last")); // শুধু নতুন row init করব
             rowIndex++;
-            initSelect2(); 
 
             $("#alertMessage").removeClass("d-none").fadeIn();
             setTimeout(() => { $("#alertMessage").fadeOut(); }, 2000);
         });
 
-     
+        // Remove row
         $("#detailsTable").on("click", ".removeRowBtn", function () {
             $(this).closest("tr").remove();
-
             $("#removedMessage").removeClass("d-none").fadeIn();
             setTimeout(() => { $("#removedMessage").fadeOut(); }, 2000);
         });
-    });
 
-
-
-        $(document).ready(function () {
+        // Form validation and submit
         $("#myForm").on('submit', function (e) {
-            e.preventDefault(); // থামাই
+            e.preventDefault();
 
             var date = $("#dateTO").val().trim();
-            var doctorId = $("#DoctorId").val().trim();
-            var patientID = $("#PatientID").val().trim();
-            var department = $("#departmentId").val().trim();
+        
 
             var container = $("body");
             var offset = 20;
@@ -274,9 +228,7 @@
             $(".field-alert").remove(); // আগের alert remove
 
             if (date === "") offset = createAlert("❌ Date Required", container, offset);
-            if (doctorId === "") offset = createAlert("❌ Doctor Required", container, offset);
-            if (patientID === "") offset = createAlert("❌ Patient is Required", container, offset);
-            if (department === "") offset = createAlert("❌ Department is Required", container, offset);
+     
 
             // Medicine Details Validation
             $("#detailsTable tbody tr").each(function (index, row) {
@@ -284,23 +236,19 @@
                 var dose = $(row).find("input[name*='.Dose']").val().trim();
                 var duration = $(row).find("input[name*='.Duration']").val().trim();
 
-                if (medicine === "" || medicine === null) {
-                    offset = createAlert(`❌ Medicine is required`, container, offset);
-                }
-                if (dose === "") {
-                    offset = createAlert(`❌ Dose is required`, container, offset);
-                }
-                if (duration === "") {
-                    offset = createAlert(`❌ Duration is required`, container, offset);
-                }
+                if (!medicine) offset = createAlert(`❌ Medicine is required`, container, offset);
+                if (!dose) offset = createAlert(`❌ Dose is required`, container, offset);
+                if (!duration) offset = createAlert(`❌ Duration is required`, container, offset);
             });
 
-            // যদি কোনো alert আছে, submit হবে না
             if ($(".field-alert").length > 0) return false;
 
-            // সব validation ঠিক থাকলে submit
             this.submit();
         });
-    });
 
+        // Optional: focus on select2 search field when open
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+    });
 </script>

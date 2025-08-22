@@ -228,9 +228,13 @@ namespace HMSYSTEM.Controllers
 
         public IActionResult Delete(int id)
         {
+            var data = _unitOfWork.PrescriptioRepository.Find(id);
+            _unitOfWork.AppointmentRepository.UpdateStatus(data.AppointmentId, Enum.AppointmentStatus.InProgress);
+
             _unitOfWork.PrescriptioRepository.Delete(id);
             TempData["Message"] = "✅ Successfully Delete!";
             TempData["MessageType"] = "danger";
+
             return RedirectToAction("Index");
         }
 

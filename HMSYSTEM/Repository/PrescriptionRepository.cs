@@ -206,5 +206,10 @@ namespace HMSYSTEM.Repository
             DateTime date= DateTime.Today;
             return _db.Prescriptions.Count(p => p.Date == date);
         }
+
+        public Prescription Find(int id)
+        {
+            return _db.Prescriptions.Find(id);
+        }
     }
 }

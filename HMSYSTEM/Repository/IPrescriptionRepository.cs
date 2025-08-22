@@ -13,5 +13,7 @@ namespace HMSYSTEM.Repository
         public PrescriptionViewModel GetPrescriptionViewModel(int id);
 
         int GetCountPrescription();
+
+        public Prescription Find(int id);
     }
 }
