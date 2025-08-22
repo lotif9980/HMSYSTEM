@@ -92,6 +92,9 @@
                 <label for="Note">Note</label>
                 <div>
                     <input class="form-control" name="Note" type="text" />
+                    <p>
+                        If you use (.) then a new line will be created.
+                    </p>
                 </div>
             </div>
 
@@ -127,7 +130,7 @@
         });
 
         $(".input-group-text").click(function () {
-            var targetId = $(this).data('target'); // যদি প্রয়োজন হয়
+            var targetId = $(this).data('target');
             $("#" + targetId).focus();
         });
 

@@ -35,7 +35,7 @@ namespace HMSYSTEM.ViewModels
       
         public string? DepartmentName { get; set; }
 
-        public int? Status { get; set; }
+        public int? Status { get; set; } = 1;
         public string? Note { get; set; }
         public DateTime? NextFlowUp { get; set; }
        
