@@ -6,7 +6,7 @@
 USE [hmsystem]
 GO
 
-/****** Object:  Table [dbo].[BillDetails]    Script Date: 23-Aug-25 1:41:02 PM ******/
+/****** Object:  Table [dbo].[BillDetails]    Script Date: 23-Aug-25 3:33:50 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -17,15 +17,27 @@ CREATE TABLE [dbo].[BillDetails](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[BillId] [int] NULL,
 	[ServiceItemId] [int] NULL,
-	[Qty] [int] NULL,
-	[Amount] [decimal](18, 0) NULL,
-	[TotalAmount] [decimal](18, 0) NULL,
+	[Qty] [int] NOT NULL,
+	[Amount] [decimal](18, 0) NOT NULL,
+	[TotalAmount] [decimal](18, 0) NOT NULL,
  CONSTRAINT [PK_BillDetails] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
+ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_Qty]  DEFAULT ((0)) FOR [Qty]
+GO
+
+ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_Amount]  DEFAULT ((0)) FOR [Amount]
+GO
+
+ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_TotalAmount]  DEFAULT ((0)) FOR [TotalAmount]
+GO
+
+
+
 
 
 
@@ -35,7 +47,7 @@ GO
 USE [hmsystem]
 GO
 
-/****** Object:  Table [dbo].[Bills]    Script Date: 23-Aug-25 1:37:46 PM ******/
+/****** Object:  Table [dbo].[Bills]    Script Date: 23-Aug-25 3:33:19 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -44,13 +56,14 @@ GO
 
 CREATE TABLE [dbo].[Bills](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[BillNo] [nvarchar](50) NULL,
 	[BillDate] [date] NULL,
 	[PatientId] [int] NULL,
-	[TotalAmount] [decimal](18, 0) NULL,
-	[Discount] [decimal](18, 0) NULL,
-	[NetAmount] [decimal](18, 0) NULL,
-	[Status] [int] NOT NULL,
-	[CreateDate] [datetime] NOT NULL,
+	[TotalAmount] [decimal](18, 0) NOT NULL,
+	[Discount] [decimal](18, 0) NOT NULL,
+	[NetAmount] [decimal](18, 0) NOT NULL,
+	[Status] [int] NULL,
+	[CreateDate] [date] NOT NULL,
  CONSTRAINT [PK_Bills] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -58,9 +71,14 @@ CREATE TABLE [dbo].[Bills](
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_TotalAmount]  DEFAULT ((0)) FOR [TotalAmount]
 GO
 
+ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_Discount]  DEFAULT ((0)) FOR [Discount]
+GO
+
+ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
 
 
 

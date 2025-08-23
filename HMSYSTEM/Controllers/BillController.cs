@@ -1,4 +1,5 @@
-﻿using HMSYSTEM.Repository;
+﻿using HMSYSTEM.Helpers;
+using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMSYSTEM.Controllers
@@ -11,9 +12,14 @@ namespace HMSYSTEM.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page=1, int pageSize=10)
         {
-            return View();
+           var data =_unitOfWork.billRepository.GetAll()
+                    .OrderBy(p=>p.Id)
+                    .AsQueryable()
+                    .ToPagedList(page,pageSize);
+
+            return View(data);
         }
     }
 }

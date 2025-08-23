@@ -1,0 +1,70 @@
+﻿@using HMSYSTEM.ViewModels
+@model HMSYSTEM.ViewModels.PagedResult<Bill>
+
+
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-around">
+                    <div> <h3 class="card-title">Existing Bill List</h3></div>
+                    <div><input placeholder="Search Patient Name" id="SearchBox" class="form-control" /></div>
+                    <div> <a class="btn btn-info" asp-controller="Bill" asp-action="Save">Create</a></div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">Sl</th>
+                                <th>Date</th>
+                                <th>Bill No</th>
+                                <th>Patient Name</th>
+                                <th>P. Number</th>
+                                <th>Total Amount</th>
+                                <th>Status</th>
+                                <th style="width:20px;text-align:center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataShow">
+                            @{
+                                int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
+                            }
+                            @foreach (Bill item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@(item.BillDate.ToString("dd-MM-yyyy"))</td>
+                                    <td>@item.BillNo</td>
+                                    <td>@item.Patient.FirstName @item.Patient.LastName</td>
+                                    <td>@item.Patient.Phone</td>
+                                    <td>@item.TotalAmount</td>
+                                    <td>@(item.Status == 1 ? "Active" : "Inactive")</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Details">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                count++;
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    @await Html.PartialAsync("_Pagination", Model)
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+</div>

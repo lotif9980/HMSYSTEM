@@ -1,4 +1,6 @@
 ﻿using HMSYSTEM.Data;
+using HMSYSTEM.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMSYSTEM.Repository
 {
@@ -11,6 +13,10 @@ namespace HMSYSTEM.Repository
             _db = db;
         }
 
-
+        public List<Bill> GetAll()
+        {
+          return _db.Bills
+                .Include(d => d.Patient).ToList();
+        }
     }
 }
