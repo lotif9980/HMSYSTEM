@@ -21,5 +21,17 @@ namespace HMSYSTEM.Controllers
 
             return View(data);
         }
+
+        [HttpGet]
+        public IActionResult Save()
+        {
+            var patient=_unitOfWork.PatienRepo.getAll();
+            ViewBag.Patient = patient;
+            var serviceItem=_unitOfWork.serviceItemRepository.GetAll();
+            ViewBag.ServiceItem = serviceItem;
+
+
+            return View();
+        }
     }
 }

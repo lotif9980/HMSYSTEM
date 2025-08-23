@@ -10,6 +10,8 @@
         public decimal? Discount { get; set; }
         public decimal? NetAmount { get; set; }
         public int? Status { get; set; }
+        public string ? PatientName {  get; set; }
+        public string ? PatientPhoneNumber {  get; set; }
 
         public List<BillDetailViewModel> BillDetail { get; set; }=new List<BillDetailViewModel>();
 
