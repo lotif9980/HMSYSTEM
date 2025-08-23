@@ -50,6 +50,8 @@ namespace HMSYSTEM.Data
             public DbSet<Bed> Beds { get; set; }
             public DbSet<Admission> Admissions { get; set; }
             public DbSet<ServiceItem> ServiceItems { get; set; }
+            public DbSet<Bill> Bills { get; set; }
+            public DbSet<BillDetail> BillDetails { get; set; }
 
 
     }

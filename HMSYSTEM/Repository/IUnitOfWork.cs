@@ -21,7 +21,7 @@ namespace HMSYSTEM.Repository
         IAdmissionRepository admissionRepository { get; }
         IHomeRepository homeRepository { get; }
         IServiceItemRepository serviceItemRepository { get; }
-
+        IBillRepository billRepository { get; }
 
         void Complete();
         Task<int> Save();

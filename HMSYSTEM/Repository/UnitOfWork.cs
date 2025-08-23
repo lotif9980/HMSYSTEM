@@ -25,7 +25,7 @@ namespace HMSYSTEM.Repository
         public IAdmissionRepository admissionRepository { get; set; }
         public IHomeRepository homeRepository { get; set; }
         public IServiceItemRepository serviceItemRepository {  get; set; }
-
+        public IBillRepository billRepository { get; set; }
 
         public UnitOfWork( Db _db, IWebHostEnvironment _env)
         {
@@ -48,6 +48,7 @@ namespace HMSYSTEM.Repository
             admissionRepository = new AdmissionRepository(db);
             homeRepository= new HomeRepository(db);
             serviceItemRepository= new ServiceItemRepository(db);
+            billRepository=new BillRepository (db);
         }
 
         public async Task<int> Save()
