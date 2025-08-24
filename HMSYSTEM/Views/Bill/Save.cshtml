@@ -34,20 +34,24 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <label>Doctor</label>
+                <label>Bill No</label>
                 <input type="text" asp-for="BillNo" readonly class="form-control" />
             </div>
 
             <div class="col-md-6">
-                <label>Patient</label>
-                <input type="text" asp-for="PatientName" readonly class="form-control" />
+                <label asp-for="PatientId" class="form-label">Patient Name</label>
+                <select asp-for="PatientId" class="form-control role-dropdown">
+                    <option value="">--Select Patient--</option>
+                    @foreach (var item in ViewBag.Patient)
+                    {
+                        <option value="@item.PatientID">@item.FirstName @item.LastName</option>
+                    }
+                </select>
+                <span asp-validation-for="PatientId" class="text-danger"></span>
             </div>
-
+          
            
-            <div class="col-md-6">
-                <label>Department</label>
-                <input type="text" asp-for="PatientPhoneNumber" readonly class="form-control" />
-            </div>
+           
         </div>
     </div>
 
@@ -56,7 +60,7 @@
         <div class="">
             <!-- Hidden medicine dropdown template -->
             <select id="serviceList" class="form-select d-none">
-                <option value="">-- Select Medicine --</option>
+                <option value="">-- Select Service --</option>
                 @foreach (var med in billList)
                 {
                     <option value="@med.Id">@med.ItemName</option>
@@ -123,7 +127,7 @@
 
             <div class="col-md-4">
                 <label for="Payment">Payment Amount</label>
-                <input class="form-control" id="paymentAmt" type="number" />
+                <input class="form-control" id="paymentAmt" type="number" value="0" />
             </div>
 
             <div class="col-md-4">
@@ -145,7 +149,22 @@
 </form>
 
 <script>
-    $(function () {
+
+     $(document).ready(function () {
+         $(".role-dropdown").select2({
+             placeholder: "--Select Patient--",
+             allowClear: true,
+             width: '100%'
+          });
+
+
+            $(document).on('select2:open', () => {
+                 document.querySelector('.select2-search__field').focus();
+            });
+     });
+
+
+         $(function () {
         $("#dateTO").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
@@ -154,86 +173,108 @@
 
         let rowIndex = 0;
 
-        // Row তৈরি ফাংশন
+        // ✅ Row তৈরি ফাংশন
         function createRow(index) {
             let serviceDropdown = $("#serviceList").html();
 
             return `<tr>
                 <td>
-                    <select name="BillDetails[${index}].ServiceItemId" class="form-select">
+                    <select name="BillDetails[${index}].ServiceItemId" class="form-select service-select">
                         ${serviceDropdown}
                     </select>
                 </td>
-                <td><input type="number" name="BillDetails[${index}].Qty" class="form-control qty" min="0" value="0" /></td>
+                <td><input type="number" name="BillDetails[${index}].Qty" class="form-control qty" min="0" value="1" /></td>
                 <td><input type="number" name="BillDetails[${index}].Amount" class="form-control amount" min="0" value="0" /></td>
                 <td><input type="number" name="BillDetails[${index}].TotalAmount" class="form-control total" readonly value="0" /></td>
                 <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
             </tr>`;
         }
 
-        // প্রথম Row তৈরি
+        // ✅ প্রথম Row
         $("#detailsTable tbody").append(createRow(rowIndex));
         rowIndex++;
+        initSelect2(); // প্রথম Row এর Service Dropdown কে Select2 করো
 
-        // নতুন Row Add
+        // ✅ নতুন Row Add
         $("#addRowBtn").click(function () {
             $("#detailsTable tbody").append(createRow(rowIndex));
             rowIndex++;
+            initSelect2(); // নতুন Row যোগ হলে Select2 করো
 
             $("#alertMessage").removeClass("d-none").fadeIn();
             setTimeout(() => { $("#alertMessage").fadeOut(); }, 2000);
-
-            calculateGrandTotal();
         });
 
-        // Row Remove
+        // ✅ Service Dropdown এ Select2 চালু
+        function initSelect2() {
+            $(".service-select").select2({
+                placeholder: "-- Select Service --",
+                allowClear: true,
+                width: '100%'
+            });
+        }
+
+        // ✅ Row Remove
         $("#detailsTable").on("click", ".removeRowBtn", function () {
             $(this).closest("tr").remove();
+            calculateGrandTotal();
             $("#removedMessage").removeClass("d-none").fadeIn();
             setTimeout(() => { $("#removedMessage").fadeOut(); }, 2000);
-
-            calculateGrandTotal();
         });
 
-        // Qty বা Amount পরিবর্তন হলে TotalAmount হিসাব
+        // ✅ Qty বা Amount পরিবর্তন হলে Row Total হিসাব
         $("#detailsTable").on("input", ".qty, .amount", function () {
             let row = $(this).closest("tr");
             let qty = parseFloat(row.find(".qty").val()) || 0;
             let amount = parseFloat(row.find(".amount").val()) || 0;
             let total = qty * amount;
             row.find(".total").val(total.toFixed(2));
-
             calculateGrandTotal();
         });
 
-        $("#discount").on("input", function () {
-            calculateGrandTotal();
-        });
-
-        $("#discount").on("focus", function () {
-            $(this).select();
-        });
-
+        // ✅ ফিল্ডে ক্লিক করলে সিলেক্ট
         $("#detailsTable").on("focus", ".qty, .amount", function () {
             $(this).select();
         });
 
-        function calculateGrandTotal(){
-            let grandTotal=0;
+        $("#discount").on("focus", function () { $(this).select(); });
+        $("#paymentAmt").on("focus", function () { $(this).select(); });
 
-            $(".total").each(function(){
-                grandTotal+=parseFloat($(this).val()) ||0;
-            })
+        // ✅ Grand Total হিসাব
+        function calculateGrandTotal() {
+            let grandTotal = 0;
+            $(".total").each(function () {
+                grandTotal += parseFloat($(this).val()) || 0;
+            });
+            $("#GrandTotalAmt").val(grandTotal.toFixed(2));
+            calculateNetTotal();
+        }
 
-             $("#grandTotal").text(grandTotal.toFixed(2));
-              $("#GrandTotalAmt").val(grandTotal.toFixed(2));
+        // ✅ Discount দিলে Net Total
+        $("#discount").on("input", function () {
+            calculateNetTotal();
+        });
 
-
-            // Net total auto update
+        function calculateNetTotal() {
+            let grandTotal = parseFloat($("#GrandTotalAmt").val()) || 0;
             let discount = parseFloat($("#discount").val()) || 0;
             let netTotal = grandTotal - discount;
             if (netTotal < 0) netTotal = 0;
             $("#netTotal").val(netTotal.toFixed(2));
+            calculateDue();
+        }
+
+        // ✅ Payment দিলে Due হিসাব
+        $("#paymentAmt").on("input", function () {
+            calculateDue();
+        });
+
+        function calculateDue() {
+            let netTotal = parseFloat($("#netTotal").val()) || 0;
+            let payment = parseFloat($("#paymentAmt").val()) || 0;
+            let due = netTotal - payment;
+            if (due < 0) due = 0;
+            $("#dueAmt").val(due.toFixed(2));
         }
     });
 </script>

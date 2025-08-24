@@ -30,6 +30,7 @@ namespace HMSYSTEM.Controllers
             var serviceItem=_unitOfWork.serviceItemRepository.GetAll();
             ViewBag.ServiceItem = serviceItem;
 
+            
 
             return View();
         }
