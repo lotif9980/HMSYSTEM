@@ -18,5 +18,10 @@ namespace HMSYSTEM.Repository
           return _db.Bills
                 .Include(d => d.Patient).ToList();
         }
+
+        public List<Bill> GetSerial()
+        {
+            return _db.Bills.ToList();
+        }
     }
 }

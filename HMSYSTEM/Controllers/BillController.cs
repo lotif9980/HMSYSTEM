@@ -29,9 +29,19 @@ namespace HMSYSTEM.Controllers
             ViewBag.Patient = patient;
             var serviceItem=_unitOfWork.serviceItemRepository.GetAll();
             ViewBag.ServiceItem = serviceItem;
-
-            
-
+            string nextBillNo = "R000"; 
+            if (!string.IsNullOrEmpty(nextBillNo))
+            {
+                
+                var numberPart = nextBillNo.Substring(1); 
+                int number;
+                if (int.TryParse(numberPart, out number))
+                {
+                    number += 1; 
+                    nextBillNo = "R" + number.ToString("D4");
+                }
+            }
+            ViewBag.NextSerial = nextBillNo;
             return View();
         }
     }

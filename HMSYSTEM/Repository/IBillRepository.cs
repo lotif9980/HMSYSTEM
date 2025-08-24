@@ -5,5 +5,6 @@ namespace HMSYSTEM.Repository
     public interface IBillRepository
     {
         public List<Bill> GetAll();
+        public List<Bill> GetSerial();
     }
 }
