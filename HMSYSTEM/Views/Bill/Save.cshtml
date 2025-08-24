@@ -21,7 +21,7 @@
 
 <form asp-action="Save" method="post" id="myForm" enctype="multipart/form-data">
 
-    <input type="hidden" asp-for="PatientId" />
+   
  
     <!-- Prescription Info Card -->
     <div class="card shadow p-4  m-4">
@@ -96,21 +96,21 @@
             <div class="col-md-4">
                 <label asp-for="TotalAmount" id="totalAmt">Total Amount</label>
                 <div>
-                    <input class="form-control" id="GrandTotalAmt" name="totalAmt" type="text" readonly />
+                    <input class="form-control" asp-for="TotalAmount" id="GrandTotalAmt"  type="text" readonly />
                 </div>
             </div>
 
             <div class="col-md-4">
                 <label asp-for="Discount" id="totalAmt">Discount</label>
                 <div>
-                    <input class="form-control" id="discount" name="discount" type="text" value="0" />
+                    <input class="form-control" asp-for="Discount" id="discount"  type="text" value="0" />
                 </div>
             </div>
 
             <div class="col-md-4">
                 <label asp-for="NetAmount" id="NetAmount">Net Total</label>
                 <div>
-                    <input class="form-control" id="netTotal" name="netTotal" type="text" readonly />
+                    <input class="form-control" asp-for="NetAmount" id="netTotal" type="text" readonly />
                 </div>
             </div>
         </div>
@@ -126,13 +126,13 @@
             </div>
 
             <div class="col-md-4">
-                <label for="Payment">Payment Amount</label>
-                <input class="form-control" id="paymentAmt" type="number" value="0" />
+                <label asp-for="PaymentAmt">Payment Amount</label>
+                <input class="form-control" asp-for="PaymentAmt" id="paymentAmt" type="number" value="0" />
             </div>
 
             <div class="col-md-4">
-                <label for="Due">Due Amount</label>
-                <input class="form-control" id="dueAmt" type="number" readonly />
+                <label asp-for="DueAmount">Due Amount</label>
+                <input class="form-control" asp-for="DueAmount" id="dueAmt" type="number" readonly />
             </div>
         </div>
     </div>
@@ -179,13 +179,13 @@
 
             return `<tr>
                 <td>
-                    <select name="BillDetails[${index}].ServiceItemId" class="form-select service-select">
+                    <select name="BillDetail[${index}].ServiceItemId" class="form-select service-select">
                         ${serviceDropdown}
                     </select>
                 </td>
-                <td><input type="number" name="BillDetails[${index}].Qty" class="form-control qty" min="0" value="1" /></td>
-                <td><input type="number" name="BillDetails[${index}].Amount" class="form-control amount" min="0" value="0" /></td>
-                <td><input type="number" name="BillDetails[${index}].TotalAmount" class="form-control total" readonly value="0" /></td>
+                <td><input type="number" name="BillDetail[${index}].Qty" class="form-control qty" min="0" value="1" /></td>
+                <td><input type="number" name="BillDetail[${index}].Amount" class="form-control amount" min="0" value="0" /></td>
+                <td><input type="number" name="BillDetail[${index}].TotalAmount" class="form-control total" readonly value="0" /></td>
                 <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
             </tr>`;
         }

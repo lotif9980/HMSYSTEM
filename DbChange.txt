@@ -6,7 +6,7 @@
 USE [hmsystem]
 GO
 
-/****** Object:  Table [dbo].[Bills]    Script Date: 24-Aug-25 1:19:15 PM ******/
+/****** Object:  Table [dbo].[Bills]    Script Date: 24-Aug-25 3:45:45 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -25,6 +25,7 @@ CREATE TABLE [dbo].[Bills](
 	[DueAmount] [decimal](18, 0) NOT NULL,
 	[Status] [int] NULL,
 	[CreateDate] [date] NOT NULL,
+	[Note] [nvarchar](50) NULL,
  CONSTRAINT [PK_Bills] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -40,11 +41,14 @@ GO
 
 ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_PaymentAmt]  DEFAULT ((0)) FOR [PaymentAmt]
 GO
+
 ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_DueAmount]  DEFAULT ((0)) FOR [DueAmount]
 GO
 
 ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
 GO
+
+
 
 
 

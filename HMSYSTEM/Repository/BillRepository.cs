@@ -23,5 +23,11 @@ namespace HMSYSTEM.Repository
         {
             return _db.Bills.ToList();
         }
+
+        public void Save(Bill bill)
+        {
+            _db.Bills.Add(bill);
+            _db.SaveChanges();
+        }
     }
 }
