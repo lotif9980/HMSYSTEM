@@ -21,5 +21,18 @@ namespace HMSYSTEM.Controllers
             return View(data);
 
         }
+
+        [HttpGet]
+        public IActionResult Save()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Save(ServiceItem serviceItem)
+        {
+          _unitOfWork.serviceItemRepository.Save(serviceItem);
+           return RedirectToAction("Save");
+        }
     }
 }

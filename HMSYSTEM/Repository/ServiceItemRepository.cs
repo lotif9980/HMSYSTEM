@@ -15,5 +15,12 @@ namespace HMSYSTEM.Repository
         {
             return _db.ServiceItems.ToList();
         }
+
+        public ServiceItem Save(ServiceItem item)
+        {
+              _db.ServiceItems.Add(item);
+              _db.SaveChanges();
+             return item;
+        }
     }
 }

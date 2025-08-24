@@ -67,37 +67,83 @@ namespace HMSYSTEM.Controllers
             return View();
         }
 
+        #region old version Save Method
+        //[HttpPost]
+        //public IActionResult Save(BillViewModel model)
+        //{
+        //    var bill = new Bill
+        //    {
+        //        BillNo=model.BillNo,
+        //        BillDate=model.BillDate,
+        //        PatientId=model.PatientId,
+        //        TotalAmount=model.TotalAmount,
+        //        Discount=model.Discount,
+        //        NetAmount=model.NetAmount,
+        //        PaymentAmt=model.PaymentAmt,
+        //        DueAmount=model.DueAmount,
+        //        Note=model.Note
+        //    };
+
+        //    if(model.BillDetail != null && model.BillDetail.Count >0)
+        //    {
+        //        bill.BillDetails = model.BillDetail
+        //        .Where(d => d.ServiceItemId.HasValue)
+        //        .Select(d => new BillDetail
+        //        {
+        //            ServiceItemId=d.ServiceItemId.Value,
+        //            Amount=d.Amount,
+        //            Qty=d.Qty,
+        //            TotalAmount=d.TotalAmount,
+        //        }).ToList();
+        //    }
+
+        //    _unitOfWork.billRepository.Save(bill);
+        //    TempData["Message"] = "✅ Successfully added!";
+        //    TempData["MessageType"] = "success";
+
+        //    return RedirectToAction("Save");
+        //}
+
+        #endregion
+
 
         [HttpPost]
         public IActionResult Save(BillViewModel model)
         {
-            var bill = new Bill
+            if (model == null || model.PatientId == null)
             {
-                BillNo=model.BillNo,
-                BillDate=model.BillDate,
-                PatientId=model.PatientId,
-                TotalAmount=model.TotalAmount,
-                Discount=model.Discount,
-                NetAmount=model.NetAmount,
-                PaymentAmt=model.PaymentAmt,
-                DueAmount=model.DueAmount,
-                Note=model.Note
-            };
-
-            if(model.BillDetail != null && model.BillDetail.Count >0)
-            {
-                bill.BillDetails = model.BillDetail
-                .Where(d => d.ServiceItemId.HasValue)
-                .Select(d => new BillDetail
-                {
-                    ServiceItemId=d.ServiceItemId.Value,
-                    Amount=d.Amount,
-                    Qty=d.Qty,
-                    TotalAmount=d.TotalAmount,
-                }).ToList();
+                TempData["Message"] = "❌ Invalid data!";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Save");
             }
 
+            // Map ViewModel to Entity
+            var bill = new Bill
+            {
+                BillNo = model.BillNo,
+                BillDate = model.BillDate,
+                PatientId = model.PatientId,
+                TotalAmount = model.TotalAmount ?? 0,
+                Discount = model.Discount ?? 0,
+                NetAmount = model.NetAmount ?? 0,
+                PaymentAmt = model.PaymentAmt ?? 0,
+                DueAmount = model.DueAmount ?? 0,
+                Note = model.Note,
+                Status = 1,
+                BillDetails = model.BillDetail
+                    .Where(d => d.ServiceItemId.HasValue)
+                    .Select(d => new BillDetail
+                    {
+                        ServiceItemId = d.ServiceItemId.Value,
+                        Amount = d.Amount ?? 0,
+                        Qty = d.Qty ?? 0,
+                        TotalAmount = d.TotalAmount ?? 0
+                        // Do NOT assign Id
+                    }).ToList()
+            };
+
             _unitOfWork.billRepository.Save(bill);
+
             TempData["Message"] = "✅ Successfully added!";
             TempData["MessageType"] = "success";
 
