@@ -55,7 +55,7 @@
     <div class="card shadow p-4 m-4">
         <div class="">
             <!-- Hidden medicine dropdown template -->
-            <select id="medicineTemplate" class="form-select d-none">
+            <select id="serviceList" class="form-select d-none">
                 <option value="">-- Select Medicine --</option>
                 @foreach (var med in billList)
                 {
@@ -88,7 +88,30 @@
 
     <div class="card shadow p-4 m-4">
         <div class="row g-3">
-            <div class="col-md-6">
+
+            <div class="col-md-4">
+                <label asp-for="TotalAmount" id="totalAmt">Total Amount</label>
+                <div>
+                    <input class="form-control" id="GrandTotalAmt" name="totalAmt" type="text" readonly />
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Discount" id="totalAmt">Discount</label>
+                <div>
+                    <input class="form-control" id="discount" name="discount" type="text" value="0" />
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="NetAmount" id="NetAmount">Net Total</label>
+                <div>
+                    <input class="form-control" id="netTotal" name="netTotal" type="text" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
                 <label for="Note">Note</label>
                 <div>
                     <input class="form-control" name="Note" type="text" />
@@ -96,6 +119,16 @@
                         If you use (.) then a new line will be created.
                     </p>
                 </div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="Payment">Payment Amount</label>
+                <input class="form-control" id="paymentAmt" type="number" />
+            </div>
+
+            <div class="col-md-4">
+                <label for="Due">Due Amount</label>
+                <input class="form-control" id="dueAmt" type="number" readonly />
             </div>
         </div>
     </div>
@@ -123,7 +156,7 @@
 
         // Row তৈরি ফাংশন
         function createRow(index) {
-            let serviceDropdown = $("#medicineTemplate").html();
+            let serviceDropdown = $("#serviceList").html();
 
             return `<tr>
                 <td>
@@ -149,6 +182,8 @@
 
             $("#alertMessage").removeClass("d-none").fadeIn();
             setTimeout(() => { $("#alertMessage").fadeOut(); }, 2000);
+
+            calculateGrandTotal();
         });
 
         // Row Remove
@@ -156,6 +191,8 @@
             $(this).closest("tr").remove();
             $("#removedMessage").removeClass("d-none").fadeIn();
             setTimeout(() => { $("#removedMessage").fadeOut(); }, 2000);
+
+            calculateGrandTotal();
         });
 
         // Qty বা Amount পরিবর্তন হলে TotalAmount হিসাব
@@ -165,10 +202,38 @@
             let amount = parseFloat(row.find(".amount").val()) || 0;
             let total = qty * amount;
             row.find(".total").val(total.toFixed(2));
+
+            calculateGrandTotal();
         });
 
-          $("#detailsTable").on("focus", ".qty, .amount", function () {
+        $("#discount").on("input", function () {
+            calculateGrandTotal();
+        });
+
+        $("#discount").on("focus", function () {
             $(this).select();
         });
+
+        $("#detailsTable").on("focus", ".qty, .amount", function () {
+            $(this).select();
+        });
+
+        function calculateGrandTotal(){
+            let grandTotal=0;
+
+            $(".total").each(function(){
+                grandTotal+=parseFloat($(this).val()) ||0;
+            })
+
+             $("#grandTotal").text(grandTotal.toFixed(2));
+              $("#GrandTotalAmt").val(grandTotal.toFixed(2));
+
+
+            // Net total auto update
+            let discount = parseFloat($("#discount").val()) || 0;
+            let netTotal = grandTotal - discount;
+            if (netTotal < 0) netTotal = 0;
+            $("#netTotal").val(netTotal.toFixed(2));
+        }
     });
 </script>
