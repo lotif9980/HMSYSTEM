@@ -149,5 +149,92 @@ namespace HMSYSTEM.Controllers
 
             return RedirectToAction("Save");
         }
+
+        public IActionResult SaveFromAdmission(int patientId)
+        {
+            // 1️⃣ Patient ও ServiceItem ViewBag এ পাঠানো
+            ViewBag.Patient = _unitOfWork.PatienRepo.getAll();
+            ViewBag.ServiceItem = _unitOfWork.serviceItemRepository.GetAll();
+
+            // 2️⃣ আগের Bill check
+            var existingBill = _unitOfWork.billRepository
+                                .GetActiveBillByPatient(patientId);
+
+            BillViewModel model;
+
+            if (existingBill != null)
+            {
+                // আগের Bill load
+                model = new BillViewModel
+                {
+                    Id = existingBill.Id,
+                    BillNo = existingBill.BillNo,      // নতুন BillNo generate করার দরকার নেই
+                    BillDate = existingBill.BillDate,
+                    PatientId = existingBill.PatientId,
+                    TotalAmount = existingBill.TotalAmount,
+                    Discount = existingBill.Discount,
+                    NetAmount = existingBill.NetAmount,
+                    PaymentAmt = existingBill.PaymentAmt,
+                    DueAmount = existingBill.DueAmount,
+                    Note = existingBill.Note,
+                    BillDetail = existingBill.BillDetails.Select(d => new BillDetailViewModel
+                    {
+                        Id = d.Id,
+                        BillId = d.BillId,
+                        ServiceItemId = d.ServiceItemId,
+                        Qty = d.Qty ?? 0,
+                        Amount = d.Amount ?? 0,
+                        TotalAmount = d.TotalAmount ?? 0
+                    }).ToList()
+                };
+            }
+            else
+            {
+                // শুধুমাত্র যদি কোন Bill না থাকে
+                model = new BillViewModel
+                {
+                    BillDate = DateTime.Now,
+                    PatientId = patientId
+                };
+            }
+
+            return View("Save", model); // Save view ব্যবহার হবে
+        }
+
+
+
+        [HttpPost]
+        public IActionResult Savea(BillViewModel model)
+        {
+            if (model == null || model.PatientId == null)
+                return RedirectToAction("Save");
+
+            var bill = new Bill
+            {
+                BillNo = model.BillNo,
+                BillDate = model.BillDate,
+                PatientId = model.PatientId,
+                TotalAmount = model.TotalAmount ?? 0,
+                Discount = model.Discount ?? 0,
+                NetAmount = model.NetAmount ?? 0,
+                PaymentAmt = model.PaymentAmt ?? 0,
+                DueAmount = model.DueAmount ?? 0,
+                Note = model.Note,
+                Status = 1,
+                BillDetails = model.BillDetail
+                    .Where(d => d.ServiceItemId.HasValue)
+                    .Select(d => new BillDetail
+                    {
+                        ServiceItemId = d.ServiceItemId.Value,
+                        Qty = d.Qty ?? 0,
+                        Amount = d.Amount ?? 0,
+                        TotalAmount = d.TotalAmount ?? 0
+                    }).ToList()
+            };
+
+            _unitOfWork.billRepository.Save(bill);
+
+            return RedirectToAction("Save");
+        }
     }
 }

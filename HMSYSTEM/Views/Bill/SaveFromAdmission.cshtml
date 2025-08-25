@@ -1,0 +1,180 @@
+﻿@model HMSYSTEM.ViewModels.BillViewModel
+
+@{
+    var serviceList = ViewBag.ServiceItem as List<HMSYSTEM.Models.ServiceItem>;
+    var patientList = ViewBag.Patient as List<HMSYSTEM.Models.Patient>;
+}
+
+<div class="position-fixed top-0 end-0 m-3" style="z-index: 9999; width:350px">
+    <div class="alert alert-success alert-dismissible d-none" id="alertMessage">✅ Successfully added!</div>
+</div>
+
+<form asp-action="Save" method="post" id="billForm">
+
+    <input type="hidden" asp-for="Id" />
+
+    <!-- Master Info -->
+    <div class="card p-4 m-4">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label>Bill Date</label>
+                <input asp-for="BillDate" class="form-control" type="text" value="@Model.BillDate.ToString("dd-MM-yyyy")" />
+            </div>
+            <div class="col-md-6">
+                <label>Bill No</label>
+                <input asp-for="BillNo" value="@Model.BillNo" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+                <label>Patient</label>
+                <select asp-for="PatientId" class="form-select">
+                    <option value="">--Select Patient--</option>
+                    @foreach (var p in patientList)
+                    {
+                        <option value="@p.PatientID" selected="@(p.PatientID == Model.PatientId ? "selected" : null)">
+                            @p.FirstName @p.LastName
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bill Details Table -->
+    <div class="card p-4 m-4">
+        <table class="table table-bordered" id="detailsTable">
+            <thead>
+                <tr>
+                    <th>Service Item</th>
+                    <th>Qty</th>
+                    <th>Amount</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.BillDetail.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <select name="BillDetail[@i].ServiceItemId" class="form-select service-select">
+                                <option value="">--Select--</option>
+                                @foreach (var s in serviceList)
+                                {
+                                    <option value="@s.Id" selected="@(s.Id == Model.BillDetail[i].ServiceItemId ? "selected" : null)">
+                                        @s.ItemName
+                                    </option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="BillDetail[@i].Qty" class="form-control qty" value="@Model.BillDetail[i].Qty" />
+                        </td>
+                        <td>
+                            <input type="number" name="BillDetail[@i].Amount" class="form-control amount" value="@Model.BillDetail[i].Amount" />
+                        </td>
+                        <td>
+                            <input type="number" name="BillDetail[@i].TotalAmount" class="form-control total" value="@Model.BillDetail[i].TotalAmount" readonly />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger removeRowBtn">X</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-primary" id="addRowBtn">+ Add Service</button>
+    </div>
+
+    <!-- Total / Discount / Net / Payment / Due -->
+    <div class="card p-4 m-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label>Total Amount</label>
+                <input type="text" asp-for="TotalAmount" class="form-control" id="GrandTotalAmt" readonly />
+            </div>
+            <div class="col-md-3">
+                <label>Discount</label>
+                <input type="number" asp-for="Discount" class="form-control" id="discount" value="@Model.Discount ?? 0" />
+            </div>
+            <div class="col-md-3">
+                <label>Net Amount</label>
+                <input type="text" asp-for="NetAmount" class="form-control" id="netTotal" readonly />
+            </div>
+            <div class="col-md-3">
+                <label>Payment</label>
+                <input type="number" asp-for="PaymentAmt" class="form-control" id="paymentAmt" value="@Model.PaymentAmt ?? 0" />
+            </div>
+            <div class="col-md-3">
+                <label>Due</label>
+                <input type="number" asp-for="DueAmount" class="form-control" id="dueAmt" readonly />
+            </div>
+        </div>
+    </div>
+
+    <div class="card p-4 m-4 text-end">
+        <button type="submit" class="btn btn-warning">Save</button>
+        <button type="reset" class="btn btn-danger">Reset</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+
+        let rowIndex = @Model.BillDetail.Count;
+
+        function calculateRowTotal(row) {
+            let qty = parseFloat(row.find(".qty").val()) || 0;
+            let amount = parseFloat(row.find(".amount").val()) || 0;
+            row.find(".total").val((qty*amount).toFixed(2));
+        }
+
+        function calculateGrandTotal() {
+            let grand = 0;
+            $(".total").each(function() {
+                grand += parseFloat($(this).val()) || 0;
+            });
+            $("#GrandTotalAmt").val(grand.toFixed(2));
+
+            let discount = parseFloat($("#discount").val()) || 0;
+            let net = grand - discount;
+            $("#netTotal").val(net.toFixed(2));
+
+            let payment = parseFloat($("#paymentAmt").val()) || 0;
+            let due = net - payment;
+            $("#dueAmt").val(due < 0 ? 0 : due.toFixed(2));
+        }
+
+        $("#detailsTable").on("input", ".qty, .amount", function() {
+            calculateRowTotal($(this).closest("tr"));
+            calculateGrandTotal();
+        });
+
+        $("#discount, #paymentAmt").on("input", function() { calculateGrandTotal(); });
+
+        $("#detailsTable").on("click", ".removeRowBtn", function() {
+            $(this).closest("tr").remove();
+            calculateGrandTotal();
+        });
+
+        $("#addRowBtn").click(function() {
+            let optionsHtml = '';
+            @foreach(var s in serviceList) {
+                @:optionsHtml += '<option value="@s.Id">@s.ItemName</option>';
+            }
+
+            let newRow = `<tr>
+                <td><select name="BillDetail[${rowIndex}].ServiceItemId" class="form-select service-select"><option value="">--Select--</option>${optionsHtml}</select></td>
+                <td><input type="number" name="BillDetail[${rowIndex}].Qty" class="form-control qty" value="1"/></td>
+                <td><input type="number" name="BillDetail[${rowIndex}].Amount" class="form-control amount" value="0"/></td>
+                <td><input type="number" name="BillDetail[${rowIndex}].TotalAmount" class="form-control total" value="0" readonly/></td>
+                <td><button type="button" class="btn btn-danger removeRowBtn">X</button></td>
+            </tr>`;
+            $("#detailsTable tbody").append(newRow);
+            rowIndex++;
+        });
+
+        // Initial calculation for existing rows
+        $("#detailsTable tbody tr").each(function() { calculateRowTotal($(this)); });
+        calculateGrandTotal();
+    });
+</script>

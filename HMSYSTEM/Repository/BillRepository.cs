@@ -72,5 +72,12 @@ namespace HMSYSTEM.Repository
             }
         }
 
+
+        public Bill GetActiveBillByPatient(int patientId)
+        {
+            return _db.Bills
+                .Include(b => b.BillDetails) // EF Core will include child
+                .FirstOrDefault(b => b.PatientId == patientId && b.Status == 1);
+        }
     }
 }

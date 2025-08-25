@@ -1,4 +1,5 @@
-﻿using HMSYSTEM.Models;
+﻿using HMSYSTEM.Data;
+using HMSYSTEM.Models;
 
 namespace HMSYSTEM.Repository
 {
@@ -7,5 +8,7 @@ namespace HMSYSTEM.Repository
         public List<Bill> GetAll();
         public List<Bill> GetSerial();
         public void Save(Bill bill);
+        public Bill GetActiveBillByPatient(int patientId);
+        
     }
 }

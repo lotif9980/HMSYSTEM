@@ -54,6 +54,13 @@
                                             <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Details">
                                                 <i class="fa fa-eye"></i>
                                             </a>
+
+                                            <a class="btn btn-info ms-2"
+                                               asp-controller="Bill"
+                                               asp-action="SaveFromAdmission"
+                                               asp-route-patientId="@item.PatientId">
+                                                <i class="fa fa-file-invoice"></i> Bill
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
