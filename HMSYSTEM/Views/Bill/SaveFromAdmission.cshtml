@@ -5,7 +5,7 @@
     var patientList = ViewBag.Patient as List<HMSYSTEM.Models.Patient>;
 }
 
-<form asp-action="Save" method="post" id="billForm">
+<form asp-action="UpdateSave" method="post" id="billForm">
     <input type="hidden" asp-for="Id" />
 
     <!-- Master Info -->
@@ -21,13 +21,13 @@
             </div>
             <div class="col-md-6">
                 <label>Patient</label>
-                <select asp-for="PatientId" class="form-select">
+                <select asp-for="PatientId" class="form-select" disabled>
                     <option value="">--Select Patient--</option>
                     @foreach (var p in patientList)
                     {
                         if (p.PatientID == Model.PatientId)
                         {
-                            <option value="@p.PatientID" selected>@p.FirstName @p.LastName</option>
+                            <option  value="@p.PatientID" selected>@p.FirstName @p.LastName</option>
                         }
                         else
                         {
@@ -35,6 +35,7 @@
                         }
                     }
                 </select>
+                <input type="hidden" asp-for="PatientId" />
             </div>
 
         </div>
@@ -75,13 +76,15 @@
                         <td><input type="number" name="BillDetail[@i].Qty" class="form-control qty" value="@Model.BillDetail[i].Qty" /></td>
                         <td><input type="number" name="BillDetail[@i].Amount" class="form-control amount" value="@Model.BillDetail[i].Amount" /></td>
                         <td><input type="number" name="BillDetail[@i].TotalAmount" class="form-control total" value="@Model.BillDetail[i].TotalAmount" readonly /></td>
-                        <td><button type="button" class="btn btn-danger removeRowBtn">X</button></td>
+                        <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
                     </tr>
                 }
 
             </tbody>
         </table>
-        <button type="button" class="btn btn-primary" id="addRowBtn">+ Add Service</button>
+        <div class="d-flex justify-content-end">
+            <button type="button" id="addRowBtn" class="btn btn-primary btn-sm">+</button>
+        </div>
     </div>
 
     <!-- Totals -->
@@ -93,7 +96,7 @@
             </div>
             <div class="col-md-3">
                 <label>Discount</label>
-                <input type="number" asp-for="Discount" class="form-control" id="discount" value="@Model.Discount ?? 0" />
+                <input type="number" asp-for="Discount" class="form-control" id="discount"  />
             </div>
             <div class="col-md-3">
                 <label>Net Amount</label>
@@ -101,7 +104,7 @@
             </div>
             <div class="col-md-3">
                 <label>Payment</label>
-                <input type="number" asp-for="PaymentAmt" class="form-control" id="paymentAmt" value="@Model.PaymentAmt ?? 0" />
+                <input type="number" asp-for="PaymentAmt" class="form-control" id="paymentAmt"  />
             </div>
             <div class="col-md-3">
                 <label>Due</label>
@@ -110,9 +113,11 @@
         </div>
     </div>
 
-    <div class="card p-4 m-4 text-end">
-        <button type="submit" class="btn btn-warning">Save</button>
-        <button type="reset" class="btn btn-danger">Reset</button>
+    <div class="card shadow action-buttons m-4 ">
+        <div class="card-body d-flex justify-content-end gap-2">
+            <button type="submit" class="btn btn-warning">Save</button>
+            <button type="reset" class="btn btn-danger">Reset</button>
+        </div>
     </div>
 </form>
 
@@ -145,6 +150,21 @@ $(document).ready(function () {
 
     $("#discount, #paymentAmt").on("input", calculateGrandTotal);
 
+        $("#detailsTable").on('focus',".qty, .amount",function(){
+            $(this).select();
+        })
+
+            $("#discount").click('focus',function(){
+                $(this).select();
+            })
+
+            $("#paymentAmt").click('focus',function(){
+                $(this).select();
+            })
+
+
+
+
     $("#detailsTable").on("click", ".removeRowBtn", function () {
         $(this).closest("tr").remove();
         calculateGrandTotal();
@@ -162,7 +182,7 @@ $(document).ready(function () {
             <td><input type="number" name="BillDetail[${rowIndex}].Qty" class="form-control qty" value="1"/></td>
             <td><input type="number" name="BillDetail[${rowIndex}].Amount" class="form-control amount" value="0"/></td>
             <td><input type="number" name="BillDetail[${rowIndex}].TotalAmount" class="form-control total" value="0" readonly/></td>
-            <td><button type="button" class="btn btn-danger removeRowBtn">X</button></td>
+                <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
         </tr>`;
         $("#detailsTable tbody").append(newRow);
         rowIndex++;

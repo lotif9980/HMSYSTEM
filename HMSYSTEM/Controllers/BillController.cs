@@ -167,6 +167,8 @@ namespace HMSYSTEM.Controllers
                 TotalAmount = existingBill?.TotalAmount ?? 0,
                 Discount = existingBill?.Discount ?? 0,
                 NetAmount = existingBill?.NetAmount ?? 0,
+                PaymentAmt=existingBill.PaymentAmt ?? 0,
+                DueAmount=existingBill.DueAmount ?? 0,
                 Status = existingBill?.Status ?? 1,
                 BillDetail = new List<BillDetailViewModel>()
             };
@@ -196,12 +198,18 @@ namespace HMSYSTEM.Controllers
 
 
 
+  
         [HttpPost]
-        public IActionResult Savea(BillViewModel model)
+        public IActionResult UpdateSave(BillViewModel model)
         {
             if (model == null || model.PatientId == null)
+            {
+                TempData["Message"] = "❌ Invalid data!";
+                TempData["MessageType"] = "danger";
                 return RedirectToAction("Save");
+            }
 
+            // Map ViewModel to Entity
             var bill = new Bill
             {
                 BillNo = model.BillNo,
@@ -219,13 +227,17 @@ namespace HMSYSTEM.Controllers
                     .Select(d => new BillDetail
                     {
                         ServiceItemId = d.ServiceItemId.Value,
-                        Qty = d.Qty ?? 0,
                         Amount = d.Amount ?? 0,
+                        Qty = d.Qty ?? 0,
                         TotalAmount = d.TotalAmount ?? 0
+                        // Do NOT assign Id
                     }).ToList()
             };
 
             _unitOfWork.billRepository.Save(bill);
+
+            TempData["Message"] = "✅ Successfully added!";
+            TempData["MessageType"] = "success";
 
             return RedirectToAction("Save");
         }

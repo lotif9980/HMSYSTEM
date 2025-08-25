@@ -8,6 +8,7 @@ namespace HMSYSTEM.Repository
         public List<Bill> GetAll();
         public List<Bill> GetSerial();
         public void Save(Bill bill);
+        //public void UpdateSave(Bill bill);
         public Bill GetActiveBillByPatient(int patientId);
         
     }
