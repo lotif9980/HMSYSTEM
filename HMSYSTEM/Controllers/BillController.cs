@@ -152,32 +152,30 @@ namespace HMSYSTEM.Controllers
 
         public IActionResult SaveFromAdmission(int patientId)
         {
-            // 1️⃣ Patient ও ServiceItem ViewBag এ পাঠানো
-            ViewBag.Patient = _unitOfWork.PatienRepo.getAll();
-            ViewBag.ServiceItem = _unitOfWork.serviceItemRepository.GetAll();
+            var patients = _unitOfWork.PatienRepo.getAll();
+            var services = _unitOfWork.serviceItemRepository.GetAll();
 
-            // 2️⃣ আগের Bill check
             var existingBill = _unitOfWork.billRepository
-                                .GetActiveBillByPatient(patientId);
+                .GetActiveBillByPatient(patientId); // এখানে Include দিয়ে BillDetails আনতে হবে
 
-            BillViewModel model;
-
-            if (existingBill != null)
+            var viewModel = new BillViewModel
             {
-                // আগের Bill load
-                model = new BillViewModel
+                Id = existingBill?.Id ?? 0,
+                PatientId = patientId,
+                BillNo = existingBill?.BillNo ?? "",
+                BillDate = existingBill?.BillDate ?? DateTime.Now,
+                TotalAmount = existingBill?.TotalAmount ?? 0,
+                Discount = existingBill?.Discount ?? 0,
+                NetAmount = existingBill?.NetAmount ?? 0,
+                Status = existingBill?.Status ?? 1,
+                BillDetail = new List<BillDetailViewModel>()
+            };
+
+            if (existingBill != null && existingBill.BillDetails != null)
+            {
+                foreach (var d in existingBill.BillDetails)
                 {
-                    Id = existingBill.Id,
-                    BillNo = existingBill.BillNo,      // নতুন BillNo generate করার দরকার নেই
-                    BillDate = existingBill.BillDate,
-                    PatientId = existingBill.PatientId,
-                    TotalAmount = existingBill.TotalAmount,
-                    Discount = existingBill.Discount,
-                    NetAmount = existingBill.NetAmount,
-                    PaymentAmt = existingBill.PaymentAmt,
-                    DueAmount = existingBill.DueAmount,
-                    Note = existingBill.Note,
-                    BillDetail = existingBill.BillDetails.Select(d => new BillDetailViewModel
+                    viewModel.BillDetail.Add(new BillDetailViewModel
                     {
                         Id = d.Id,
                         BillId = d.BillId,
@@ -185,21 +183,16 @@ namespace HMSYSTEM.Controllers
                         Qty = d.Qty ?? 0,
                         Amount = d.Amount ?? 0,
                         TotalAmount = d.TotalAmount ?? 0
-                    }).ToList()
-                };
-            }
-            else
-            {
-                // শুধুমাত্র যদি কোন Bill না থাকে
-                model = new BillViewModel
-                {
-                    BillDate = DateTime.Now,
-                    PatientId = patientId
-                };
+                    });
+                }
             }
 
-            return View("Save", model); // Save view ব্যবহার হবে
+            ViewBag.Patient = patients;
+            ViewBag.ServiceItem = services;
+
+            return View(viewModel);
         }
+
 
 
 
