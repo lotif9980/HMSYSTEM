@@ -9,6 +9,7 @@ namespace HMSYSTEM.ViewModels
         public int Id { get; set; }
         public DateTime BillDate { get; set; }
         public string BillNo { get; set; }
+        public int BedId { get; set; }
         public int? PatientId { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? Discount { get; set; }

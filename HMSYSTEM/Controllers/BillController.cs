@@ -150,10 +150,12 @@ namespace HMSYSTEM.Controllers
             return RedirectToAction("Save");
         }
 
-        public IActionResult SaveFromAdmission(int patientId)
+        [HttpGet]
+        public IActionResult SaveFromAdmission(int patientId,int bedId)
         {
             var patients = _unitOfWork.PatienRepo.getAll();
             var services = _unitOfWork.serviceItemRepository.GetAll();
+            
 
             var existingBill = _unitOfWork.billRepository
                 .GetActiveBillByPatient(patientId); // এখানে Include দিয়ে BillDetails আনতে হবে
@@ -238,7 +240,7 @@ namespace HMSYSTEM.Controllers
 
             if (bill.Status == 2)
             {
-               // code uncomplete 
+                _unitOfWork.bedRepository.StatusUpdate(model.BedId);
             }
 
             TempData["Message"] = "✅ Successfully added!";
