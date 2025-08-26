@@ -10,6 +10,6 @@ namespace HMSYSTEM.Repository
         public void Save(Bill bill);
         //public void UpdateSave(Bill bill);
         public Bill GetActiveBillByPatient(int patientId);
-        public void UpdateSave(Bill bill);
+        public Bill UpdateSave(Bill bill);
     }
 }

@@ -236,9 +236,9 @@ namespace HMSYSTEM.Controllers
                     }).ToList()
             };
 
-            _unitOfWork.billRepository.UpdateSave(bill);
+             var data= _unitOfWork.billRepository.UpdateSave(bill);
 
-            if (bill.Status == 2)
+            if (data.Status == 2)
             {
                 _unitOfWork.bedRepository.StatusUpdate(model.BedId);
             }

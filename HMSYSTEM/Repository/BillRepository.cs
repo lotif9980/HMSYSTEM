@@ -145,20 +145,21 @@ namespace HMSYSTEM.Repository
             _db.SaveChanges();
         }
 
-        public void UpdateSave(Bill bill)
+        public Bill UpdateSave(Bill bill)
         {
+            // 🔹 Check if there is an existing active bill for the patient
             var existingBill = _db.Bills
                 .Include(b => b.BillDetails)
                 .FirstOrDefault(b => b.PatientId == bill.PatientId && b.Status == 1);
 
             if (existingBill != null)
             {
-                //  Master Fields Update
+                // 🔹 Update Master Fields
                 existingBill.Discount = bill.Discount ?? 0;
-                existingBill.PaymentAmt = bill.PaymentAmt ?? 0; 
+                existingBill.PaymentAmt = bill.PaymentAmt ?? 0; // ⚠️ Replace or accumulate if needed
                 existingBill.BillDate = bill.BillDate;
 
-                //  Sync BillDetails (Add or Update)
+                // 🔹 Sync BillDetails (Add or Update)
                 foreach (var d in bill.BillDetails)
                 {
                     var existingDetail = existingBill.BillDetails
@@ -200,15 +201,20 @@ namespace HMSYSTEM.Repository
                 existingBill.Status = (due == 0 && netAmount > 0) ? 2 : 1;
 
                 _db.Bills.Update(existingBill);
+
+                _db.SaveChanges();
+
+                return existingBill; // ✅ Return updated Bill
             }
             else
             {
                 // 🔹 New Bill Add
                 _db.Bills.Add(bill);
+                _db.SaveChanges();
+                return bill; // ✅ Return new Bill
             }
-
-            _db.SaveChanges();
         }
+
 
 
 
