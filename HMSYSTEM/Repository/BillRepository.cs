@@ -153,12 +153,12 @@ namespace HMSYSTEM.Repository
 
             if (existingBill != null)
             {
-                // 🔹 Master Fields Update
+                //  Master Fields Update
                 existingBill.Discount = bill.Discount ?? 0;
-                existingBill.PaymentAmt = bill.PaymentAmt ?? 0; // ⚠️ এখানে Payment Replace হচ্ছে
+                existingBill.PaymentAmt = bill.PaymentAmt ?? 0; 
                 existingBill.BillDate = bill.BillDate;
 
-                // 🔹 Sync BillDetails (Add or Update)
+                //  Sync BillDetails (Add or Update)
                 foreach (var d in bill.BillDetails)
                 {
                     var existingDetail = existingBill.BillDetails

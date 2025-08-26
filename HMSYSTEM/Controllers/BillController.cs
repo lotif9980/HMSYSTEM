@@ -236,6 +236,11 @@ namespace HMSYSTEM.Controllers
 
             _unitOfWork.billRepository.UpdateSave(bill);
 
+            if (bill.Status == 2)
+            {
+               // code uncomplete 
+            }
+
             TempData["Message"] = "✅ Successfully added!";
             TempData["MessageType"] = "success";
 
