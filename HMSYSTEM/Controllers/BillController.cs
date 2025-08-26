@@ -234,7 +234,7 @@ namespace HMSYSTEM.Controllers
                     }).ToList()
             };
 
-            _unitOfWork.billRepository.Save(bill);
+            _unitOfWork.billRepository.UpdateSave(bill);
 
             TempData["Message"] = "✅ Successfully added!";
             TempData["MessageType"] = "success";
