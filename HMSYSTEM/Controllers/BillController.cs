@@ -17,9 +17,19 @@ namespace HMSYSTEM.Controllers
         public IActionResult Index(int page=1, int pageSize=10)
         {
            var data =_unitOfWork.billRepository.GetAll()
-                    .OrderBy(p=>p.Id)
+                    .OrderByDescending(p=>p.Id)
                     .AsQueryable()
                     .ToPagedList(page,pageSize);
+
+            return View(data);
+        }
+
+        public IActionResult CompleteList(int page=1, int pageSize = 10)
+        {
+            var data = _unitOfWork.billRepository.CompliteList()
+                    .OrderByDescending(p => p.Id)
+                    .AsQueryable()
+                    .ToPagedList(page, pageSize);
 
             return View(data);
         }
@@ -159,7 +169,12 @@ namespace HMSYSTEM.Controllers
 
             var existingBill = _unitOfWork.billRepository
                 .GetActiveBillByPatient(patientId); // এখানে Include দিয়ে BillDetails আনতে হবে
-
+            if (existingBill == null)
+            {
+                TempData["Message"] = "❌ Data not Found";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Index", "Admission");
+            }
             var viewModel = new BillViewModel
             {
                 Id = existingBill?.Id ?? 0,

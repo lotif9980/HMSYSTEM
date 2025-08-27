@@ -20,7 +20,7 @@ namespace HMSYSTEM.Controllers
         {
 
             var totalAdmission = _unitOfWork.admissionRepository.getAll()
-                                   .OrderBy(d => d.Id)
+                                   .OrderByDescending(d => d.Id)
                                    .AsQueryable()
                                    .ToPagedList(page, pageSize);
            

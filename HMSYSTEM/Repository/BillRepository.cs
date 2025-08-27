@@ -1,5 +1,6 @@
 ﻿using HMSYSTEM.Data;
 using HMSYSTEM.Models;
+using HMSYSTEM.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMSYSTEM.Repository
@@ -16,7 +17,13 @@ namespace HMSYSTEM.Repository
         public List<Bill> GetAll()
         {
           return _db.Bills
-                .Include(d => d.Patient).ToList();
+                .Include(d => d.Patient).Where(p=>p.Status==1).ToList();
+        }
+
+        public List<Bill> CompliteList()
+        {
+            return _db.Bills
+                   .Include(d => d.Patient).Where(p => p.Status == 2).ToList();
         }
 
         public List<Bill> GetSerial()
@@ -75,7 +82,7 @@ namespace HMSYSTEM.Repository
 
         #endregion
         public void Save(Bill bill)
-        {
+            {
             var existingBill = _db.Bills
                 .Include(b => b.BillDetails)
                 .FirstOrDefault(b => b.PatientId == bill.PatientId && b.Status == 1);
@@ -221,8 +228,13 @@ namespace HMSYSTEM.Repository
         public Bill GetActiveBillByPatient(int patientId)
         {
             return _db.Bills
-                .Include(b => b.BillDetails) // EF Core will include child
+                .Include(b => b.BillDetails) 
                 .FirstOrDefault(b => b.PatientId == patientId && b.Status == 1);
+        }
+
+        public BillViewModel Details(int id)
+        {
+           
         }
     }
 }

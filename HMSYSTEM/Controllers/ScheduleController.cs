@@ -88,7 +88,7 @@ namespace HMSYSTEM.Controllers
         public IActionResult Delete(int Id)
         {
             _unitofWork.scheduleRepo.Delete(Id);
-            TempData["Message"] = "✅ Successfully Delete!";
+            TempData["Message"] = "❌ Successfully Delete!";
             TempData["MessageType"] = "danger";
 
 
