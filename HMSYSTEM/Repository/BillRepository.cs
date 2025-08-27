@@ -245,6 +245,7 @@ namespace HMSYSTEM.Repository
                                  //PatientName=b.Patient.FirstName +""+b.Patient.LastName,
                                  PatientName = p != null ? p.FirstName + " " + p.LastName : null,
                                  PatientPhoneNumber =b.Patient.Phone,
+                                 Address=p.Address,
                                  BillDate=b.BillDate,
                                  BillNo=b.BillNo,
                                  TotalAmount=b.TotalAmount,

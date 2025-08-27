@@ -20,6 +20,7 @@ namespace HMSYSTEM.ViewModels
         public string? Note { get; set; }
         public string ? PatientName {  get; set; }
         public string ? PatientPhoneNumber {  get; set; }
+        public string ? Address { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? CreateDate { get; set; }
 
