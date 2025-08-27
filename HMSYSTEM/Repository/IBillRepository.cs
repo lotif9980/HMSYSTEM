@@ -7,6 +7,7 @@ namespace HMSYSTEM.Repository
     public interface IBillRepository
     {
         public List<Bill> GetAll();
+   
         public List<Bill> CompliteList();
         public List<Bill> GetSerial();
         public void Save(Bill bill);

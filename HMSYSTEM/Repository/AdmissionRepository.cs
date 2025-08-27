@@ -57,5 +57,14 @@ namespace HMSYSTEM.Repository
         {
             return await _db.Admissions.AnyAsync(b=>b.PatientId==patientId && b.Status==1);
         }
+
+        public bool UpdateAdmissionStatus(int id)
+        {
+           var data= _db.Admissions.FirstOrDefault(d=>d.Id==id);
+            data.Status = data.Status == 1 ? 0 : 1;
+            _db.SaveChanges();
+
+            return true;
+        }
     }
 }

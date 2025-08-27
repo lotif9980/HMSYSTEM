@@ -141,7 +141,7 @@ namespace HMSYSTEM.Controllers
         public IActionResult GetBedsByWardId(int wardId)
         {
             var beds = _unitOfWork.bedRepository.getAllBed()
-                .Where(b => b.WardId == wardId && b.IsOccupied==true)
+                .Where(b => b.WardId == wardId && b.IsOccupied==false)
                 .Select(b => new { b.Id, b.BedNumber })
                 .ToList();
 

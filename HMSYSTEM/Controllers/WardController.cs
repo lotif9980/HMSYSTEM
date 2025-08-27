@@ -97,8 +97,8 @@ namespace HMSYSTEM.Controllers
                 }).ToList();
 
             var totalBeds = beds.Count;
-            var occupiedBeds = beds.Count(b => b.isOccupied==false);
-            var emptyBeds = beds.Count(b => b.isOccupied == true);
+            var occupiedBeds = beds.Count(b => b.isOccupied==true);
+            var emptyBeds = beds.Count(b => b.isOccupied == false);
 
             return Json(new
             {

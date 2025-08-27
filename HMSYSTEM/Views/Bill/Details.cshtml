@@ -1,42 +1,37 @@
 ﻿@model HMSYSTEM.ViewModels.BillViewModel
 @using System.Text.RegularExpressions
+@using HMSYSTEM.Helpers;
 
 <div class="container ">
 
     <div style="margin:50px;" class=" shadow border border-black">
-        <div class="row  border border-opacity-25  border-black m-4 p-4 ">
-            <div class=" d-flex justify-content-end">
-                <div class="btn-group">
+        <div class=" d-flex justify-content-end">
+            <div class="btn-group">
 
-                    <a class="btn btn-success " asp-route-id="" asp-controller="Prescription" asp-action="Save">
-                        <i class="fa fa-plus"></i>
-                        Add
-                    </a>
+                <a class="btn btn-success " asp-route-id="" asp-controller="Bill" asp-action="Save">
+                    <i class="fa fa-plus"></i>
+                    Add
+                </a>
 
 
-                    <a class="btn btn-primary " asp-route-id="" asp-controller="Prescription" asp-action="Index">
-                        <i class="fa fa-list"></i>
-                        List
-                    </a>
+                <a class="btn btn-primary " asp-route-id="" asp-controller="Bill" asp-action="Index">
+                    <i class="fa fa-list"></i>
+                    List
+                </a>
 
-                    <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
-                        <i class="fa fa-print"></i> Print
-                    </button>
+                <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
+                    <i class="fa fa-print"></i> Print
+                </button>
 
-                </div>
             </div>
-            <div class="col-md-4">
-                <h3>@Model.PatientName</h3>
-                <h6>@Model.PatientPhoneNumber</h6>
-                <h6>@Model.</h6>
-               
-            </div>
-
-            <div class="col-md-4">
+        </div>
+        <div class="row  border border-opacity-25  border-black m-4 p-4 d-flex justify-content-end ">
+            
+            <div class="col-md-6">
                 <h2>Bill Details</h2>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <h3>Hospital Management</h3>
                 <h6>Charghat , Rajshahi</h6>
                 <h6>Mobile : 01791177192</h6>
@@ -50,63 +45,67 @@
                 <strong>Patient : @Model.PatientName <br /></strong>
                 <small>
                     Phone No :  @Model.PatientPhoneNumber <br />
-                    Address: @Model.PatientPhoneNumber </br>
+                    Address: @Model.Address </br>
                 </small>
 
             </div>
 
             <div class="col-md-6">
-                <small>
                     Date : @Model.BillDate.ToString("dd - MMM - yyyy") <br />
-                
-                </small>
+                    Bill No :@Model.BillNo <br />
+                    Create Date: @Model.BillDate.ToString("dd - MMM - yyyy") <br />
             </div>
         </div>
 
         <div class="row m-4 t-4 ">
-            <div class="d-flex justify-content-center "><u><h4>Prescribed Medicines</h4></u></div>
+            <div class="d-flex justify-content-center "><u><h4>Service Items</h4></u></div>
             <table class="table table-bordered border-opacity-25 border-black">
                 <thead>
                     <tr>
+                        <th style="width:15px">Sl</th>
                         <th>Item Name</th>
+                        <th>Charge Date</th>
                         <th>Unit Price</th>
                         <th>Qty</th>
-                        <th>Total Amount</th>
+                        <th style="width:50px">Amount</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @{
+                        int count = 1;
+                    }
                     @foreach (var detail in Model.BillDetail)
                     {
                         <tr>
-                            <td>
-                                @detail.ItemName
-                                
-                            </td>
+                            <td>@count</td>
+                            <td> @detail.ItemName</td>
+                            <td>@detail.ChargeDate?.ToString("dd-MMM-yyy")</td>
                             <td>@detail.Amount</td>
                             <td>@detail.Qty</td>
                             <td>@detail.TotalAmount</td>
                         </tr>
+                        count++;
                     }
                 </tbody>
                 <tfoot>
                     <tr class="fw-bold">
-                        <td colspan="3" class="text-end">Total Amount:</td>
+                        <td colspan="5" class="text-end">Total Amount:</td>
                         <td class="text-end">@Model.TotalAmount</td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-end">Discount:</td>
+                        <td colspan="5" class="text-end">Discount:</td>
                         <td class="text-end">@Model.Discount</td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-end">Net Total:</td>
+                        <td colspan="5" class="text-end">Net Total:</td>
                         <td class="text-end">@Model.NetAmount</td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-end">Payment Amount:</td>
+                        <td colspan="5" class="text-end">Payment Amount:</td>
                         <td class="text-end">@Model.PaymentAmt</td>
                     </tr>
                     <tr class="fw-bold text-danger">
-                        <td colspan="3" class="text-end">Due Amount:</td>
+                        <td colspan="5" class="text-end">Due Amount:</td>
                         <td class="text-end">@Model.DueAmount</td>
                     </tr>
                 </tfoot>
@@ -117,8 +116,16 @@
             var noteLines = (Model.Note ?? "").Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             int counter = 1;
         }
-
+        
         <div class="row mb-5">
+
+            <div class="col-md-6 ps-4 ms-4">
+                <strong>
+                    In word:
+                </strong>
+                    <td>@QueryableExtensions.TakaInWords(Model.PaymentAmt??0)</td>
+            </div>
+
             <div class="col-md-6 ps-4 ms-4">
                 <strong>Advice Given:</strong><br />
 
@@ -129,9 +136,9 @@
 
             </div>
 
-
-            <div class="col-md-6">
-            </div>
+        </div>
+        <div class="col-md-12 p-5 d-flex justify-content-center text-danger">
+            <strong> [ Note: This is a system-generated invoice and does not require any signature or seal ]</strong>
         </div>
 
     </div>

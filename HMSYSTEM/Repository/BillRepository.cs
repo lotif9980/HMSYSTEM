@@ -118,7 +118,8 @@ namespace HMSYSTEM.Repository
                             ServiceItemId = d.ServiceItemId,
                             Qty = d.Qty ?? 0,
                             Amount = d.Amount ?? 0,
-                            TotalAmount = d.TotalAmount ?? 0
+                            TotalAmount = d.TotalAmount ?? 0,
+                            ChargeDate=d.ChargeDate
                         });
                     }
                 }
@@ -178,6 +179,7 @@ namespace HMSYSTEM.Repository
                         existingDetail.Qty = d.Qty ?? 0;
                         existingDetail.Amount = d.Amount ?? 0;
                         existingDetail.TotalAmount = d.TotalAmount ?? 0;
+                        existingDetail.ChargeDate = d.ChargeDate;
                     }
                     else
                     {
@@ -188,7 +190,8 @@ namespace HMSYSTEM.Repository
                             ServiceItemId = d.ServiceItemId,
                             Qty = d.Qty ?? 0,
                             Amount = d.Amount ?? 0,
-                            TotalAmount = d.TotalAmount ?? 0
+                            TotalAmount = d.TotalAmount ?? 0,
+                            ChargeDate=d.ChargeDate
                         });
                     }
                 }
@@ -271,6 +274,7 @@ namespace HMSYSTEM.Repository
                                         Qty =bd.Qty,
                                         Amount=bd.Amount,
                                         TotalAmount=bd.TotalAmount,
+                                        ChargeDate=bd.ChargeDate
 
                                     }).ToList();
 

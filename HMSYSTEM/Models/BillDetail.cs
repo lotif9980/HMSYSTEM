@@ -8,5 +8,6 @@
         public int? Qty { get; set; }
         public decimal? Amount { get; set; }
         public decimal? TotalAmount { get; set; }
+        public DateTime? ChargeDate { get; set; }
     }
 }

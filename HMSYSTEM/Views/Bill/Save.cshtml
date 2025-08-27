@@ -74,6 +74,7 @@
                         <th>Qty</th>
                         <th>Amount</th>
                         <th>TotalAmount</th>
+                        <th>Charge Date</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -163,7 +164,7 @@
             });
      });
 
-
+     
          $(function () {
         $("#dateTO").datepicker({
             dateFormat: "dd-mm-yy",
@@ -171,6 +172,7 @@
             changeYear: true
         });
 
+    
         let rowIndex = 0;
 
         // ✅ Row তৈরি ফাংশন
@@ -186,9 +188,20 @@
                 <td><input type="number" name="BillDetail[${index}].Qty" class="form-control qty" min="0" value="1" /></td>
                 <td><input type="number" name="BillDetail[${index}].Amount" class="form-control amount" min="0" value="0" /></td>
                 <td><input type="number" name="BillDetail[${index}].TotalAmount" class="form-control total" readonly value="0" /></td>
+                <td><input type="text" id="dateTOCharge" name="BillDetail[${index}].ChargeDate" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" /></td>
                 <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
             </tr>`;
         }
+
+      $(document).ready(function () {
+        $(document).on("focus", "#dateTOCharge", function () {
+            $(this).datepicker({
+                dateFormat: "dd-mm-yy", // Format
+                changeMonth: true,
+                changeYear: true
+            }).datepicker("show");
+        });
+      });
 
         // ✅ প্রথম Row
         $("#detailsTable tbody").append(createRow(rowIndex));

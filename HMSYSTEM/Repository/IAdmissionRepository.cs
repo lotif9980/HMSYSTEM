@@ -14,6 +14,7 @@ namespace HMSYSTEM.Repository
 
         public Task<bool> PatientStatusCheck(int patientId);
 
+        public bool UpdateAdmissionStatus(int id);
       
     }
 }

@@ -47,7 +47,7 @@ namespace HMSYSTEM.Controllers
 
           
             var lastBillNo = _unitOfWork.billRepository
-                                .GetAll() // বা নির্দিষ্ট মেথড, যেমন: GetSerial()
+                                .GetSerial() // বা নির্দিষ্ট মেথড, যেমন: GetSerial()
                                 .OrderByDescending(b => b.Id)
                                 .Select(b => b.BillNo)
                                 .FirstOrDefault();
@@ -147,7 +147,9 @@ namespace HMSYSTEM.Controllers
                         ServiceItemId = d.ServiceItemId.Value,
                         Amount = d.Amount ?? 0,
                         Qty = d.Qty ?? 0,
-                        TotalAmount = d.TotalAmount ?? 0
+                        TotalAmount = d.TotalAmount ?? 0,
+                        ChargeDate=d.ChargeDate
+                        
                         // Do NOT assign Id
                     }).ToList()
             };
@@ -161,7 +163,7 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpGet]
-        public IActionResult SaveFromAdmission(int patientId,int bedId)
+        public IActionResult SaveFromAdmission(int patientId,int bedId , int admissionId)
         {
             var patients = _unitOfWork.PatienRepo.getAll();
             var services = _unitOfWork.serviceItemRepository.GetAll();
@@ -201,7 +203,8 @@ namespace HMSYSTEM.Controllers
                         ServiceItemId = d.ServiceItemId,
                         Qty = d.Qty ?? 0,
                         Amount = d.Amount ?? 0,
-                        TotalAmount = d.TotalAmount ?? 0
+                        TotalAmount = d.TotalAmount ?? 0,
+                        ChargeDate=d.ChargeDate
                     });
                 }
             }
@@ -212,15 +215,7 @@ namespace HMSYSTEM.Controllers
             return View(viewModel);
         }
 
-        [HttpGet]
-        public IActionResult Details(int id)
-        {
-            var data =_unitOfWork.billRepository.GetBillDetails(id);
-            return View(data);
-        }
 
-
-  
         [HttpPost]
         public IActionResult UpdateSave(BillViewModel model)
         {
@@ -251,16 +246,18 @@ namespace HMSYSTEM.Controllers
                         ServiceItemId = d.ServiceItemId.Value,
                         Amount = d.Amount ?? 0,
                         Qty = d.Qty ?? 0,
-                        TotalAmount = d.TotalAmount ?? 0
+                        TotalAmount = d.TotalAmount ?? 0,
+                        ChargeDate=d.ChargeDate
                         // Do NOT assign Id
                     }).ToList()
             };
 
-             var data= _unitOfWork.billRepository.UpdateSave(bill);
+            var data = _unitOfWork.billRepository.UpdateSave(bill);
 
             if (data.Status == 2)
             {
                 _unitOfWork.bedRepository.StatusUpdate(model.BedId);
+                _unitOfWork.admissionRepository.UpdateAdmissionStatus(model.AdmissionId);
             }
 
             TempData["Message"] = "✅ Successfully added!";
@@ -268,5 +265,16 @@ namespace HMSYSTEM.Controllers
 
             return RedirectToAction("Save");
         }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var data =_unitOfWork.billRepository.GetBillDetails(id);
+            return View(data);
+        }
+
+
+  
+      
     }
 }

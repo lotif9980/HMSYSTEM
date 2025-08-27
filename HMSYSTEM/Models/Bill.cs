@@ -13,6 +13,7 @@ namespace HMSYSTEM.Models
         public decimal? NetAmount { get; set; }
         public decimal? PaymentAmt{get;set; }
         public decimal? DueAmount { get;set; }
+    
 
         public int? Status { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]

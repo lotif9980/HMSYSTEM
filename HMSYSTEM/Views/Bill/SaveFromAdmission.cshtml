@@ -8,6 +8,7 @@
 <form asp-action="UpdateSave" method="post" id="billForm">
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="BedId" />
+    <input type="hidden" asp-for="AdmissionId" />
 
 
     <!-- Master Info -->
@@ -52,6 +53,7 @@
                     <th>Qty</th>
                     <th>Amount</th>
                     <th>Total</th>
+                    <th>Charge Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -78,6 +80,12 @@
                         <td><input type="number" name="BillDetail[@i].Qty" class="form-control qty" value="@Model.BillDetail[i].Qty" /></td>
                         <td><input type="number" name="BillDetail[@i].Amount" class="form-control amount" value="@Model.BillDetail[i].Amount" /></td>
                         <td><input type="number" name="BillDetail[@i].TotalAmount" class="form-control total" value="@Model.BillDetail[i].TotalAmount" readonly /></td>
+                        <td>
+                            <input type="text"
+                                   name="BillDetail[@i].ChargeDate"
+                                   class="form-control dateToCharge"
+                                   value="@(Model.BillDetail[i].ChargeDate?.ToString("dd-MM-yyyy"))" />
+                        </td>
                         <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
                     </tr>
                 }
@@ -179,16 +187,29 @@ $(document).ready(function () {
             @:optionsHtml += '<option value="@s.Id">@s.ItemName</option>';
         }
 
-        let newRow = `<tr>
-            <td><select name="BillDetail[${rowIndex}].ServiceItemId" class="form-select service-select"><option value="">--Select--</option>${optionsHtml}</select></td>
-            <td><input type="number" name="BillDetail[${rowIndex}].Qty" class="form-control qty" value="1"/></td>
-            <td><input type="number" name="BillDetail[${rowIndex}].Amount" class="form-control amount" value="0"/></td>
-            <td><input type="number" name="BillDetail[${rowIndex}].TotalAmount" class="form-control total" value="0" readonly/></td>
+            let newRow = `<tr>
+                <td>
+                    <select name="BillDetail[${rowIndex}].ServiceItemId" class="form-select service-select">
+                        <option value="">--Select--</option>${optionsHtml}
+                    </select>
+                </td>
+                <td><input type="number" name="BillDetail[${rowIndex}].Qty" class="form-control qty" value="1"/></td>
+                <td><input type="number" name="BillDetail[${rowIndex}].Amount" class="form-control amount" value="0"/></td>
+                <td><input type="number" name="BillDetail[${rowIndex}].TotalAmount" class="form-control total" value="0" readonly/></td>
+                <td><input type="text" name="BillDetail[${rowIndex}].ChargeDate" class="form-control dateToCharge" value="@DateTime.Now.ToString("dd-MM-yyyy")" /></td>
                 <td><button type="button" class="btn btn-sm btn-danger removeRowBtn"><i class="fa fa-trash"></i></button></td>
-        </tr>`;
+            </tr>`;
         $("#detailsTable tbody").append(newRow);
         rowIndex++;
     });
+
+            $(document).on("focus", ".dateToCharge", function () {
+                $(this).datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changeMonth: true,
+                    changeYear: true
+                }).datepicker("show");
+            });
 
     // Initial calculation for existing rows
     $("#detailsTable tbody tr").each(function () { calculateRowTotal($(this)); });

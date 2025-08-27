@@ -10,6 +10,7 @@ namespace HMSYSTEM.ViewModels
         public DateTime BillDate { get; set; }
         public string BillNo { get; set; }
         public int BedId { get; set; }
+        public int AdmissionId { get; set; }
         public int? PatientId { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? Discount { get; set; }
@@ -37,5 +38,6 @@ namespace HMSYSTEM.ViewModels
         public int? Qty { get; set; }
         public decimal? Amount { get; set; }
         public decimal? TotalAmount { get; set; }
+        public DateTime? ChargeDate {  get; set; }
     }
 }
