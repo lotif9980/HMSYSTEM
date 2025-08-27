@@ -212,7 +212,12 @@ namespace HMSYSTEM.Controllers
             return View(viewModel);
         }
 
-
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var data =_unitOfWork.billRepository.GetBillDetails(id);
+            return View(data);
+        }
 
 
   

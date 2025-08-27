@@ -231,10 +231,49 @@ namespace HMSYSTEM.Repository
                 .Include(b => b.BillDetails) 
                 .FirstOrDefault(b => b.PatientId == patientId && b.Status == 1);
         }
-
-        public BillViewModel Details(int id)
+        
+        public BillViewModel? GetBillDetails(int id)
         {
-           
+            var viewModel = (from b in _db.Bills
+                             join p in _db.Patients on b.PatientId equals p.PatientID into pgroup 
+                             from p in pgroup.DefaultIfEmpty()
+                             where b.Id == id
+                             select new BillViewModel 
+                             { 
+                                 Id=b.Id,
+                                 PatientId=b.PatientId,
+                                 //PatientName=b.Patient.FirstName +""+b.Patient.LastName,
+                                 PatientName = p != null ? p.FirstName + " " + p.LastName : null,
+                                 PatientPhoneNumber =b.Patient.Phone,
+                                 BillDate=b.BillDate,
+                                 BillNo=b.BillNo,
+                                 TotalAmount=b.TotalAmount,
+                                 Discount=b.Discount,
+                                 NetAmount=b.NetAmount,
+                                 PaymentAmt=b.PaymentAmt,
+                                 DueAmount=b.DueAmount,
+                                 Status=b.Status
+                             }).FirstOrDefault();
+
+            viewModel.BillDetail = (from bd in _db.BillDetails
+                                    join si in _db.ServiceItems on bd.ServiceItemId equals si.Id into sgroup
+                                    from si in sgroup.DefaultIfEmpty()
+                                    where bd.BillId==id
+                                    select new BillDetailViewModel
+                                    {
+                                        
+                                        Id=bd.Id,
+                                        BillId = bd.BillId,
+                                        ServiceItemId =si.Id,
+                                        //ItemName=si.ItemName,
+                                        ItemName = si != null ? si.ItemName : null,
+                                        Qty =bd.Qty,
+                                        Amount=bd.Amount,
+                                        TotalAmount=bd.TotalAmount,
+
+                                    }).ToList();
+
+            return viewModel;
         }
     }
 }

@@ -14,6 +14,6 @@ namespace HMSYSTEM.Repository
         public Bill GetActiveBillByPatient(int patientId);
         public Bill UpdateSave(Bill bill);
 
-        public BillViewModel Details(int id);
+        public BillViewModel GetBillDetails(int id);
     }
 }

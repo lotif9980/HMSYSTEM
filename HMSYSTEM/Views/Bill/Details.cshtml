@@ -1,0 +1,163 @@
+﻿@model HMSYSTEM.ViewModels.BillViewModel
+@using System.Text.RegularExpressions
+
+<div class="container ">
+
+    <div style="margin:50px;" class=" shadow border border-black">
+        <div class="row  border border-opacity-25  border-black m-4 p-4 ">
+            <div class=" d-flex justify-content-end">
+                <div class="btn-group">
+
+                    <a class="btn btn-success " asp-route-id="" asp-controller="Prescription" asp-action="Save">
+                        <i class="fa fa-plus"></i>
+                        Add
+                    </a>
+
+
+                    <a class="btn btn-primary " asp-route-id="" asp-controller="Prescription" asp-action="Index">
+                        <i class="fa fa-list"></i>
+                        List
+                    </a>
+
+                    <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
+                        <i class="fa fa-print"></i> Print
+                    </button>
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h3>@Model.PatientName</h3>
+                <h6>@Model.PatientPhoneNumber</h6>
+               
+            </div>
+
+            <div class="col-md-4">
+                <h2>Bill Details</h2>
+            </div>
+
+            <div class="col-md-4">
+                <h3>Hospital Management</h3>
+                <h6>Charghat , Rajshahi</h6>
+                <h6>Mobile : 01791177192</h6>
+            </div>
+            <hr />
+        </div>
+
+        <div class="row  m-4 p-1 border border-opacity-25 border-black">
+            <div class="col-md-6">
+
+                <strong>Patient : @Model.PatientName <br /></strong>
+                <small>
+                    Phone No :  @Model.PatientPhoneNumber <br />
+                    Address: @Model.PatientPhoneNumber </br>
+                </small>
+
+            </div>
+
+            <div class="col-md-6">
+                <small>
+                    Date : @Model.BillDate.ToString("dd - MMM - yyyy") <br />
+                
+                </small>
+            </div>
+        </div>
+
+        <div class="row m-4 t-4 ">
+            <div class="d-flex justify-content-center "><u><h4>Prescribed Medicines</h4></u></div>
+            <table class="table table-bordered border-opacity-25 border-black">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Amount</th>
+                        <th>Qty</th>
+                        <th>Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.BillDetail)
+                    {
+                        <tr>
+                            <td>
+                                @detail.ItemName
+                                
+                            </td>
+                            <td>@detail.Amount</td>
+                            <td>@detail.Qty</td>
+                            <td>@detail.TotalAmount</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="fw-bold">
+                        <td colspan="3" class="text-end">Total Amount:</td>
+                        <td class="text-end">@Model.TotalAmount</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-end">Discount:</td>
+                        <td class="text-end">@Model.Discount</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-end">Net Total:</td>
+                        <td class="text-end">@Model.NetAmount</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-end">Payment Amount:</td>
+                        <td class="text-end">@Model.PaymentAmt</td>
+                    </tr>
+                    <tr class="fw-bold text-danger">
+                        <td colspan="3" class="text-end">Due Amount:</td>
+                        <td class="text-end">@Model.DueAmount</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        @{
+            var noteLines = (Model.Note ?? "").Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            int counter = 1;
+        }
+
+        <div class="row mb-5">
+            <div class="col-md-6 ps-4 ms-4">
+                <strong>Advice Given:</strong><br />
+
+                @foreach (var line in noteLines)
+                {
+                    <div>  @(counter++). @line.Trim()</div>
+                }
+
+            </div>
+
+
+            <div class="col-md-6">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="printContainer" style="display:none;"></div>
+@* 
+
+<script>
+    function loadAndPrint(id) {
+        $.ajax({
+            url: '/Prescription/GetPrescriptionPrintPartial/' + id,
+            type: 'GET',
+            success: function (data) {
+                $('#printContainer').html(data);
+                var printContents = document.getElementById('printContainer').innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+                window.print();
+                document.body.innerHTML = originalContents;
+                location.reload();
+            },
+            error: function () {
+                alert("Failed to load print view.");
+            }
+        });
+    }
+</script>
+ *@
