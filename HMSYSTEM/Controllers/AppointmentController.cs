@@ -74,7 +74,7 @@ namespace HMSYSTEM.Controllers
             .Select(a => a.SerialNumber)
             .FirstOrDefault();
 
-            int nextSerial = (lastSerial ?? 0) + 1; 
+            int nextSerial = (lastSerial ?? 0) + 1001; 
             ViewBag.NextSerial = nextSerial;
 
             return View();
