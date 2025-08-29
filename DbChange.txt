@@ -1,4 +1,16 @@
 -----------------------------------------------
+---------------29.08.2025-----------------
+----------------------------------------------- 
+CREATE TABLE Payments (
+    Id INT PRIMARY KEY IDENTITY,
+    BillId INT NOT NULL,             
+    PaymentDate DATETIME NOT NULL,    
+    PaymentAmount DECIMAL(18,2) NOT NULL, 
+    PaymentMethod VARCHAR(50) NULL,   
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (BillId) REFERENCES Bills(Id)
+);
+-----------------------------------------------
 ---------------27.08.2025-----------------
 ----------------------------------------------- 
 /* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/

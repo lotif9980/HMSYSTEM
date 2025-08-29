@@ -8,9 +8,9 @@ namespace HMSYSTEM.Data
 {
     public class Db:DbContext
     {
-        //public static string ConnectionString = "Server=localhost;Database=hmsystem;User Id=sa;Password=Test_123;Encrypt=False";
+        public static string ConnectionString = "Server=localhost;Database=hmsystem;User Id=sa;Password=Test_123;Encrypt=False";
 
-        public static string ConnectionString = "Server=103.125.252.243;Database=cecom;User Id=oct_cecom;Password=ywvflaxd2hobusjcznmt;Encrypt=False";
+        //public static string ConnectionString = "Server=103.125.252.243;Database=cecom;User Id=oct_cecom;Password=ywvflaxd2hobusjcznmt;Encrypt=False";
 
         public Db()
         {
@@ -52,6 +52,8 @@ namespace HMSYSTEM.Data
             public DbSet<ServiceItem> ServiceItems { get; set; }
             public DbSet<Bill> Bills { get; set; }
             public DbSet<BillDetail> BillDetails { get; set; }
+            
+            public DbSet<Payment> Payments { get; set; }
 
 
     }

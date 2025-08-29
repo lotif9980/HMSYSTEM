@@ -81,93 +81,27 @@ namespace HMSYSTEM.Repository
         //}
 
         #endregion
+
         public void Save(Bill bill)
-            {
-            var existingBill = _db.Bills
-                .Include(b => b.BillDetails)
-                .FirstOrDefault(b => b.PatientId == bill.PatientId && b.Status == 1);
-
-            if (existingBill != null)
-            {
-                // ✅ Master Fields Update
-                existingBill.Discount = bill.Discount ?? 0;
-                existingBill.BillDate = bill.BillDate;
-
-                // ✅ PaymentAmt (Add old + new)
-                existingBill.PaymentAmt = (existingBill.PaymentAmt ?? 0) + (bill.PaymentAmt ?? 0);
-
-                // ✅ Sync BillDetails (Add/Update Only)
-                foreach (var d in bill.BillDetails)
-                {
-                    var existingDetail = existingBill.BillDetails
-                        .FirstOrDefault(x => x.ServiceItemId == d.ServiceItemId);
-
-                    if (existingDetail != null)
-                    {
-                        // Update existing detail
-                        existingDetail.Qty = d.Qty ?? 0;
-                        existingDetail.Amount = d.Amount ?? 0;
-                        existingDetail.TotalAmount = d.TotalAmount ?? 0;
-                    }
-                    else
-                    {
-                        // Add new detail
-                        existingBill.BillDetails.Add(new BillDetail
-                        {
-                            BillId = existingBill.Id,
-                            ServiceItemId = d.ServiceItemId,
-                            Qty = d.Qty ?? 0,
-                            Amount = d.Amount ?? 0,
-                            TotalAmount = d.TotalAmount ?? 0,
-                            ChargeDate=d.ChargeDate
-                        });
-                    }
-                }
-
-                // ✅ Calculation from BillDetails
-                decimal totalAmount = existingBill.BillDetails.Sum(d => d.TotalAmount ?? 0);
-                decimal discount = existingBill.Discount ?? 0;
-                decimal netAmount = totalAmount - discount;
-                decimal payment = existingBill.PaymentAmt ?? 0;
-                decimal due = netAmount - payment;
-
-                // ✅ Update Master table values
-                existingBill.TotalAmount = totalAmount;
-                existingBill.NetAmount = netAmount;
-                existingBill.DueAmount = due;
-
-                // ✅ Status Update
-                if (due == 0 && netAmount > 0)
-                    existingBill.Status = 2; // Fully Paid
-                else
-                    existingBill.Status = 1; // Active/Unpaid
-
-                _db.Bills.Update(existingBill);
-            }
-            else
-            {
-                // ✅ New Bill Add
-                _db.Bills.Add(bill);
-            }
-
-            _db.SaveChanges();
-        }
-
-        public Bill UpdateSave(Bill bill)
         {
-            // 🔹 Check if there is an existing active bill for the patient
+            // কত টাকা নতুন Payment এসেছে সেটা আলাদা করলাম
+            decimal newPayment = bill.PaymentAmt ?? 0;
+
+            // আগের Bill আছে কিনা দেখি
             var existingBill = _db.Bills
                 .Include(b => b.BillDetails)
                 .FirstOrDefault(b => b.PatientId == bill.PatientId && b.Status == 1);
 
             if (existingBill != null)
             {
-                // 🔹 Update Master Fields
+                // 🔹 Master Fields Update
                 existingBill.Discount = bill.Discount ?? 0;
-                existingBill.PaymentAmt = bill.PaymentAmt ?? 0; // ⚠️ Replace or accumulate if needed
                 existingBill.BillDate = bill.BillDate;
 
-                // 🔹 Sync BillDetails (Add or Update)
+                // 🔹 PaymentAmt Update
+                existingBill.PaymentAmt = (existingBill.PaymentAmt ?? 0) + newPayment;
+
+                // 🔹 BillDetails Sync
                 foreach (var d in bill.BillDetails)
                 {
                     var existingDetail = existingBill.BillDetails
@@ -175,7 +109,6 @@ namespace HMSYSTEM.Repository
 
                     if (existingDetail != null)
                     {
-                        // Update existing detail
                         existingDetail.Qty = d.Qty ?? 0;
                         existingDetail.Amount = d.Amount ?? 0;
                         existingDetail.TotalAmount = d.TotalAmount ?? 0;
@@ -183,7 +116,6 @@ namespace HMSYSTEM.Repository
                     }
                     else
                     {
-                        // Add new detail
                         existingBill.BillDetails.Add(new BillDetail
                         {
                             BillId = existingBill.Id,
@@ -191,12 +123,12 @@ namespace HMSYSTEM.Repository
                             Qty = d.Qty ?? 0,
                             Amount = d.Amount ?? 0,
                             TotalAmount = d.TotalAmount ?? 0,
-                            ChargeDate=d.ChargeDate
+                            ChargeDate = d.ChargeDate
                         });
                     }
                 }
 
-                // 🔹 Recalculate Master Values from Child
+                // 🔹 Calculation
                 decimal totalAmount = existingBill.BillDetails.Sum(d => d.TotalAmount ?? 0);
                 decimal discount = existingBill.Discount ?? 0;
                 decimal netAmount = totalAmount - discount;
@@ -212,16 +144,140 @@ namespace HMSYSTEM.Repository
 
                 _db.Bills.Update(existingBill);
 
-                _db.SaveChanges();
-
-                return existingBill; // ✅ Return updated Bill
+                // 🔹 Always Insert Payment Record
+                if (newPayment > 0)
+                {
+                    _db.Payments.Add(new Payment
+                    {
+                        BillId = existingBill.Id,
+                        PaymentAmount = newPayment,
+                        PaymentDate = DateTime.Now,
+                        PaymentMethod = "Cash",
+                        CreatedDate = DateTime.Now
+                    });
+                }
             }
             else
             {
-                // 🔹 New Bill Add
+                // 🔹 First Time Bill Add
+                _db.Bills.Add(bill);
+                _db.SaveChanges(); // Save to get BillId
+
+                // 🔹 First Payment Record
+                if (newPayment > 0)
+                {
+                    _db.Payments.Add(new Payment
+                    {
+                        BillId = bill.Id,
+                        PaymentAmount = newPayment,
+                        PaymentDate = DateTime.Now,
+                        PaymentMethod = "Cash",
+                        CreatedDate = DateTime.Now
+                    });
+                }
+            }
+
+            _db.SaveChanges();
+        }
+
+        public Bill UpdateSave(Bill bill)
+        {
+            var existingBill = _db.Bills
+                .Include(b => b.BillDetails)
+                .FirstOrDefault(b => b.PatientId == bill.PatientId && b.Status == 1);
+
+            if (existingBill != null)
+            {
+                // Original UpdateSave logic (unchanged)
+                existingBill.Discount = bill.Discount ?? 0;
+                existingBill.BillDate = bill.BillDate;
+
+                foreach (var d in bill.BillDetails)
+                {
+                    var existingDetail = existingBill.BillDetails
+                        .FirstOrDefault(x => x.ServiceItemId == d.ServiceItemId);
+
+                    if (existingDetail != null)
+                    {
+                        existingDetail.Qty = d.Qty ?? 0;
+                        existingDetail.Amount = d.Amount ?? 0;
+                        existingDetail.TotalAmount = d.TotalAmount ?? 0;
+                        existingDetail.ChargeDate = d.ChargeDate;
+                    }
+                    else
+                    {
+                        existingBill.BillDetails.Add(new BillDetail
+                        {
+                            BillId = existingBill.Id,
+                            ServiceItemId = d.ServiceItemId,
+                            Qty = d.Qty ?? 0,
+                            Amount = d.Amount ?? 0,
+                            TotalAmount = d.TotalAmount ?? 0,
+                            ChargeDate = d.ChargeDate
+                        });
+                    }
+                }
+
+                // Recalculate Master Values
+                decimal totalAmount = existingBill.BillDetails.Sum(d => d.TotalAmount ?? 0);
+                decimal discount = existingBill.Discount ?? 0;
+                decimal netAmount = totalAmount - discount;
+
+                // Payment logic: calculate remaining/new payment
+                decimal previousPayment = existingBill.PaymentAmt ?? 0;
+                decimal userPayment = bill.PaymentAmt ?? 0;
+                decimal paymentToInsert = userPayment - previousPayment;
+
+                // Update Master table PaymentAmt
+                existingBill.PaymentAmt = userPayment;
+
+                decimal due = (decimal)(netAmount - existingBill.PaymentAmt);
+
+
+                existingBill.TotalAmount = totalAmount;
+                existingBill.NetAmount = netAmount;
+                existingBill.DueAmount = due;
+                existingBill.Status = (due == 0 && netAmount > 0) ? 2 : 1;
+
+                _db.Bills.Update(existingBill);
+
+                // Insert new Payment only if paymentToInsert > 0
+                if (paymentToInsert > 0)
+                {
+                    _db.Payments.Add(new Payment
+                    {
+                        BillId = existingBill.Id,
+                        PaymentAmount = paymentToInsert,
+                        PaymentDate = DateTime.Now,
+                        PaymentMethod = "Cash",
+                        CreatedDate = DateTime.Now
+                    });
+                }
+
+                _db.SaveChanges();
+                return existingBill;
+            }
+            else
+            {
+                //  New Bill Add
                 _db.Bills.Add(bill);
                 _db.SaveChanges();
-                return bill; // ✅ Return new Bill
+
+                //  Insert Payment for new bill
+                if (bill.PaymentAmt > 0)
+                {
+                    _db.Payments.Add(new Payment
+                    {
+                        BillId = bill.Id,
+                        PaymentAmount = bill.PaymentAmt ?? 0,
+                        PaymentDate = DateTime.Now,
+                        PaymentMethod = "Cash",
+                        CreatedDate = DateTime.Now
+                    });
+                    _db.SaveChanges();
+                }
+
+                return bill;
             }
         }
 
