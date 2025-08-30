@@ -4,44 +4,39 @@
     @@media print {
         @@page {
             size: A4 portrait;
-            margin: 10mm 15mm;
+            margin: 15mm;
         }
 
         body {
             margin: 0;
             padding: 0;
-            -webkit-print-color-adjust: exact !important;
-            color-adjust: exact !important;
+            -webkit-print-color-adjust: exact;
         }
 
         #PrescriptionPrintArea {
             width: 100%;
             max-width: 210mm;
-            min-height: 297mm;
             margin: auto;
-            padding: 15px;
-            box-sizing: border-box;
+            margin-top:50px;
         }
 
         .full-page-border {
+            min-height: 277mm;
             border: 1px solid black !important;
-            padding: 20px;
+            padding: 15px !important;
+            box-sizing: border-box;
         }
 
         .shadow {
             box-shadow: none !important;
         }
 
-        .m-4, .p-4, .m-3, .p-3 {
-            margin: 0 !important;
-            padding: 5px !important;
+        h3, h4, h5, h6, p, td, th, div, span {
+            font-size: 12pt !important;
+            line-height: 1.4 !important;
         }
 
-        h3, h4, h5, h6, p, td, th, div {
-            font-size: 11pt !important;
-        }
-
-        .table, .row, .col-md-4, .col-md-6 {
+        .row, .col-md-6, .col-md-4 {
             page-break-inside: avoid !important;
         }
 
@@ -49,170 +44,105 @@
             display: none !important;
         }
     }
+
+    /* Optional: spacing between sections */
+    .section-title {
+        border-bottom: 1px solid #000;
+        padding-bottom: 4px;
+        margin-bottom: 8px;
+        margin-top: 40px;
+        font-weight: bold;
+        font-size: 13pt;
+    }
+
+    .info-label {
+        font-weight: bold;
+        width: 140px;
+    }
+
+    .info-row {
+        display: flex;
+        margin-bottom: 4px;
+    }
 </style>
 
-@{
-    ViewData["Title"] = "Admission Details";
-    var labelStyle = "font-weight: bold; width: 140px;";
-}
-
-<div id="PrescriptionPrintArea" class="full-page-border">
-
-    <div class="container mt-3">
-        <div class="card shadow ps-4 pe-4 pt-3 pb-4 bg-light" style="max-width: 900px; height:1000px; margin: auto;">
-
-            <div class="text-center mb-4">
-                <h3>Hospital Admission Form</h3>
-                <p>Address: Charghat, Rajshahi</p>
-                <p>Phone: 01791177192</p>
-                <hr />
-            </div>
-
-            <!-- Admission Info -->
-            <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Admission Information</h5>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Invoice No:</div>
-                        <div>@Model.InvoiceNo</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Admit Date:</div>
-                        <div>@Model.AdmitDate</div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Ward:</div>
-                        <div>@Model.Bed.Ward.Name</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Bed Number:</div>
-                        <div>@Model.Bed.BedNumber</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Patient Info -->
-            <h5 class="mb-3 text-primary border-bottom pb-1">Patient Information</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Patient Name:</div>
-                        <div>@Model.Patient.FirstName @Model.Patient.LastName</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Phone:</div>
-                        <div>@Model.Patient.Phone</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Email:</div>
-                        <div>@Model.Patient.Email</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Address:</div>
-                        <div>@Model.Patient.Address</div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Emr. Phone:</div>
-                        <div>@Model.Patient.EmergencyContact</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Father Name:</div>
-                        <div>@Model.Patient.FatherName</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">DOB:</div>
-                        <div>@Model.Patient.DateOfBirth</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Blood Group:</div>
-                        <div>@Model.Patient.BloodGroup</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Doctor Info -->
-            <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Doctor Information</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Admit Doctor:</div>
-                        <div>@Model.Doctor.FirstName @Model.Doctor.LastName</div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Doctor Phone:</div>
-                        <div>@Model.Doctor.PhoneNo</div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Specialist:</div>
-                        <div>@Model.Doctor.Specialist</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Attendent Information Section Title -->
-            <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Attendant Information</h5>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Attendant Name:</div>
-                        <div>
-                            <div>@Model.AttendentName</div>
-                        </div>
-                    </div>
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Relation:</div>
-                        <div>@Model.AttendentRelation</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-
-                    <div class="mb-1 d-flex">
-                        <div style="@labelStyle">Phone Number  :</div>
-                        <div>
-                            <div>@Model.AttendentPhone</div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <hr />
-            <div class="row">
-                <div> ✅I hereby declare that the information provided is true and I agree to hospital policies.</div>
-                <div class="d-flex justify-content-around">
-                    <div class="mt-5">
-                        <u> Patient Signature</u>
-                    </div>
-                    <div class="mt-5">
-                        <u>Attendant/Guardian Signature</u>
-                    </div>
-                    <div class="mt-5">
-                        <u>Hospital Authority</u>
-                    </div>
-                </div>
-            </div>
-
+<div id="PrescriptionPrintArea" class="full-page-border" style="margine-top:10px;">
+    <!-- Header -->
+    <div class="d-flex justify-content-between mb-3">
+        <div>
+            <h4>Hospital Management</h4>
+            <h6>Charghat, Rajshahi</h6>
+            <h6>Phone: 01791177192</h6>
+        </div>
+        <div class="text-center">
+            <h3>Admission Form</h3>
+        </div>
+       <div>
+            <h4>Hospital Management</h4>
+            <h6>Charghat, Rajshahi</h6>
+            <h6>Phone: 01791177192</h6>
         </div>
     </div>
 
+    <!-- Admission Info -->
+    <div class="section-title mt-1">Admission Information</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-row"><div class="info-label">Invoice No:</div><div>@Model.InvoiceNo</div></div>
+            <div class="info-row"><div class="info-label">Admit Date:</div><div>@Model.AdmitDate?.ToString("dd MMM yyyy")</div></div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-row"><div class="info-label">Ward:</div><div>@Model.Bed.Ward.Name</div></div>
+            <div class="info-row"><div class="info-label">Bed Number:</div><div>@Model.Bed.BedNumber</div></div>
+        </div>
+    </div>
+
+    <!-- Patient Info -->
+    <div class="section-title mt-6">Patient Information</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-row"><div class="info-label">Patient Name:</div><div>@Model.Patient.FirstName @Model.Patient.LastName</div></div>
+            <div class="info-row"><div class="info-label">Phone:</div><div>@Model.Patient.Phone</div></div>
+            <div class="info-row"><div class="info-label">Email:</div><div>@Model.Patient.Email</div></div>
+            <div class="info-row"><div class="info-label">Address:</div><div>@Model.Patient.Address</div></div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-row"><div class="info-label">Emergency Phone:</div><div>@Model.Patient.EmergencyContact</div></div>
+            <div class="info-row"><div class="info-label">Father Name:</div><div>@Model.Patient.FatherName</div></div>
+            <div class="info-row"><div class="info-label">DOB:</div><div>@Model.Patient.DateOfBirth?.ToString("dd MMM yyyy")</div></div>
+            <div class="info-row"><div class="info-label">Blood Group:</div><div>@Model.Patient.BloodGroup</div></div>
+        </div>
+    </div>
+
+    <!-- Doctor Info -->
+    <div class="section-title">Doctor Information</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-row"><div class="info-label">Admit Doctor:</div><div>@Model.Doctor.FirstName @Model.Doctor.LastName</div></div>
+            <div class="info-row"><div class="info-label">Doctor Phone:</div><div>@Model.Doctor.PhoneNo</div></div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-row"><div class="info-label">Specialist:</div><div>@Model.Doctor.Specialist</div></div>
+        </div>
+    </div>
+
+    <!-- Attendant Info -->
+    <div class="section-title">Attendant Information</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-row"><div class="info-label">Attendant Name:</div><div>@Model.AttendentName</div></div>
+            <div class="info-row"><div class="info-label">Relation:</div><div>@Model.AttendentRelation</div></div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-row"><div class="info-label">Phone Number:</div><div>@Model.AttendentPhone</div></div>
+        </div>
+    </div>
+
+    <hr />
+    <div>✅ I hereby declare that the information provided is true and I agree to hospital policies.</div>
+    <div class="d-flex justify-content-around mt-5">
+        <div><u>Patient Signature</u></div>
+        <div><u>Attendant/Guardian Signature</u></div>
+        <div><u>Hospital Authority</u></div>
+    </div>
 </div>

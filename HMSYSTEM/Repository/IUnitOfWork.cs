@@ -22,6 +22,7 @@ namespace HMSYSTEM.Repository
         IHomeRepository homeRepository { get; }
         IServiceItemRepository serviceItemRepository { get; }
         IBillRepository billRepository { get; }
+        IReportRepository reportRepository { get; }
 
         void Complete();
         Task<int> Save();

@@ -1,0 +1,43 @@
+﻿@using HMSYSTEM.ViewModels
+@model IEnumerable<WardBedViewModel>
+
+@{
+    ViewData["Title"] = "Ward Bed Occupancy Report";
+}
+
+<h3>Ward Bed Occupancy Report</h3>
+
+<form method="get" class="mb-3">
+    <label>Select Ward:</label>
+    <select name="wardId" class="form-select" style="width:200px; display:inline-block;">
+        <option value="">All Wards</option>
+        @* Populate wards dynamically *@
+        @foreach (var ward in ViewBag.Wards as List<Ward>)
+        {
+            <option value="@ward.Id" @(Request.Query["wardId"] == ward.Id.ToString() ? "selected" : "")>@ward.Name</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Ward</th>
+            <th>Bed</th>
+            <th>Status</th>
+            <th>Patient</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@item.WardName</td>
+                <td>@item.BedNumber</td>
+                <td>@(item.IsOccupied ? "Occupied" : "Blank")</td>
+                <td>@item.PatientName</td>
+            </tr>
+        }
+    </tbody>
+</table>
