@@ -16,7 +16,7 @@ namespace HMSYSTEM.Models
         [Required]
         public decimal? RatePerDay {  get; set; }
       
-        public bool IsOccupied { get; set; }=true;
+        public bool IsOccupied { get; set; }=false;
 
        
         public Ward? Ward { get; set; }
