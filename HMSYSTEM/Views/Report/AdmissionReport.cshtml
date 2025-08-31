@@ -1,0 +1,47 @@
+﻿@using HMSYSTEM.ViewModels
+@model List<AdmissionViewModel>
+
+
+<form asp-action="AdmissionReports" method="post">
+    <div class="row">
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary">View</button>
+        </div>
+    </div>
+</form>
+
+
+<div class="container">
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Sl</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Bed</th>
+                    <th>Admission Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 1;
+                }
+   
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.PatientName</td>
+                        <td>@item.DoctorName</td>
+                        <td>@item.BedName</td>
+                        <td>@(item.AdmitDate?.ToString("dd-MM-yyyy"))</td>
+                    </tr>
+                    count++;
+                }
+
+            </tbody>
+        </table>
+    }
+</div>

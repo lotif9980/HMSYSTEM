@@ -8,12 +8,15 @@ namespace HMSYSTEM.ViewModels
 
         [Required(ErrorMessage = "Patient is required")]
         public int PatientId { get; set; }
+        public string PatientName { get; set; }
         
         [Required(ErrorMessage = "Doctor is required")]
         public int DoctorId { get; set; }
+        public string DoctorName { get; set; }
 
         [Required(ErrorMessage = "Bed is required")]
         public int BedId { get; set; }
+        public string BedName { get; set; }
 
         [Required(ErrorMessage = "Admit date is required")]
         public DateTime? AdmitDate { get; set; }

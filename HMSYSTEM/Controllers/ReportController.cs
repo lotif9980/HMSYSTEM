@@ -50,6 +50,17 @@ namespace HMSYSTEM.Controllers
             return View(data);
         }
 
+        [HttpGet]
+        public IActionResult AdmissionReport()
+        {
+            return View(new List<AdmissionViewModel>());            
+        }
 
+        [HttpPost]
+        public IActionResult AdmissionReports()
+        {
+            var data = _unitOfWork.reportRepository.GetAllAdmission();
+            return View("AdmissionReport",data);
+        }
     }
 }

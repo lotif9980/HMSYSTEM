@@ -14,6 +14,8 @@ namespace HMSYSTEM.Repository
             _db = db;
         }
 
+       
+
         public List<WardBedViewModel> GetWardBedStatus(int? wardId = null)
         {
             var data = from w in _db.Wards
@@ -27,6 +29,26 @@ namespace HMSYSTEM.Repository
                        };
 
             return data.ToList();
+        }
+
+        public List<AdmissionViewModel> GetAllAdmission()
+        {
+            var viewModel = (from a in _db.Admissions
+                             join p in _db.Patients on a.PatientId equals p.PatientID
+                             join d in _db.Doctors on a.DoctorId equals d.Id into dgroup
+                             from d in dgroup.DefaultIfEmpty()
+                             join b in _db.Beds on a.BedId equals b.Id into bgroup
+                             from b in bgroup.DefaultIfEmpty()
+                             select new AdmissionViewModel
+                             {
+                                 PatientName=p.FirstName +" "+p.LastName,
+                                 DoctorName=d.FirstName +" "+d.LastName,
+                                 BedName=b.BedNumber,
+                                 AdmitDate=a.AdmitDate,
+                                 InvoiceNo=a.InvoiceNo,
+                                 ForReason=a.ForReason
+                             }).ToList();
+            return viewModel;
         }
     }
 }
