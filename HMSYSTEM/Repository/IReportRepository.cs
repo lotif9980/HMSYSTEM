@@ -6,6 +6,6 @@ namespace HMSYSTEM.Repository
     {
         public List<WardBedViewModel> GetWardBedStatus(int?wardId=null);
 
-        public List<AdmissionViewModel> GetAllAdmission();
+        public List<AdmissionViewModel> GetAllAdmission(DateTime fromDate, DateTime toDate);
     }
 }

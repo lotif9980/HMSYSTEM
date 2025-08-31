@@ -1,0 +1,32 @@
+﻿<li class="nav-item">
+    <a href="#" class="nav-link">
+        <i class="fa fa-cogs" aria-hidden="true"></i>
+
+        <p>
+            Reports
+            <i class="nav-arrow bi bi-chevron-right"></i>
+        </p>
+    </a>
+
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a asp-controller="Report" asp-action="GetWardBedStatus" class="nav-link">
+                <i class="ms-4 bi bi-people-fill"></i>
+                Ward wise Bed Status
+            </a>
+        </li>
+
+    </ul>
+
+
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a asp-controller="Report" asp-action="AdmissionReport" class="nav-link">
+                <i class="ms-4 fas fa-sticky-note"></i>
+                <p>AdmissionReport</p>
+            </a>
+        </li>
+
+    </ul>
+
+</li>

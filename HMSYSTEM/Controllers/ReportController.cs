@@ -53,14 +53,28 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public IActionResult AdmissionReport()
         {
+            ViewBag.FromDate = DateTime.Now.ToString("yyyy-MM-dd");
+            ViewBag.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
             return View(new List<AdmissionViewModel>());            
         }
 
         [HttpPost]
-        public IActionResult AdmissionReports()
+        public IActionResult AdmissionReports(DateTime? fromDate, DateTime? toDate)
         {
-            var data = _unitOfWork.reportRepository.GetAllAdmission();
-            return View("AdmissionReport",data);
+            if (!fromDate.HasValue || !toDate.HasValue)
+            {
+                // যদি user date না দেয় → empty list
+                ViewBag.FromDate = DateTime.Now.ToString("yyyy-MM-dd");
+                ViewBag.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
+                return View(new List<AdmissionViewModel>());
+            }
+            var data = _unitOfWork.reportRepository.GetAllAdmission(fromDate.Value, toDate.Value);
+
+
+            ViewBag.FromDate = fromDate.Value.ToString("yyyy-MM-dd");
+            ViewBag.ToDate = toDate.Value.ToString("yyyy-MM-dd");
+
+            return View("AdmissionReport", data);
         }
     }
 }
