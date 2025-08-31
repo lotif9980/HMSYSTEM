@@ -1,17 +1,22 @@
 ﻿@using HMSYSTEM.ViewModels
 @model List<WardBedViewModel>
 
+<style>
+ 
+</style>
+
 @{
     ViewData["Title"] = "Ward Bed Report";
 }
 
 <h2>Ward Bed Report</h2>
 
-    <div class="container">
-        <form asp-action="GetWardBedStatus" method="post">
-            <div class="form-group">
-                <label>Select Ward</label>
-                <select name="wardId" class="form-control">
+<div class="container mt-3">
+    <form asp-action="GetWardBedStatus" method="post">
+        <div class="row align-items-end d-flex justify-content-center">
+            <div class="col-md-4">
+                
+                <select name="wardId" class="form-control ward-dropdown">
                     <option value="">-- Select Ward --</option>
                     @foreach (var ward in ViewBag.Ward as List<SelectListItem>)
                     {
@@ -19,29 +24,60 @@
                     }
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">View</button>
-        </form>
-    </div>
 
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">View</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container">
     @if (Model != null && Model.Any())
     {
-        <table class="table table-bordered mt-3">
+        <table class="table table-bordered table-hover mt-3">
             <thead>
                 <tr>
                     <th>Ward</th>
+                    <th>Sl</th>
                     <th>Bed</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var wardGroup in Model.GroupBy(m => m.WardName))
                 {
-                    <tr>
-                        <td>@item.WardName</td>
-                        <td>@item.BedNumber</td>
-                        <td>@(item.IsOccupied ? "Occupied" : "Available")</td>
-                    </tr>
+                    var beds = wardGroup.ToList();
+                    for (int i = 0; i < beds.Count; i++)
+                    {
+                        <tr>
+                            
+                            @if (i == 0)
+                            {
+                                <td rowspan="@beds.Count">@wardGroup.Key</td>
+                            }
+                            <td>@(i+1)</td>
+                            <td>@beds[i].BedNumber</td>
+                            <td>@(beds[i].IsOccupied ? "Occupied" : "Available")</td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
     }
+</div>
+
+<script>
+    $(document).ready(function () {
+         $(".ward-dropdown").select2({
+             placeholder: "--Select Ward--",
+             allowClear: true,
+             width: '100%'
+         });
+
+
+         $(document).on('select2:open', () => {
+             document.querySelector('.select2-search__field').focus();
+         });
+    });
+</script>

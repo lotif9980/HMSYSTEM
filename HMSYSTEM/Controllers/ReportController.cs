@@ -31,7 +31,7 @@ namespace HMSYSTEM.Controllers
 
             ViewBag.Ward = wards;
 
-            return View(new List<WardBedViewModel>()); // 🔹 ফাঁকা Model পাঠানো
+            return View(new List<WardBedViewModel>()); 
         }
 
         [HttpPost]
@@ -49,5 +49,7 @@ namespace HMSYSTEM.Controllers
             var data = _unitOfWork.reportRepository.GetWardBedStatus(wardId);
             return View(data);
         }
+
+
     }
 }
