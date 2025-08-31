@@ -1,43 +1,47 @@
 ﻿@using HMSYSTEM.ViewModels
-@model IEnumerable<WardBedViewModel>
+@model List<WardBedViewModel>
 
 @{
-    ViewData["Title"] = "Ward Bed Occupancy Report";
+    ViewData["Title"] = "Ward Bed Report";
 }
 
-<h3>Ward Bed Occupancy Report</h3>
+<h2>Ward Bed Report</h2>
 
-<form method="get" class="mb-3">
-    <label>Select Ward:</label>
-    <select name="wardId" class="form-select" style="width:200px; display:inline-block;">
-        <option value="">All Wards</option>
-        @* Populate wards dynamically *@
-        @foreach (var ward in ViewBag.Wards as List<Ward>)
-        {
-            <option value="@ward.Id" @(Request.Query["wardId"] == ward.Id.ToString() ? "selected" : "")>@ward.Name</option>
-        }
-    </select>
-    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
-</form>
+    <div class="container">
+        <form asp-action="GetWardBedStatus" method="post">
+            <div class="form-group">
+                <label>Select Ward</label>
+                <select name="wardId" class="form-control">
+                    <option value="">-- Select Ward --</option>
+                    @foreach (var ward in ViewBag.Ward as List<SelectListItem>)
+                    {
+                        <option value="@ward.Value">@ward.Text</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">View</button>
+        </form>
+    </div>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Ward</th>
-            <th>Bed</th>
-            <th>Status</th>
-            <th>Patient</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var item in Model)
-        {
-            <tr>
-                <td>@item.WardName</td>
-                <td>@item.BedNumber</td>
-                <td>@(item.IsOccupied ? "Occupied" : "Blank")</td>
-                <td>@item.PatientName</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Ward</th>
+                    <th>Bed</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.WardName</td>
+                        <td>@item.BedNumber</td>
+                        <td>@(item.IsOccupied ? "Occupied" : "Available")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }

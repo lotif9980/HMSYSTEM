@@ -23,7 +23,7 @@ namespace HMSYSTEM.Repository
                        {
                            WardName = w.Name,
                            BedNumber = b != null ? b.BedNumber : "-",
-                           IsOccupied = b != null && b.IsOccupied != null // patient info লাগছে না
+                           IsOccupied=b.IsOccupied
                        };
 
             return data.ToList();
