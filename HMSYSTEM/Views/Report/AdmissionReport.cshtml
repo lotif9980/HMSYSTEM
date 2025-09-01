@@ -8,11 +8,17 @@
             <div class="row">
                 <div class="col-md-5">
                     <label class="form-label">From</label>
-                    <input type="date" name="fromDate" value="@ViewBag.FromDate" class="form-control" />
+                    <div class="input-group">
+                        <input type="text" id="fromDate" name="fromDate" class="form-control" />
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
                 </div>
                 <div class="col-md-5">
                     <label class="form-label">To</label>
-                    <input type="date" name="toDate" value="@ViewBag.ToDate" class="form-control" />
+                    <div class="input-group">
+                        <input type="text" id="toDate" name="toDate" class="form-control" />
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary mt-4">View</button>
@@ -64,3 +70,38 @@
         <p class="text-center text-muted">No data found for the selected date range.</p>
     }
 </div>
+
+
+<script>
+    $(function () {
+        $("#fromDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date()   // আজকের তারিখ default হবে
+        }).datepicker("setDate", new Date()); // input এও বসিয়ে দেবে
+
+        $(".input-group-text").click(function () {
+            $("#fromDate").focus();
+        });
+    });
+
+
+       $(function () {
+       
+        var today = new Date();
+       
+        var lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        $("#toDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: lastDateOfMonth   
+        }).datepicker("setDate", lastDateOfMonth); 
+
+        $(".input-group-text").click(function () {
+            $("#toDate").focus();
+        });
+    });
+</script>
