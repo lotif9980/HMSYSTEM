@@ -53,5 +53,22 @@ namespace HMSYSTEM.Repository
                              }).ToList();
             return viewModel;
         }
+
+        public List<AppointmentVM> GetAppointment()
+        {
+           var viewModel=(from a in _db.Appointments
+                         join p in _db.Patients on a.PatientID equals p.PatientID into gPatientgroup
+                         from p in gPatientgroup.DefaultIfEmpty()
+                         join d in _db.Doctors on a.DoctorId equals d.Id
+                         select new AppointmentVM 
+                         { 
+                             PatientName=p.FirstName + " " + p.LastName,
+                             PatientPhoneNumber=p.Phone,
+                             Problem=a.Problem,
+                             SerialNumber=a.SerialNumber,
+                             AppoinmentDate=a.AppoinmentDate
+                         }).ToList();
+            return viewModel;
+        }
     }
 }

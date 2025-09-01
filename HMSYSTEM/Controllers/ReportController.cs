@@ -63,7 +63,7 @@ namespace HMSYSTEM.Controllers
         {
             if (!fromDate.HasValue || !toDate.HasValue)
             {
-                // যদি user date না দেয় → empty list
+               
                 ViewBag.FromDate = DateTime.Now.ToString("yyyy-MM-dd");
                 ViewBag.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
                 return View(new List<AdmissionViewModel>());
