@@ -1,5 +1,6 @@
 ﻿using AspNetCoreGeneratedDocument;
 using HMSYSTEM.Data;
+using HMSYSTEM.Enum;
 using HMSYSTEM.Models;
 using HMSYSTEM.ViewModels;
 
@@ -54,12 +55,13 @@ namespace HMSYSTEM.Repository
             return viewModel;
         }
 
-        public List<AppointmentVM> GetAppointment()
+        public List<AppointmentVM> GetAppointment(DateTime formDate, DateTime toDate)
         {
            var viewModel=(from a in _db.Appointments
                          join p in _db.Patients on a.PatientID equals p.PatientID into gPatientgroup
                          from p in gPatientgroup.DefaultIfEmpty()
                          join d in _db.Doctors on a.DoctorId equals d.Id
+                         where  a.AppoinmentDate >=formDate && a.AppoinmentDate <= toDate
                          select new AppointmentVM 
                          { 
                              PatientName=p.FirstName + " " + p.LastName,

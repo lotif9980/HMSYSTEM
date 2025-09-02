@@ -8,6 +8,6 @@ namespace HMSYSTEM.Repository
 
         public List<AdmissionViewModel> GetAllAdmission(DateTime fromDate, DateTime toDate);
 
-        public List<AppointmentVM> GetAppointment();
+        public List<AppointmentVM> GetAppointment(DateTime formDate, DateTime toDate);
     }
 }

@@ -53,9 +53,7 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public IActionResult AdmissionReport()
         {
-            ViewBag.FromDate = DateTime.Now.ToString("yyyy-MM-dd");
-            ViewBag.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
-            return View(new List<AdmissionViewModel>());            
+            return View();            
         }
 
         [HttpPost]
@@ -63,18 +61,31 @@ namespace HMSYSTEM.Controllers
         {
             if (!fromDate.HasValue || !toDate.HasValue)
             {
-               
-                ViewBag.FromDate = DateTime.Now.ToString("yyyy-MM-dd");
-                ViewBag.ToDate = DateTime.Now.ToString("yyyy-MM-dd");
                 return View(new List<AdmissionViewModel>());
             }
             var data = _unitOfWork.reportRepository.GetAllAdmission(fromDate.Value, toDate.Value);
 
 
-            ViewBag.FromDate = fromDate.Value.ToString("yyyy-MM-dd");
-            ViewBag.ToDate = toDate.Value.ToString("yyyy-MM-dd");
-
             return View("AdmissionReport", data);
         }
+
+
+        [HttpGet]
+        public IActionResult AppointmentReport()
+        {
+            return View() ;
+        }
+
+        [HttpPost]
+        public IActionResult AppointmentReports(DateTime? fromDate , DateTime? toDate)
+        {
+            if (!fromDate.HasValue || !toDate.HasValue)
+            {
+                return View(new List<AppointmentVM>());
+            }
+            var data = _unitOfWork.reportRepository.GetAppointment(fromDate.Value, toDate.Value);
+            return View("AppointmentReport", data);
+        }
+
     }
 }
