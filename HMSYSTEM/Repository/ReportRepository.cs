@@ -73,11 +73,12 @@ namespace HMSYSTEM.Repository
             return viewModel;
         }
 
-        public List<PrescriptionViewModel> GetPrescriptions()
+        public List<PrescriptionViewModel> GetPrescriptions(DateTime formDate, DateTime toDate)
         {
             var viewModel = (from p in _db.Prescriptions
                              join pat in _db.Patients on p.PatientId equals pat.PatientID
                              join doc in _db.Doctors on p.DoctorId equals doc.Id
+                             where p.Date>=formDate && p.Date<=toDate
                              select new PrescriptionViewModel
                              {
                                  PatientName=pat.FirstName + " " + pat.LastName,
@@ -90,10 +91,11 @@ namespace HMSYSTEM.Repository
             return viewModel;
         }
 
-        public List<BillViewModel> GetBill()
+        public List<BillViewModel> GetBill(DateTime? fromDate, DateTime? toDate)
         {
            var viewModel=(from b in _db.Bills
                           join p in _db.Patients on b.PatientId equals  p.PatientID
+                          where b.BillDate>=fromDate && b.BillDate<=toDate
                           select new BillViewModel
                           {
                               BillNo=b.BillNo,
@@ -102,7 +104,9 @@ namespace HMSYSTEM.Repository
                               TotalAmount=b.TotalAmount,
                               Discount=b.Discount,
                               NetAmount=b.NetAmount,
-                              DueAmount=b.DueAmount
+                              DueAmount=b.DueAmount,
+                              PaymentAmt=b.PaymentAmt,
+                              PatientPhoneNumber=p.Phone
                           }).ToList();
 
             return viewModel;

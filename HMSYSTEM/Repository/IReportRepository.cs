@@ -7,7 +7,7 @@ namespace HMSYSTEM.Repository
         public List<WardBedViewModel> GetWardBedStatus(int?wardId=null);
         public List<AdmissionViewModel> GetAllAdmission(DateTime fromDate, DateTime toDate);
         public List<AppointmentVM> GetAppointment(DateTime formDate, DateTime toDate);
-        public List<PrescriptionViewModel> GetPrescriptions();
-        public List<BillViewModel> GetBill();
+        public List<PrescriptionViewModel> GetPrescriptions(DateTime formDate, DateTime toDate);
+        public List<BillViewModel> GetBill(DateTime? fromDate, DateTime? toDate);
     }
 }

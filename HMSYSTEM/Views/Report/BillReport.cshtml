@@ -1,18 +1,18 @@
 ﻿@using HMSYSTEM.ViewModels
-@model List<AppointmentVM>
+@model List<BillViewModel>
 
 
 <div class="container mt-5">
-    <form asp-action="AppointmentReports" method="post">
+    <form asp-action="BillReports" method="post">
         <div class="row d-flex justify-content-center align-items-end">
-            <div class="col-md-3">
+            <div class="col-md-5">
                 <label class="form-label">From</label>
                 <div class="input-group">
                     <input type="text" id="fromDate" name="fromDate" class="form-control" />
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
                 <label class="form-label">To</label>
                 <div class="input-group">
                     <input type="text" id="toDate" name="toDate" class="form-control" />
@@ -20,15 +20,15 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary">View</button>
-                <a class="btn btn-danger" asp-controller="Report" asp-action="AppointmentReport">Reset</a>
+                <button type="submit" class="btn btn-primary ">View</button>
+                <a class="btn btn-danger" asp-controller="Report" asp-action="BillReport">Reset</a>
             </div>
         </div>
     </form>
 </div>
 
 
-<div class="container">
+<div class="m-3">
     @if (Model != null && Model.Any())
     {
         <table class="table table-bordered mt-3 table-hover">
@@ -36,11 +36,14 @@
                 <tr>
                     <th>Sl</th>
                     <th>Date</th>
-                    <th>Serial</th>
                     <th>Patient</th>
                     <th>P.Phone</th>
-                    <th>Problem</th>
-                   
+                    <th>TotalAmt</th>
+                    <th>Discount</th>
+                    <th>Net Total</th>
+                    <th>Payment</th>
+                    <th>Due Amtount</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -52,11 +55,14 @@
                 {
                     <tr>
                         <td>@count</td>
-                        <td>@(item.AppoinmentDate?.ToString("dd-MM-yyyy"))</td>
-                        <td>@item.SerialNumber</td>
+                        <td>@(item.BillDate.ToString("dd-MM-yyyy"))</td>
                         <td>@item.PatientName</td>
                         <td>@item.PatientPhoneNumber</td>
-                        <td>@item.Problem</td>
+                        <td>@item.TotalAmount</td>
+                        <td>@item.Discount</td>
+                        <td>@item.NetAmount</td>
+                        <td>@item.PaymentAmt</td>
+                        <td>@item.DueAmount</td>
                     </tr>
                     count++;
                 }
@@ -64,20 +70,34 @@
             </tbody>
         </table>
     }
+   
 </div>
-
 
 
 <script>
     $(function () {
+        $("#fromDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date()
+        }).datepicker("setDate", new Date());
+
+        $(".input-group-text").click(function () {
+            $("#fromDate").focus();
+        });
+    });
+
+
+    $(function () {
         var today = new Date();
 
-        
+
         var firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-       
+
         var lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-    
+
         $("#fromDate").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
@@ -85,7 +105,7 @@
             defaultDate: firstDateOfMonth
         }).datepicker("setDate", firstDateOfMonth);
 
-  
+
         $("#toDate").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
@@ -93,7 +113,7 @@
             defaultDate: lastDateOfMonth
         }).datepicker("setDate", lastDateOfMonth);
 
-      
+
         $("#fromDateIcon").click(function () {
             $("#fromDate").focus();
         });

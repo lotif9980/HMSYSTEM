@@ -87,5 +87,40 @@ namespace HMSYSTEM.Controllers
             return View("AppointmentReport", data);
         }
 
+
+        [HttpGet]
+        public IActionResult PrescriptionReports()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult PrescriptionReport(DateTime? fromDate, DateTime? toDate)
+        {
+            if (!fromDate.HasValue || !toDate.HasValue)
+            {
+                return View(new List<PrescriptionViewModel>());
+            }
+            var data = _unitOfWork.reportRepository.GetPrescriptions(fromDate.Value, toDate.Value);
+            return View("PrescriptionReports", data);
+        }
+
+
+        [HttpGet]
+        public IActionResult BillReport()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult BillReports(DateTime? fromDate, DateTime? toDate)
+        {
+            if (!fromDate.HasValue || !toDate.HasValue)
+            {
+                return View(new List<BillViewModel>());
+            }
+            var data = _unitOfWork.reportRepository.GetBill(fromDate.Value, toDate.Value);
+            return View("BillReport", data);
+        }
     }
 }

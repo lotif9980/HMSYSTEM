@@ -4,8 +4,7 @@
 
 <div class="container mt-5">
     <form asp-action="AdmissionReports" method="post">
-        <div class="row d-flex justify-content-center">
-            <div class="row">
+        <div class="row d-flex justify-content-center align-items-end">
                 <div class="col-md-5">
                     <label class="form-label">From</label>
                     <div class="input-group">
@@ -21,10 +20,9 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary mt-4">View</button>
+                    <button type="submit" class="btn btn-primary ">View</button>
+                <a class="btn btn-danger" asp-controller="Report" asp-action="AdmissionReport">Reset</a>
                 </div>
-            </div>
-            
         </div>
     </form>
 </div>
@@ -78,8 +76,8 @@
             dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
-            defaultDate: new Date()   // আজকের তারিখ default হবে
-        }).datepicker("setDate", new Date()); // input এও বসিয়ে দেবে
+            defaultDate: new Date()  
+        }).datepicker("setDate", new Date()); 
 
         $(".input-group-text").click(function () {
             $("#fromDate").focus();

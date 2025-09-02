@@ -54,7 +54,7 @@
                     <div class="row mb-3">
                         <label asp-for="DepartmentId" class="form-label col-sm-3">Department</label>
                         <div class="col-sm-9">
-                            <select asp-for="DepartmentId" class="form-select role-dropdown" id="DepartmentId">
+                            <select asp-for="DepartmentId" class="form-select role-departmen" id="DepartmentId">
                                 <option value="">-- Select Department --</option>
                                 @foreach (var med in departments)
                                 {
@@ -87,7 +87,7 @@
 
       $(document).ready(function () {
            $(".role-dropdown").select2({
-               placeholder: "--Select Role--",
+               placeholder: "--Select Ward Type--",
                allowClear: true,
                width: '100%'
            });
@@ -97,6 +97,19 @@
                document.querySelector('.select2-search__field').focus();
            });
       });
+
+        $(document).ready(function () {
+               $(".role-departmen").select2({
+                 placeholder: "--Select Department--",
+                 allowClear: true,
+                 width: '100%'
+             });
+
+
+             $(document).on('select2:open', () => {
+                 document.querySelector('.select2-search__field').focus();
+             });
+        });
 
 
   $(document).ready(function(){
