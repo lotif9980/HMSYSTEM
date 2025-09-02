@@ -72,5 +72,25 @@ namespace HMSYSTEM.Repository
                          }).ToList();
             return viewModel;
         }
+
+        public List<PrescriptionViewModel> GetPrescriptions()
+        {
+            var viewModel = (from p in _db.Prescriptions
+                             join pat in _db.Patients on p.PatientId equals pat.PatientID
+                             join doc in _db.Doctors on p.DoctorId equals doc.Id
+                             select new PrescriptionViewModel
+                             {
+                                 PatientName=pat.FirstName + " " + pat.LastName,
+                                 PatientMobileNo=pat.Phone,
+                                 DoctorName=doc.FirstName +""+ doc.LastName,
+                                 Date=p.Date,
+                                 NextFlowUp=p.NextFlowUp
+                             }).ToList();
+
+            return viewModel;
+        }
+
+       
+
     }
 }
