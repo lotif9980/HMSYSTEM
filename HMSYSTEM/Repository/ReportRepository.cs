@@ -90,7 +90,22 @@ namespace HMSYSTEM.Repository
             return viewModel;
         }
 
-       
+        public List<BillViewModel> GetBill()
+        {
+           var viewModel=(from b in _db.Bills
+                          join p in _db.Patients on b.PatientId equals  p.PatientID
+                          select new BillViewModel
+                          {
+                              BillNo=b.BillNo,
+                              BillDate=b.BillDate,
+                              PatientName=p.FirstName+""+p.LastName,
+                              TotalAmount=b.TotalAmount,
+                              Discount=b.Discount,
+                              NetAmount=b.NetAmount,
+                              DueAmount=b.DueAmount
+                          }).ToList();
 
+            return viewModel;
+        }
     }
 }
