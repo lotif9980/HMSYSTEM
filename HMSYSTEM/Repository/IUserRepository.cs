@@ -15,7 +15,9 @@ namespace HMSYSTEM.Repository
         public void Update(User user);
 
         public void GetStatus(int id);
-     
+        public User GetUserById(int userId);
+        
+
 
     }
 }

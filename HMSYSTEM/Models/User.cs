@@ -17,9 +17,8 @@ namespace HMSYSTEM.Models
         [Required(ErrorMessage ="Role Required")]
         public int ? RoleId { get; set; }
         public Role? Role { get; set; }
-
-        public int  DoctorId { get; set; }
-        public Doctor Doctor { get; set; }
+        public int DoctorId { get; set; } = 0;
+        public Doctor? Doctor { get; set; }
     }
 
     public class LoginViewModel

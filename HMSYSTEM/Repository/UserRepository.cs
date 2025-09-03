@@ -107,6 +107,11 @@ namespace HMSYSTEM.Repository
 
         }
 
+        public User GetUserById(int userId)
+        {
+            return _db.Users.FirstOrDefault(u => u.Id == userId);
+          
+        }
 
     }
 }

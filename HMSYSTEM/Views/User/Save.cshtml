@@ -60,7 +60,7 @@
                         <div class="col-md-6">
                             <label asp-for="DoctorId" class="form-label">Doctor Name</label>
                             <select asp-for="DoctorId" class="form-control doctor-dropdown">
-                                <option value="">--Select Doctor--</option>
+                                <option value="0">--Select Doctor--</option>
                                 @foreach (var item in ViewBag.Doctors)
                                 {
                                     <option value="@item.Id">@item.FirstName @item.LastName</option>

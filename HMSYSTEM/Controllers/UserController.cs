@@ -74,6 +74,7 @@ namespace HMSYSTEM.Controllers
                 TempData["Message"] = "❌ " + (ex?.Message ?? "An error occurred.");
                 TempData["MessageType"] = "danger";
                 ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
+                ViewBag.Doctors = unitofwork.doctorRepo.getAll();
                 return View(user);
             }
         }
