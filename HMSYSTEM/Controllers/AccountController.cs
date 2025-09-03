@@ -46,9 +46,11 @@ namespace HMSYSTEM.Controllers
 
                 var claims = new[]
                 {
-            new Claim(ClaimTypes.Name, user.UserName),
-        };
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim("RoleId", user.RoleId.ToString())
+                };
 
+               
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
 

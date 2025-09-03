@@ -58,19 +58,17 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Status</label>
-                            <div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" asp-for="Status" value="true" id="statusActive" />
-                                    <label class="form-check-label" for="statusActive">Active</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" asp-for="Status" value="false" id="statusInactive" />
-                                    <label class="form-check-label" for="statusInactive">Inactive</label>
-                                </div>
-                                <span asp-validation-for="Status" class="text-danger"></span>
-                            </div>
+                            <label asp-for="DoctorId" class="form-label">Doctor Name</label>
+                            <select asp-for="DoctorId" class="form-control doctor-dropdown">
+                                <option value="">--Select Doctor--</option>
+                                @foreach (var item in ViewBag.Doctors)
+                                {
+                                    <option value="@item.Id">@item.FirstName @item.LastName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-danger"></span>
                         </div>
+                        
                     </div>
 
                 </div>
@@ -84,6 +82,7 @@
     </div>
 </div>
 <script>
+    
     $(document).ready(function () {
          $(".role-dropdown").select2({
              placeholder: "--Select Role--",
@@ -92,6 +91,18 @@
          });
 
         
+         $(document).on('select2:open', () => {
+             document.querySelector('.select2-search__field').focus();
+         });
+
+
+         $(".doctor-dropdown").select2({
+             placeholder: "--Select Doctor--",
+             allowClear: true,
+             width: '100%'
+         });
+
+
          $(document).on('select2:open', () => {
              document.querySelector('.select2-search__field').focus();
          });

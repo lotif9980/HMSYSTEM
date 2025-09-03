@@ -38,7 +38,6 @@ namespace HMSYSTEM.Enum
 
         public enum AdmissionType
         {
-        
             Emergency=1,
             Routine=2,
             Maternity=3,
@@ -51,5 +50,12 @@ namespace HMSYSTEM.Enum
             Referral=10
         }
 
+        public enum RoleEnum
+        {
+            Admin=1,
+            LocalAdmin=2,
+            Manager=3,
+            Doctor=4
+        }
 
 }

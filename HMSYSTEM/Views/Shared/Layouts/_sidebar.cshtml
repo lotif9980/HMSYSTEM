@@ -1,9 +1,17 @@
-﻿<style>
+﻿@using HMSYSTEM.Enum
+
+<style>
     .sidebarUser{
     background-color: #042a4a;
     color: #fff;
     }
 </style>
+
+@{
+    var roleClaim = User.Claims.FirstOrDefault(c => c.Type == "RoleId");
+    var roleId = roleClaim != null ? int.Parse(roleClaim.Value) : 0;
+}
+
 
 <!--begin::Sidebar-->
 @if (User.Identity.IsAuthenticated)
@@ -32,24 +40,55 @@
                 data-lte-toggle="treeview"
                 role="menu"
                 data-accordion="false">
-
-            
-                    <partial name="Layouts/Menus/_Settings" />
-                    <partial name="Layouts/Menus/_Designation" />
-                    <partial name="Layouts/Menus/_Medicine" />
-                    <partial name="Layouts/Menus/_Department" />
-                    <partial name="Layouts/Menus/_Doctor" />
-                    <partial name="Layouts/Menus/_Patient" />
-                    <partial name="Layouts/Menus/_Schedule" />
-                    <partial name="Layouts/Menus/_Appointment" />
-                    <partial name="Layouts/Menus/_Prescription" />
-                    <partial name="Layouts/Menus/_IPDAll" />
-                    <partial name="Layouts/Menus/_ServiceItem" />
-                    <partial name="Layouts/Menus/_reports" />
-
-                    <partial name="Layouts/Menus/_User" />
                     
-                  
+                
+                    @if (roleId == (int)RoleEnum.Admin)
+                    {
+                        <partial name="Layouts/Menus/_Settings" />
+                        <partial name="Layouts/Menus/_Designation" />
+                        <partial name="Layouts/Menus/_Medicine" />
+                        <partial name="Layouts/Menus/_Department" />
+                        <partial name="Layouts/Menus/_Doctor" />
+                        <partial name="Layouts/Menus/_Patient" />
+                        <partial name="Layouts/Menus/_Schedule" />
+                        <partial name="Layouts/Menus/_Appointment" />
+                        <partial name="Layouts/Menus/_Prescription" />
+                        <partial name="Layouts/Menus/_IPDAll" />
+                        <partial name="Layouts/Menus/_ServiceItem" />
+                        <partial name="Layouts/Menus/_reports" />
+                        <partial name="Layouts/Menus/_User" />
+                    }
+
+                    @if (roleId == (int)RoleEnum.Manager)
+                    {
+                        <partial name="Layouts/Menus/_ServiceItem" />
+                        <partial name="Layouts/Menus/_IPDAll" />
+                        <partial name="Layouts/Menus/_reports" />
+                        
+                    }
+
+                    @if (roleId == (int)RoleEnum.LocalAdmin)
+                    {
+                        <partial name="Layouts/Menus/_Designation" />
+                        <partial name="Layouts/Menus/_Medicine" />
+                        <partial name="Layouts/Menus/_Department" />
+                        <partial name="Layouts/Menus/_Doctor" />
+                        <partial name="Layouts/Menus/_Patient" />
+                        <partial name="Layouts/Menus/_Schedule" />
+                        <partial name="Layouts/Menus/_Appointment" />
+                        <partial name="Layouts/Menus/_Prescription" />
+                        <partial name="Layouts/Menus/_IPDAll" />
+                        <partial name="Layouts/Menus/_ServiceItem" />
+                    }
+
+                    @if (roleId == (int)RoleEnum.Doctor)
+                    {
+                        <partial name="Layouts/Menus/_Schedule" />
+                        <partial name="Layouts/Menus/_Appointment" />
+                        <partial name="Layouts/Menus/_Prescription" />
+                        <partial name="Layouts/Menus/_IPDAll" />
+                    }
+
             </ul>
             <!--end::Sidebar Menu-->
         </nav>

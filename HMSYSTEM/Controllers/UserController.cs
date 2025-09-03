@@ -45,6 +45,8 @@ namespace HMSYSTEM.Controllers
         public IActionResult Save()
         {
             ViewBag.Roles=unitofwork.RoleRepository.GetRoles();
+            ViewBag.Doctors=unitofwork.doctorRepo.getAll();
+
             return View();
         }
 
@@ -56,6 +58,7 @@ namespace HMSYSTEM.Controllers
                 TempData["Message"] = "❌ Invalid user data submitted.";
                 TempData["MessageType"] = "danger";
                 ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
+                ViewBag.Doctors = unitofwork.doctorRepo.getAll();
                 return View(user);
             }
 
