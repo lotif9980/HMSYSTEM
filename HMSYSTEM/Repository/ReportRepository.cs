@@ -40,7 +40,7 @@ namespace HMSYSTEM.Repository
                              from d in dgroup.DefaultIfEmpty()
                              join b in _db.Beds on a.BedId equals b.Id into bgroup
                              from b in bgroup.DefaultIfEmpty()
-                             where a.Status== 1 && a.AdmitDate >= fromDate
+                             where a.AdmitDate >= fromDate
                            && a.AdmitDate <= toDate
                              select new AdmissionViewModel
                              {
