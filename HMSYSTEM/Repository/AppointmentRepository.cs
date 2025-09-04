@@ -63,6 +63,8 @@ namespace HMSYSTEM.Repository
         }
 
 
+     
+
 
         public void Save(Appointment appointment)
         {
@@ -87,13 +89,24 @@ namespace HMSYSTEM.Repository
                 .Include(x=>x.Department)
                 .Include(x=>x.Patient).Where(p => p.Status == AppointmentStatus.Deleted).ToList();
         }
-        public List<Appointment> GetProgress()
+
+        public IQueryable<Appointment> GetProgress(int? doctorId = null)
         {
-            return _db.Appointments
-                .Include(x=>x.Doctor)
-                .Include(x=>x.Department)
-                .Include(x=>x.Patient).Where(p=>p.Status==AppointmentStatus.InProgress).ToList();
+
+            var query = _db.Appointments
+                .Include(x => x.Doctor)
+                .Include(x => x.Department)
+                .Include(x => x.Patient).Where(p => p.Status == AppointmentStatus.InProgress).AsQueryable();
+
+            if (doctorId.HasValue && doctorId.Value > 0)
+            {
+                query = query.Where(p => p.DoctorId == doctorId.Value);
+            }
+
+            return query;
         }
+
+
 
         public List<Appointment> GetComplete()
         {

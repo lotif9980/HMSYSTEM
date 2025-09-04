@@ -30,11 +30,8 @@ namespace HMSYSTEM.Controllers
             ViewBag.FromDate = fromDate.ToString("yyyy-MM-dd");
             ViewBag.ToDate = toDate.ToString("yyyy-MM-dd");
 
-            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == "RoleId");
-            var doctorClaim = User.Claims.FirstOrDefault(c => c.Type == "DoctorId");
-
-            int roleId=roleClaim!=null?int.Parse(roleClaim.Value) : 0;
-            int doctorId=doctorClaim!=null?int.Parse(doctorClaim.Value) : 0;
+            int roleId = Helper.GetRoleId(User);
+            int doctorId = Helper.GetDoctorId(User);
 
             IQueryable<Appointment> query;
 
@@ -220,7 +217,23 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public IActionResult GetProgress(int page=1 , int pageSize=10)
         {
-            var totalProgress =_unitofWork.AppointmentRepository.GetProgress();
+
+            int roleId = Helper.GetRoleId(User);
+            int doctorId = Helper.GetDoctorId(User);
+
+
+
+            IQueryable<Appointment> totalProgress;
+
+            if (roleId == (int)RoleEnum.Doctor && doctorId > 0)
+            {
+                totalProgress = _unitofWork.AppointmentRepository.GetProgress(doctorId);
+            }
+            else
+            {
+                totalProgress = _unitofWork.AppointmentRepository.GetProgress();
+            }
+
             var totalItem = totalProgress.Count();
             var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
             var progress=totalProgress

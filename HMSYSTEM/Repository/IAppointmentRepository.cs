@@ -11,7 +11,7 @@ namespace HMSYSTEM.Repository
         public void Save(Appointment appointment);
         public void Delete(int Id);
         List<Appointment> GetDeleteAppointments();
-        List<Appointment> GetProgress();
+        IQueryable<Appointment> GetProgress(int? doctorId=null);
         List<Appointment> GetComplete();
         public void UpdateStatus(int id, AppointmentStatus status);
         List<Appointment> GetSerial();
