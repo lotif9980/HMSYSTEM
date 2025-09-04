@@ -140,7 +140,8 @@ namespace HMSYSTEM.Repository
 
         public async Task<bool> AppointmentCheck(int PatientId)
         {
-           return await _db.Appointments.AnyAsync(p=>p.PatientID== PatientId && p.Status==AppointmentStatus.Active || p.Status== AppointmentStatus.InProgress);
+           return await _db.Appointments.AnyAsync(p=>p.PatientID== PatientId && 
+                        (p.Status==AppointmentStatus.Active || p.Status== AppointmentStatus.InProgress));
         }
 
         
