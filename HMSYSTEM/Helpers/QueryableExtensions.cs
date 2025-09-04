@@ -1,4 +1,5 @@
 ﻿using HMSYSTEM.ViewModels;
+using System.Security.Claims;
 
 namespace HMSYSTEM.Helpers
 {
@@ -52,6 +53,21 @@ namespace HMSYSTEM.Helpers
             }
 
             return words + " Taka";
+        }
+
+        public static class Helper
+        {
+            public static int GetRoleId(ClaimsPrincipal user)
+            {
+                var roleClaim = user.Claims.FirstOrDefault(c => c.Type == "RoleId");
+                return roleClaim != null ? int.Parse(roleClaim.Value) : 0;
+            }
+
+            public static int GetDoctorId(ClaimsPrincipal user)
+            {
+                var doctorClaim = user.Claims.FirstOrDefault(c => c.Type == "DoctorId");
+                return doctorClaim != null ? int.Parse(doctorClaim.Value) : 0;
+            }
         }
     }
 }

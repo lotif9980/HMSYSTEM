@@ -6,6 +6,7 @@ using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using static HMSYSTEM.Helpers.QueryableExtensions;
 
 namespace HMSYSTEM.Controllers
 {
@@ -43,7 +44,7 @@ namespace HMSYSTEM.Controllers
             }
             else
             {
-                 query = _unitofWork.AppointmentRepository.GetAllAppointments(fromDate, toDate);
+                 query = _unitofWork.AppointmentRepository.GetAppointmentsByDoctorId(null,fromDate, toDate);
             }
 
            
@@ -58,9 +59,22 @@ namespace HMSYSTEM.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Index(DateTime? fromDate, DateTime? toDate, int pageSize = 10, int page = 1)
+        public IActionResult Index(int? doctroId, DateTime? fromDate, DateTime? toDate, int pageSize = 10, int page = 1)
         {
-            var query = _unitofWork.AppointmentRepository.GetAllAppointments(fromDate, toDate);
+            IQueryable<Appointment> query;
+
+            int roleId = Helper.GetRoleId(User);
+            int doctorId = Helper.GetDoctorId(User);
+
+            if (roleId == (int)RoleEnum.Doctor && doctorId > 0)
+            {
+                query = _unitofWork.AppointmentRepository.GetAppointmentsByDoctorId(doctorId, fromDate, toDate);
+            }
+            else
+            {
+                query=_unitofWork.AppointmentRepository.GetAppointmentsByDoctorId(null, fromDate, toDate);
+            }
+       
 
             ViewBag.FromDate = fromDate?.ToString("yyyy-MM-dd") ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString("yyyy-MM-dd");
             ViewBag.ToDate = toDate?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd");

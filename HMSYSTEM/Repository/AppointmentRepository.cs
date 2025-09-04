@@ -16,7 +16,28 @@ namespace HMSYSTEM.Repository
             _db = db;
         }
 
-        public IQueryable<Appointment> GetAllAppointments(DateTime? fromDate = null, DateTime? toDate = null)
+        //public IQueryable<Appointment> GetAllAppointments(DateTime? fromDate = null, DateTime? toDate = null)
+        //{
+        //    var query = _db.Appointments
+        //        .Include(a => a.Department)
+        //        .Include(a => a.Patient)
+        //        .Include(a => a.Doctor)
+        //        .Where(a => a.Status == AppointmentStatus.Active)
+        //        .AsQueryable();
+
+        //    // Default current month
+        //    fromDate ??= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        //    toDate ??= fromDate.Value.AddMonths(1).AddDays(-1);
+
+        //    // Filter by only date part
+        //    query = query.Where(a =>
+        //        a.AppoinmentDate.Date >= fromDate.Value.Date &&
+        //        a.AppoinmentDate.Date <= toDate.Value.Date);
+
+        //    return query;
+        //}
+
+        public IQueryable<Appointment> GetAppointmentsByDoctorId(int? doctorId=null, DateTime? fromDate = null, DateTime? toDate = null)
         {
             var query = _db.Appointments
                 .Include(a => a.Department)
@@ -25,27 +46,10 @@ namespace HMSYSTEM.Repository
                 .Where(a => a.Status == AppointmentStatus.Active)
                 .AsQueryable();
 
-            // Default current month
-            fromDate ??= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            toDate ??= fromDate.Value.AddMonths(1).AddDays(-1);
-
-            // Filter by only date part
-            query = query.Where(a =>
-                a.AppoinmentDate.Date >= fromDate.Value.Date &&
-                a.AppoinmentDate.Date <= toDate.Value.Date);
-
-            return query;
-        }
-
-        public IQueryable<Appointment> GetAppointmentsByDoctorId(int doctorId, DateTime? fromDate = null, DateTime? toDate = null)
-        {
-            var query = _db.Appointments
-                .Include(a => a.Department)
-                .Include(a => a.Patient)
-                .Include(a => a.Doctor)
-                .Where(a => a.Status == AppointmentStatus.Active && a.DoctorId==doctorId)
-                .AsQueryable();
-
+            if(doctorId.HasValue && doctorId.Value > 0)
+            {
+                query = query.Where(a => a.DoctorId == doctorId.Value);
+            }
             // Default current month
             fromDate ??= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             toDate ??= fromDate.Value.AddMonths(1).AddDays(-1);
