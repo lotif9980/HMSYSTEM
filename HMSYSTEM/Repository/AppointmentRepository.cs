@@ -37,6 +37,27 @@ namespace HMSYSTEM.Repository
             return query;
         }
 
+        public IQueryable<Appointment> GetAppointmentsByDoctorId(int doctorId, DateTime? fromDate = null, DateTime? toDate = null)
+        {
+            var query = _db.Appointments
+                .Include(a => a.Department)
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .Where(a => a.Status == AppointmentStatus.Active && a.DoctorId==doctorId)
+                .AsQueryable();
+
+            // Default current month
+            fromDate ??= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            toDate ??= fromDate.Value.AddMonths(1).AddDays(-1);
+
+            // Filter by only date part
+            query = query.Where(a =>
+                a.AppoinmentDate.Date >= fromDate.Value.Date &&
+                a.AppoinmentDate.Date <= toDate.Value.Date);
+
+            return query;
+        }
+
 
 
         public void Save(Appointment appointment)
@@ -104,6 +125,8 @@ namespace HMSYSTEM.Repository
         {
            return await _db.Appointments.AnyAsync(p=>p.PatientID== PatientId && p.Status==AppointmentStatus.Active || p.Status== AppointmentStatus.InProgress);
         }
+
+        
     }
 
 }

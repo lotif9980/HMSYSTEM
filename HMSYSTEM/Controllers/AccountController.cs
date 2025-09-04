@@ -43,14 +43,18 @@ namespace HMSYSTEM.Controllers
                     ViewBag.Error = "Your account is inactive. Please contact admin.";
                     return View(model);
                 }
+                var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.UserName),
+                        new Claim("RoleId", user.RoleId?.ToString() ?? "0")
+                    };
 
-                var claims = new[]
+                if (user.DoctorId > 0)
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim("RoleId", user.RoleId.ToString())
-                };
+                    claims.Add(new Claim("DoctorId", user.DoctorId.ToString()));
+                }
 
-               
+
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
 

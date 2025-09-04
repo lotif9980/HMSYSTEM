@@ -29,7 +29,24 @@ namespace HMSYSTEM.Controllers
             ViewBag.FromDate = fromDate.ToString("yyyy-MM-dd");
             ViewBag.ToDate = toDate.ToString("yyyy-MM-dd");
 
-            var query = _unitofWork.AppointmentRepository.GetAllAppointments(fromDate, toDate);
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == "RoleId");
+            var doctorClaim = User.Claims.FirstOrDefault(c => c.Type == "DoctorId");
+
+            int roleId=roleClaim!=null?int.Parse(roleClaim.Value) : 0;
+            int doctorId=doctorClaim!=null?int.Parse(doctorClaim.Value) : 0;
+
+            IQueryable<Appointment> query;
+
+            if (roleId==(int)RoleEnum.Doctor && doctorId > 0)
+            {
+                query=_unitofWork.AppointmentRepository.GetAppointmentsByDoctorId(doctorId,fromDate,toDate);
+            }
+            else
+            {
+                 query = _unitofWork.AppointmentRepository.GetAllAppointments(fromDate, toDate);
+            }
+
+           
 
             var pagedData = query
                 .OrderByDescending(p => p.AppointmentId)
