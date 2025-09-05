@@ -46,7 +46,8 @@ namespace HMSYSTEM.Controllers
                 var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim("RoleId", user.RoleId?.ToString() ?? "0")
+                        new Claim("RoleId", user.RoleId?.ToString() ?? "0"),
+                        new Claim("FullName",user.Name?.ToString()??"0")
                     };
 
                 if (user.DoctorId > 0)
