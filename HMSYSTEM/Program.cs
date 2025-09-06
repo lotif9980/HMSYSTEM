@@ -1,7 +1,8 @@
-﻿using HMSYSTEM.Repository;
-using Microsoft.EntityFrameworkCore;
-using HMSYSTEM.Data;
+﻿using HMSYSTEM.Data;
+using HMSYSTEM.Repository;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+
+var culture = new CultureInfo("en-GB"); 
+CultureInfo.DefaultThreadCurrentCulture = culture; 
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
