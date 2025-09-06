@@ -82,12 +82,19 @@ namespace HMSYSTEM.Repository
 
         }
 
-        public List<Appointment> GetDeleteAppointments()
+        public IQueryable<Appointment> GetDeleteAppointments(int? doctorId=null)
         {
-            return _db.Appointments
+            var query= _db.Appointments
                 .Include(x=> x.Doctor)
                 .Include(x=>x.Department)
-                .Include(x=>x.Patient).Where(p => p.Status == AppointmentStatus.Deleted).ToList();
+                .Include(x=>x.Patient).Where(p => p.Status == AppointmentStatus.Deleted).AsQueryable();
+
+            if(doctorId.HasValue && doctorId.Value > 0)
+            {
+                query = query.Where(p => p.DoctorId == doctorId.Value);
+            }
+
+            return query;
         }
 
         public IQueryable<Appointment> GetProgress(int? doctorId = null)
@@ -108,12 +115,19 @@ namespace HMSYSTEM.Repository
 
 
 
-        public List<Appointment> GetComplete()
+        public IQueryable<Appointment> GetComplete(int? doctorId = null)
         {
-            return _db.Appointments
+            var query= _db.Appointments
                  .Include(x => x.Doctor)
                  .Include(x => x.Department)
-                 .Include(x=>x.Patient).Where(p => p.Status == AppointmentStatus.Completed).ToList();
+                 .Include(x=>x.Patient).Where(p => p.Status == AppointmentStatus.Completed).AsQueryable();
+
+            if(doctorId.HasValue && doctorId.Value > 0)
+            {
+                query = query.Where(p => p.DoctorId == doctorId.Value);
+            }
+
+            return query;
         }
 
 

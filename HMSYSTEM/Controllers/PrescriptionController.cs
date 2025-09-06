@@ -1,8 +1,10 @@
-﻿using HMSYSTEM.Models;
+﻿using HMSYSTEM.Enum;
+using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static HMSYSTEM.Helpers.QueryableExtensions;
 
 namespace HMSYSTEM.Controllers
 {
@@ -16,7 +18,21 @@ namespace HMSYSTEM.Controllers
 
         public IActionResult Index( int pageSize=10 , int page=1)
         {
-            var totalPrescription=  _unitOfWork.PrescriptioRepository.GetAll().OrderByDescending(p=>p.Id);
+            int roleId = Helper.GetRoleId(User);
+            int doctorId=Helper.GetDoctorId(User);
+
+            IQueryable<Prescription> totalPrescription;
+
+            if (roleId==(int)RoleEnum.Doctor && doctorId > 0)
+            {
+                totalPrescription= _unitOfWork.PrescriptioRepository.GetAll(doctorId);
+            }
+            else
+            {
+                totalPrescription = _unitOfWork.PrescriptioRepository.GetAll();
+            }
+            
+            totalPrescription= totalPrescription.OrderByDescending(p=>p.Id);
             var totalItem= totalPrescription.Count();
             var totalPage=(int)Math.Ceiling((decimal)totalItem/pageSize);
             var prescription = totalPrescription

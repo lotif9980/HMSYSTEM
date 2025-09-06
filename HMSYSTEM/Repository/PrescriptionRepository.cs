@@ -2,6 +2,7 @@
 using HMSYSTEM.Models;
 using HMSYSTEM.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace HMSYSTEM.Repository
 {
@@ -17,12 +18,19 @@ namespace HMSYSTEM.Repository
 
       
 
-        public List<Prescription> GetAll()
+        public IQueryable<Prescription> GetAll(int? doctorId=null)
         {
-            return _db.Prescriptions
+            var query= _db.Prescriptions
                 .Include(d=>d.Doctor)
                 .Include(d=>d.Department)
-                .Include(p=>p.Patient).ToList();
+                .Include(p=>p.Patient).AsQueryable();
+
+                if(doctorId.HasValue &&  doctorId.Value > 0)
+                {
+                    query = query.Where(p => p.DoctorId == doctorId.Value);
+                }
+
+              return query;
         }
 
         public void Save(Prescription prescription)

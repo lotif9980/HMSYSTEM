@@ -10,9 +10,9 @@ namespace HMSYSTEM.Repository
         IQueryable<Appointment> GetAppointmentsByDoctorId(int? doctorId =null,DateTime? fromDate = null, DateTime? toDate = null);
         public void Save(Appointment appointment);
         public void Delete(int Id);
-        List<Appointment> GetDeleteAppointments();
+        IQueryable<Appointment> GetDeleteAppointments(int?doctorId=null);
         IQueryable<Appointment> GetProgress(int? doctorId=null);
-        List<Appointment> GetComplete();
+        IQueryable<Appointment> GetComplete(int? doctorId=null);
         public void UpdateStatus(int id, AppointmentStatus status);
         List<Appointment> GetSerial();
 

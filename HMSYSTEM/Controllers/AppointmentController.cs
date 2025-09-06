@@ -194,7 +194,21 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public IActionResult GetDeleteList(int page = 1, int pageSize = 10)
         {
-            var totalDelete = _unitofWork.AppointmentRepository.GetDeleteAppointments();
+            int roleId = Helper.GetRoleId(User);
+            int doctorId = Helper.GetDoctorId(User);
+
+            IQueryable<Appointment> totalDelete;
+
+            if(roleId==(int)RoleEnum.Doctor && doctorId > 0)
+            {
+                totalDelete = _unitofWork.AppointmentRepository.GetDeleteAppointments(doctorId);
+            }
+            else
+            {
+                totalDelete = _unitofWork.AppointmentRepository.GetDeleteAppointments();
+            }
+
+           
             var totalItem = totalDelete.Count();
             var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
             var progress = totalDelete
@@ -256,7 +270,20 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public IActionResult GetComplete(int page = 1, int pageSize = 10)
         {
-            var totalComplete = _unitofWork.AppointmentRepository.GetComplete();
+            int roleId=Helper.GetRoleId(User);
+            int doctorId=Helper.GetDoctorId(User);
+
+            IQueryable<Appointment> totalComplete;
+
+            if(roleId==(int)RoleEnum.Doctor && doctorId > 0)
+            {
+                totalComplete = _unitofWork.AppointmentRepository.GetComplete(doctorId);
+            }
+            else
+            {
+                totalComplete = _unitofWork.AppointmentRepository.GetComplete();
+            }
+
             var totalItem = totalComplete.Count();
             var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
             var progress = totalComplete

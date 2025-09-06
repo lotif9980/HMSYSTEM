@@ -5,7 +5,7 @@ namespace HMSYSTEM.Repository
 {
     public interface IPrescriptionRepository
     {
-        List<Prescription> GetAll();
+        IQueryable<Prescription> GetAll(int?doctorId=null);
         public void Save(Prescription prescription);
 
         public void Delete(int id);

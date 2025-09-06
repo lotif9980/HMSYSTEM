@@ -194,7 +194,19 @@ namespace HMSYSTEM.Controllers
                     await _unitOf.Save();
                 }
 
-                TempData["Message"] = "✅ Successfully Added!";
+                var User = new User
+                {
+                    Name=doctor.FirstName +" "+doctor.LastName,
+                    MobileNo=doctor.PhoneNo,
+                    UserName = doctor.EmailAddress,
+                    Password = doctor.Password,
+                    RoleId=_unitOf.RoleRepository.GetRoles().FirstOrDefault(r=>r.Name== "Doctor")?.Id,
+                    DoctorId=doctor.Id
+                };
+
+                _unitOf.UserRepository.Save(User);
+
+                TempData["Message"] = "✅ Successfully Added Doctor and User!";
                 TempData["MessageType"] = "primary";
 
                 return RedirectToAction("Save");
