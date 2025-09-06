@@ -1,8 +1,10 @@
-﻿    using HMSYSTEM.Models;
+﻿using HMSYSTEM.Enum;
+using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static HMSYSTEM.Helpers.QueryableExtensions;
 
 namespace HMSYSTEM.Controllers
 {
@@ -20,8 +22,21 @@ namespace HMSYSTEM.Controllers
         [Authorize]
         public IActionResult Index( int page=1, int pageSize=10)
         {
+            int roleId = Helper.GetRoleId(User);
+            int doctorId=Helper.GetDoctorId(User);
 
-            var totalSchedule = _unitofWork.scheduleRepo.getAll().OrderBy(d=>d.ScheduleId);
+            IQueryable<Schedule> totalSchedule;
+
+            if (roleId==(int)RoleEnum.Doctor && doctorId > 0)
+            {
+                totalSchedule= _unitofWork.scheduleRepo.getAll(doctorId).OrderBy(d => d.ScheduleId);
+            }
+            else
+            {
+                totalSchedule= _unitofWork.scheduleRepo.getAll().OrderBy(d => d.ScheduleId);
+            }
+
+       
             var totalItem=totalSchedule.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pageSize);
 

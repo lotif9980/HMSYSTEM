@@ -15,11 +15,18 @@ namespace HMSYSTEM.Repository
 
         
 
-        public List<Schedule> getAll()
+        public IQueryable<Schedule> getAll(int?doctroId=null)
         {
 
-           return _db.Schedules.Include(d=>d.Department)
-                .Include(dr=>dr.Doctor).ToList();
+           var query= _db.Schedules.Include(d=>d.Department)
+                .Include(dr=>dr.Doctor).AsQueryable();
+
+            if(doctroId.HasValue && doctroId.Value > 0)
+            {
+                query=query.Where(p=>p.DoctorId == doctroId.Value);
+            }
+
+            return query;
         }
 
         public List<Schedule> Save(Schedule schedule)

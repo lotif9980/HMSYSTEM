@@ -4,7 +4,7 @@ namespace HMSYSTEM.Repository
 {
     public interface IScheduleRepository
     {
-        List<Schedule> getAll();
+        IQueryable<Schedule> getAll(int?doctorId=null);
         List<Schedule> Save(Schedule schedule);
         Schedule Edit(int Id);
         Schedule Update(Schedule schedule);
