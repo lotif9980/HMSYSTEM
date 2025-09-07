@@ -2,31 +2,41 @@
 @model List<AdmissionViewModel>
 
 
-<div class="container mt-5">
-    <form asp-action="AdmissionReports" method="post">
+<form id="billFilterForm" asp-action="AdmissionReports" method="post">
+    <div class="container">
         <div class="row d-flex justify-content-center align-items-end">
-                <div class="col-md-5">
-                    <label class="form-label">From</label>
-                    <div class="input-group">
-                        <input type="text" id="fromDate" name="fromDate" class="form-control" />
-                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    </div>
+            <div class="col-md-5">
+                <label class="form-label">From</label>
+                <div class="input-group">
+                    <input type="text" id="fromDate" name="fromDate" class="form-control" />
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
-                <div class="col-md-5">
-                    <label class="form-label">To</label>
-                    <div class="input-group">
-                        <input type="text" id="toDate" name="toDate" class="form-control" />
-                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    </div>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">To</label>
+                <div class="input-group">
+                    <input type="text" id="toDate" name="toDate" class="form-control" />
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary ">View</button>
-                <a class="btn btn-danger" asp-controller="Report" asp-action="AdmissionReport">Reset</a>
-                </div>
-        </div>
-    </form>
-</div>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
 
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-eye"></i>
+                </button>
+
+                <a class="btn btn-danger" asp-controller="Report" asp-action="AdmissionReport">
+                    <i class="fa fa-refresh"></i>
+                </a>
+
+
+                <button type="button" class="btn btn-info" onclick="loadAndPrint()">
+                    <i class="fa fa-print"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
 
 <div class="m-3">
     @if (Model != null && Model.Any())
@@ -63,12 +73,11 @@
             </tbody>
         </table>
     }
-    else
-    {
-        <p class="text-center text-muted">No data found for the selected date range.</p>
-    }
+   
 </div>
 
+
+<div id="printContainer" style="display:none;"></div>
 
 <script>
     $(function () {
@@ -86,20 +95,65 @@
 
 
     $(function () {
-       
         var today = new Date();
-       
+
+
+        var firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
         var lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+
+        $("#fromDate").datepicker({
+            dateFormat: "dd-mm-yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: firstDateOfMonth
+        }).datepicker("setDate", firstDateOfMonth);
+
 
         $("#toDate").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
-            defaultDate: lastDateOfMonth   
-        }).datepicker("setDate", lastDateOfMonth); 
+            defaultDate: lastDateOfMonth
+        }).datepicker("setDate", lastDateOfMonth);
 
-        $(".input-group-text").click(function () {
+
+        $("#fromDateIcon").click(function () {
+            $("#fromDate").focus();
+        });
+
+        $("#toDateIcon").click(function () {
             $("#toDate").focus();
         });
     });
+
+
+    function loadAndPrint() {
+        var fromDate = $('#fromDate').val();
+        var toDate = $('#toDate').val();
+
+        if(!fromDate || !toDate){
+            alert("Please select From and To date");
+            return;
+        }
+            $.ajax({
+                url: '/Report/GetAdmissionPrint/',
+                type: 'GET',
+                data: { fromDate: fromDate, toDate: toDate },
+                success: function (data) {
+                    $('#printContainer').html(data);
+                    var printContents = document.getElementById('printContainer').innerHTML;
+                    var originalContents = document.body.innerHTML;
+
+                    document.body.innerHTML = printContents;
+                    window.print();
+                    document.body.innerHTML = originalContents;
+                    location.reload();
+                },
+                error: function () {
+                    alert("Failed to load print view.");
+                }
+            });
+    }
 </script>

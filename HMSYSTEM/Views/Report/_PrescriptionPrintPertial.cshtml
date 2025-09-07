@@ -1,0 +1,111 @@
+﻿@model List<HMSYSTEM.ViewModels.PrescriptionViewModel>
+
+
+<style type="text/css">
+    @@media print {
+        @@page {
+            size: A4 portrait;
+            margin: 15mm;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+        }
+
+        #PrescriptionPrintArea {
+            width: 100%;
+            max-width: 210mm; /* A4 width */
+            margin: auto;
+            margin-top: 40px;
+        }
+
+        .full-page-border {
+            min-height: 277mm; /* 297mm - 2x10mm margin */
+            border: 1px solid black !important;
+            padding: 15px !important;
+            box-sizing: border-box;
+        }
+
+        .shadow {
+            box-shadow: none !important;
+        }
+
+        .m-4, .p-4, .m-3, .p-3 {
+            margin: 0 !important;
+            padding: 5px !important;
+        }
+
+        h3, h4, h6, p, td, th {
+            font-size: 12pt !important;
+        }
+
+        .table {
+            page-break-inside: auto;
+            width: 100% !important;
+        }
+
+            .table thead {
+                display: table-header-group; /* repeat header on each page */
+            }
+
+        .row, .col-md-4, .col-md-6 {
+            page-break-inside: avoid;
+        }
+
+        button {
+            display: none !important;
+        }
+    }
+
+</style>
+
+
+<div id="PrescriptionPrintArea" class="full-page-border">
+    <div class="d-flex justify-content-around align-items-start flex-wrap border border-black border-opacity-25 p-4" style="margin-bottom:15px;">
+        <div class="text-end flex-fill p-4 ">
+            <h4>Hospital Management</h4>
+            <h6>Charghat, Rajshahi</h6>
+            <h6>Mobile: 01791177192</h6>
+        </div>
+
+        <div class="text-center flex-fill p-4">
+            <h3>Prescription Details</h3>
+        </div>
+
+        <div class="text-end flex-fill p-4 ">
+            <h4>Hospital Management</h4>
+            <h6>Charghat, Rajshahi</h6>
+            <h6>Mobile: 01791177192</h6>
+        </div>
+    </div>
+
+    <div>
+        <table class="table table-bordered mt-3 table-hover">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Patient</th>
+                    <th>P.Phone</th>
+                    <th>D.Name</th>
+                    <th>Next Flowup</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var bill in Model)
+                {
+                    <tr>
+                        <td>@bill.Date?.ToString("dd-MM-yyyy")</td>
+                        <td>@bill.PatientName</td>
+                        <td>@bill.PatientMobileNo</td>
+                        <td>@bill.DoctorName</td>
+                        <td>@bill.NextFlowUp</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
