@@ -2,8 +2,9 @@
 @model List<BillViewModel>
 
 <form id="billFilterForm" asp-action="BillReports" method="post">
-  <div class="container">
+    <div class="container">
         <div class="row d-flex justify-content-center align-items-end">
+            <!-- From Date -->
             <div class="col-md-5">
                 <label class="form-label">From</label>
                 <div class="input-group">
@@ -11,6 +12,8 @@
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
+
+            <!-- To Date -->
             <div class="col-md-5">
                 <label class="form-label">To</label>
                 <div class="input-group">
@@ -18,28 +21,29 @@
                     <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
+
+            <!-- Action Buttons -->
             <div class="col-md-2 d-flex gap-2">
-                
+                <!-- Search -->
                 <button type="submit" class="btn btn-primary">
                     <i class="fa fa-eye"></i>
                 </button>
 
+                <!-- Refresh -->
                 <a class="btn btn-danger" asp-controller="Report" asp-action="BillReport">
                     <i class="fa fa-refresh"></i>
                 </a>
 
-             
+                <!-- Print -->
                 <button type="button" class="btn btn-info" onclick="loadAndPrint()">
                     <i class="fa fa-print"></i>
                 </button>
             </div>
         </div>
-  </div>
+    </div>
 </form>
 
-
-
-
+<!-- Data Table -->
 <div class="m-3">
     @if (Model != null && Model.Any())
     {
@@ -54,20 +58,18 @@
                     <th>Discount</th>
                     <th>Net Total</th>
                     <th>Payment</th>
-                    <th>Due Amtount</th>
-                    
+                    <th>Due Amount</th>
                 </tr>
             </thead>
             <tbody>
                 @{
                     int count = 1;
                 }
-
                 @foreach (var item in Model)
                 {
                     <tr>
                         <td>@count</td>
-                        <td>@(item.BillDate.ToString("dd-MM-yyyy"))</td>
+                        <td>@item.BillDate.ToString("dd-MM-yyyy")</td>
                         <td>@item.PatientName</td>
                         <td>@item.PatientPhoneNumber</td>
                         <td>@item.TotalAmount</td>
@@ -78,91 +80,69 @@
                     </tr>
                     count++;
                 }
-
             </tbody>
         </table>
     }
-   
 </div>
 
-
+<!-- Hidden Print Container -->
 <div id="printContainer" style="display:none;"></div>
 
-
+<!-- Scripts -->
 <script>
-    $(function () {
-        $("#fromDate").datepicker({
-            dateFormat: "dd-mm-yy",
-            changeMonth: true,
-            changeYear: true,
-            defaultDate: new Date()
-        }).datepicker("setDate", new Date());
-
-        $(".input-group-text").click(function () {
-            $("#fromDate").focus();
-        });
-    });
-
-
+    // Datepickers
     $(function () {
         var today = new Date();
 
-
         var firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
         var lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
 
         $("#fromDate").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
-            changeYear: true,
-            defaultDate: firstDateOfMonth
+            changeYear: true
         }).datepicker("setDate", firstDateOfMonth);
-
 
         $("#toDate").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
-            changeYear: true,
-            defaultDate: lastDateOfMonth
+            changeYear: true
         }).datepicker("setDate", lastDateOfMonth);
 
-
-        $("#fromDateIcon").click(function () {
-            $("#fromDate").focus();
-        });
-
-        $("#toDateIcon").click(function () {
-            $("#toDate").focus();
+        $(".input-group-text").click(function () {
+            $(this).prev("input").focus();
         });
     });
 
+    // Print Function
     function loadAndPrint() {
         var fromDate = $('#fromDate').val();
         var toDate = $('#toDate').val();
 
-        if(!fromDate || !toDate){
+        if (!fromDate || !toDate) {
             alert("Please select From and To date");
             return;
         }
-            $.ajax({
-                url: '/Report/PrintGetBills/',
-                type: 'GET',
-                data: { fromDate: fromDate, toDate: toDate },
-                success: function (data) {
-                    $('#printContainer').html(data);
-                    var printContents = document.getElementById('printContainer').innerHTML;
-                    var originalContents = document.body.innerHTML;
 
-                    document.body.innerHTML = printContents;
-                    window.print();
-                    document.body.innerHTML = originalContents;
-                    location.reload();
-                },
-                error: function () {
-                    alert("Failed to load print view.");
-                }
-            });
+        $.ajax({
+            url: '/Report/PrintGetBills/',
+            type: 'GET',
+            data: { fromDate: fromDate, toDate: toDate },
+            success: function (data) {
+                $('#printContainer').html(data);
+
+                var printContents = document.getElementById('printContainer').innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+                window.print();
+                document.body.innerHTML = originalContents;
+
+                location.reload(); // Reload after print
+            },
+            error: function () {
+                alert("Failed to load print view.");
+            }
+        });
     }
 </script>

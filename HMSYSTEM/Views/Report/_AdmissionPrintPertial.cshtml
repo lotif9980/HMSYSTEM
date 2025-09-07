@@ -5,7 +5,7 @@
     @@media print {
         @@page {
             size: A4 portrait;
-            margin: 15mm;
+            margin: 0.5mm;
         }
 
         body {
@@ -16,17 +16,16 @@
 
         #PrescriptionPrintArea {
             width: 100%;
-            max-width: 210mm; /* A4 width */
+            max-width: 250mm; /* A4 width */
             margin: auto;
-            margin-top: 40px;
+            margin-top: 30px;
         }
-
-        .full-page-border {
-            min-height: 277mm; /* 297mm - 2x10mm margin */
-            border: 1px solid black !important;
-            padding: 15px !important;
-            box-sizing: border-box;
-        }
+        /* .full-page-border {
+                min-height: 350mm; /* 297mm - 2x10mm margin /
+                border: 1px solid black !important;
+                padding: 15px !important;
+                box-sizing: border-box;
+            } */
 
         .shadow {
             box-shadow: none !important;
@@ -37,8 +36,16 @@
             padding: 5px !important;
         }
 
+        h1 {
+            font-size: 22pt !important;
+        }
+
+        h2 {
+            font-size: 20pt !important;
+        }
+
         h3, h4, h6, p, td, th {
-            font-size: 12pt !important;
+            font-size: 15pt !important;
         }
 
         .table {
@@ -60,6 +67,7 @@
     }
 
 </style>
+
 
 
 <div id="PrescriptionPrintArea" class="full-page-border">
