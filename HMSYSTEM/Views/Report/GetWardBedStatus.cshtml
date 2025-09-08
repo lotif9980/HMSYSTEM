@@ -2,7 +2,150 @@
 @model List<WardBedViewModel>
 
 <style>
- 
+    @@media print {
+
+        /* Hide everything initially */
+        * {
+            visibility: hidden;
+        }
+
+        /* Make only page container visible */
+        .page-container,
+        .page-container * {
+            visibility: visible;
+        }
+
+        .page-container {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        @@page {
+            size: A4;
+            margin: 5mm;
+        }
+
+        /* Text and layout adjustments */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            background: none !important; /* REMOVE all background colors */
+        }
+
+        body {
+            font-size: 13pt !important;
+            line-height: 1.2 !important;
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: auto !important;
+        }
+
+        .row,
+        .form-inline,
+        .date-range,
+        .form-group {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8pt !important;
+            margin-bottom: 6pt !important;
+        }
+
+        .form-control {
+            font-size: 8pt !important;
+            padding: 2pt 4pt !important;
+            width: auto !important;
+            min-width: 100px !important;
+        }
+
+        label {
+            font-size: 8pt !important;
+            margin-right: 4pt !important;
+        }
+
+        button,
+        .btn {
+            display: none !important;
+        }
+
+        .print-button, .print-section {
+            display: none !important;
+        }
+
+        .main-content {
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            height: auto !important;
+            overflow: visible !important;
+        }
+
+        /* Remove headers and card colors */
+        .header,
+        .section-header,
+        .section-total,
+        .summary-card,
+        .section-card,
+        .financial-item,
+        .profit-item,
+        .net-profit {
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        /* Table formatting */
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #000 !important;
+            background: none !important; /* Ensure no background */
+            color: #000 !important;
+            font-size: 13pt !important;
+            padding: 4pt !important;
+        }
+
+        .underline {
+            border-bottom: 1px solid #000 !important;
+            width: 700px;
+        }
+
+        /* Prevent extra blank pages */
+        .page-container::after {
+            content: "";
+            display: block;
+            page-break-after: avoid !important;
+        }
+
+        .main-content > *:last-child {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        /* Remove hover effects */
+        .summary-card:hover,
+        .section-card:hover,
+        .financial-item:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+    }
 </style>
 
 @{
@@ -15,7 +158,6 @@
     <form asp-action="GetWardBedStatus" method="post">
         <div class="row align-items-end d-flex justify-content-center">
             <div class="col-md-4">
-                
                 <select name="wardId" class="form-control ward-dropdown">
                     <option value="">-- Select Ward --</option>
                     @foreach (var ward in ViewBag.Ward as List<SelectListItem>)
@@ -32,40 +174,54 @@
     </form>
 </div>
 
-<div class="container">
-    @if (Model != null && Model.Any())
-    {
-        <table class="table table-bordered table-hover mt-3">
-            <thead>
-                <tr>
-                    <th>Ward</th>
-                    <th>Sl</th>
-                    <th>Bed</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var wardGroup in Model.GroupBy(m => m.WardName))
-                {
-                    var beds = wardGroup.ToList();
-                    for (int i = 0; i < beds.Count; i++)
-                    {
+<body>
+    <div class="page-container">
+        <div class="container">
+            @if (Model != null && Model.Any())
+            {
+                <table class="table table-bordered table-hover mt-3">
+                    <thead>
                         <tr>
-                            
-                            @if (i == 0)
-                            {
-                                <td rowspan="@beds.Count">@wardGroup.Key</td>
-                            }
-                            <td>@(i+1)</td>
-                            <td>@beds[i].BedNumber</td>
-                            <td>@(beds[i].IsOccupied ? "Occupied" : "Available")</td>
+                            <th>Ward</th>
+                            <th>Sl</th>
+                            <th>Bed</th>
+                            <th>Status</th>
                         </tr>
-                    }
-                }
-            </tbody>
-        </table>
-    }
-</div>
+                    </thead>
+                    <tbody>
+                        @foreach (var wardGroup in Model.GroupBy(m => m.WardName))
+                        {
+                            var beds = wardGroup.ToList();
+                            for (int i = 0; i < beds.Count; i++)
+                            {
+                                <tr>
+                                    @if (i == 0)
+                                    {
+                                        <td rowspan="@beds.Count">@wardGroup.Key</td>
+                                    }
+                                    <td>@(i+1)</td>
+                                    <td>@beds[i].BedNumber</td>
+                                    <td>@(beds[i].IsOccupied ? "Occupied" : "Available")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <section class="print-section">
+            <button onclick="window.print()" class="print-button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6,9 6,2 18,2 18,9" />
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                    <rect x="6" y="14" width="12" height="8" />
+                </svg>
+                Print Report
+            </button>
+        </section>
+    </div>
+</body>
 
 <script>
     $(document).ready(function () {
@@ -74,7 +230,6 @@
              allowClear: true,
              width: '100%'
          });
-
 
          $(document).on('select2:open', () => {
              document.querySelector('.select2-search__field').focus();
