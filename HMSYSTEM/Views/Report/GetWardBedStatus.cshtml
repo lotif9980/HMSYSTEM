@@ -2,6 +2,10 @@
 @model List<WardBedViewModel>
 
 <style>
+
+    .print-hide p {
+        display: none;
+    }
     @@media print {
 
         /* Hide everything initially */
@@ -177,6 +181,10 @@
 <body>
     <div class="page-container">
         <div class="container">
+                <div class="header-text print-hide">
+                    <h1>Financial Report</h1>
+                    <p>Comprehensive Business Overview</p>
+                </div>
             @if (Model != null && Model.Any())
             {
                 <table class="table table-bordered table-hover mt-3">
