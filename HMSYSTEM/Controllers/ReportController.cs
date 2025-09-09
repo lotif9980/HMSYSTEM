@@ -59,7 +59,7 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpPost]
-        public IActionResult AdmissionReports(DateTime? fromDate, DateTime? toDate)
+        public IActionResult AdmissionReport(DateTime? fromDate, DateTime? toDate)
         {
             if (!fromDate.HasValue || !toDate.HasValue)
             {
@@ -68,7 +68,7 @@ namespace HMSYSTEM.Controllers
             var data = _unitOfWork.reportRepository.GetAllAdmission(fromDate.Value, toDate.Value);
 
 
-            return View("AdmissionReport", data);
+            return View(data);
         }
 
         [HttpGet]

@@ -1,8 +1,100 @@
 ﻿@using HMSYSTEM.ViewModels
 @model List<AdmissionViewModel>
 
+<style>
 
-<form id="billFilterForm" asp-action="AdmissionReports" method="post">
+    .print-hide {
+        display: none !important;
+    }
+
+    @@media print {
+        /* Hide everything initially */
+        * {
+            visibility: hidden;
+        }
+        /* Make only page container visible */
+        .page-container,
+        .page-container * {
+            visibility: visible;
+        }
+
+        .page-container {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        @@page {
+            size: A4;
+            margin: 5mm;
+        }
+        /* Text and layout adjustments */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            background: none !important; /* REMOVE all background colors */
+        }
+
+        body {
+            font-size: 13pt !important;
+            line-height: 1.2 !important;
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: auto !important;
+        }
+
+        .row,
+        .form-inline,
+        .date-range,
+        .form-group {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8pt !important;
+            margin-bottom: 6pt !important;
+        }
+
+
+
+        button,
+        .btn {
+            display: none !important;
+        }
+        /* Table formatting */
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+            table th,
+            table td {
+                border: 1px solid #000 !important;
+                background: none !important; /* Ensure no background */
+                color: #000 !important;
+                font-size: 13pt !important;
+                padding: 4pt !important;
+            }
+
+        .print-hide {
+            display: block !important;
+        }
+    }
+</style>
+
+
+<form id="billFilterForm" asp-action="AdmissionReport" method="post">
     <div class="container">
         <div class="row d-flex justify-content-center align-items-end">
             <div class="col-md-5">
@@ -30,54 +122,74 @@
                 </a>
 
 
-                <button type="button" class="btn btn-info" onclick="loadAndPrint()">
-                    <i class="fa fa-print"></i>
-                </button>
+               
+            </div>
+            <div class="d-flex justify-content-end mt-2">
+                <section class="print-section">
+                    <button onclick="window.print()" class="print-button bg-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6,9 6,2 18,2 18,9" />
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                            <rect x="6" y="14" width="12" height="8" />
+                        </svg>
+                        Print Report
+                    </button>
+                </section>
             </div>
         </div>
     </div>
 </form>
 
-<div class="m-3">
-    @if (Model != null && Model.Any())
-    {
-        <table class="table table-bordered mt-3 table-hover">
-            <thead>
-                <tr>
-                    <th>Sl</th>
-                    <th>Patient</th>
-                    <th>P.Phone</th>
-                    <th>Doctor</th>
-                    <th>Bed</th>
-                    <th>Admission Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int count = 1;
-                }
-   
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@count</td>
-                        <td>@item.PatientName</td>
-                        <td>@item.PatientPhoneNumber</td>
-                        <td>@item.DoctorName</td>
-                        <td>@item.BedName</td>
-                        <td>@(item.AdmitDate?.ToString("dd-MM-yyyy"))</td>
-                    </tr>
-                    count++;
-                }
 
-            </tbody>
-        </table>
-    }
-   
+<div class="page-container">
+    <div class="container">
+         <div class="m-3">
+            <div class="row  print-hide">
+                <div class="d-flex justify-content-center">
+                   <h1>Admission Reports</h1>
+                </div>
+             </div>
+             @if (Model != null && Model.Any())
+            {
+            <table class="table table-bordered mt-3 table-hover">
+                <thead>
+                    <tr>
+                        <th>Sl</th>
+                        <th>Patient</th>
+                        <th>P.Phone</th>
+                        <th>Doctor</th>
+                        <th>Bed</th>
+                        <th>Admission Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int count = 1;
+                    }
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@count</td>
+                            <td>@item.PatientName</td>
+                            <td>@item.PatientPhoneNumber</td>
+                            <td>@item.DoctorName</td>
+                            <td>@item.BedName</td>
+                            <td>@(item.AdmitDate?.ToString("dd-MM-yyyy"))</td>
+                        </tr>
+                        count++;
+                    }
+
+                </tbody>
+            </table>
+        }
+
+         </div>
+    </div>
+
 </div>
 
 
-<div id="printContainer" style="display:none;"></div>
 
 <script>
     $(function () {
@@ -129,31 +241,4 @@
     });
 
 
-    function loadAndPrint() {
-        var fromDate = $('#fromDate').val();
-        var toDate = $('#toDate').val();
-
-        if(!fromDate || !toDate){
-            alert("Please select From and To date");
-            return;
-        }
-            $.ajax({
-                url: '/Report/GetAdmissionPrint/',
-                type: 'GET',
-                data: { fromDate: fromDate, toDate: toDate },
-                success: function (data) {
-                    $('#printContainer').html(data);
-                    var printContents = document.getElementById('printContainer').innerHTML;
-                    var originalContents = document.body.innerHTML;
-
-                    document.body.innerHTML = printContents;
-                    window.print();
-                    document.body.innerHTML = originalContents;
-                    location.reload();
-                },
-                error: function () {
-                    alert("Failed to load print view.");
-                }
-            });
-    }
 </script>
