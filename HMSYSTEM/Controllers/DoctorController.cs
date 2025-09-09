@@ -182,8 +182,8 @@ namespace HMSYSTEM.Controllers
                 if (doctor.ImageFile != null)
                 {
                     string firstName = doctor.FirstName.Replace(" ", "_");
-                    string secendName = doctor.LastName.Replace(" ", "_");
-                    string convertName = firstName + "_" + secendName;
+           
+                    string convertName = firstName;
                     string fileName = $"{doctor.Id}_{convertName}{Path.GetExtension(doctor.ImageFile.FileName)}";
 
                     SavePhoto(doctor.ImageFile, fileName);
