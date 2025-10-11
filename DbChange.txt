@@ -1,57 +1,91 @@
------------------------------------------------
----------------03.09.2025-----------------
------------------------------------------------ 
-ALTER TABLE Users
-ADD DoctorId INT NOT NULL CONSTRAINT DF_Users_DoctorId DEFAULT 0;
-
-
------------------------------------------------
----------------29.08.2025-----------------
------------------------------------------------ 
-CREATE TABLE Payments (
-    Id INT PRIMARY KEY IDENTITY,
-    BillId INT NOT NULL,             
-    PaymentDate DATETIME NOT NULL,    
-    PaymentAmount DECIMAL(18,2) NOT NULL, 
-    PaymentMethod VARCHAR(50) NULL,   
-    CreatedDate DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (BillId) REFERENCES Bills(Id)
-);
------------------------------------------------
----------------27.08.2025-----------------
------------------------------------------------ 
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.BillDetails ADD
-	ChargeDate date NULL
-GO
-ALTER TABLE dbo.BillDetails SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
------------------------------------------------
----------------24.08.2025-----------------
------------------------------------------------ 
-USE [hmsystem]
-GO
-
-/****** Object:  Table [dbo].[Bills]    Script Date: 24-Aug-25 3:45:45 PM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
+CREATE TABLE [dbo].[Admissions](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[PatientId] [int] NOT NULL,
+	[DoctorId] [int] NOT NULL,
+	[BedId] [int] NOT NULL,
+	[Status] [int] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+	[InvoiceNo] [int] NOT NULL,
+	[AdmitDate] [date] NULL,
+	[AttendentName] [nvarchar](50) NULL,
+	[AttendentRelation] [nvarchar](50) NULL,
+	[AttendentPhone] [nvarchar](50) NULL,
+	[ForReason] [nvarchar](250) NULL,
+	[Declaration] [bit] NOT NULL,
+ CONSTRAINT [PK_Admissions] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Appointments]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Appointments](
+	[AppointmentId] [int] IDENTITY(1,1) NOT NULL,
+	[PatientPhoneNumber] [nvarchar](50) NULL,
+	[DepartmentId] [int] NULL,
+	[DoctorId] [int] NULL,
+	[AppoinmentDate] [datetime] NULL,
+	[SerialNumber] [int] NULL,
+	[Problem] [nvarchar](max) NULL,
+	[Status] [int] NULL,
+	[PatientID] [int] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED 
+(
+	[AppointmentId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Beds]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Beds](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[BedNumber] [nvarchar](50) NULL,
+	[WardId] [int] NOT NULL,
+	[RatePerDay] [decimal](18, 0) NOT NULL,
+	[IsOccupied] [bit] NULL,
+	[BedType] [int] NOT NULL,
+ CONSTRAINT [PK_Beds] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[BillDetails]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[BillDetails](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[BillId] [int] NULL,
+	[ServiceItemId] [int] NULL,
+	[Qty] [int] NOT NULL,
+	[Amount] [decimal](18, 0) NOT NULL,
+	[TotalAmount] [decimal](18, 0) NOT NULL,
+	[ChargeDate] [date] NULL,
+ CONSTRAINT [PK_BillDetails] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Bills]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 CREATE TABLE [dbo].[Bills](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[BillNo] [nvarchar](50) NULL,
@@ -71,788 +105,41 @@ CREATE TABLE [dbo].[Bills](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_TotalAmount]  DEFAULT ((0)) FOR [TotalAmount]
-GO
-
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_Discount]  DEFAULT ((0)) FOR [Discount]
-GO
-
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_PaymentAmt]  DEFAULT ((0)) FOR [PaymentAmt]
-GO
-
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_DueAmount]  DEFAULT ((0)) FOR [DueAmount]
-GO
-
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
-GO
-
-
-
-
-
-
------------------------------------------------
----------------23.08.2025-----------------
------------------------------------------------ 
-USE [hmsystem]
-GO
-
-/****** Object:  Table [dbo].[BillDetails]    Script Date: 23-Aug-25 3:33:50 PM ******/
+/****** Object:  Table [dbo].[Departments]    Script Date: 11-Oct-25 11:32:05 PM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-CREATE TABLE [dbo].[BillDetails](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[BillId] [int] NULL,
-	[ServiceItemId] [int] NULL,
-	[Qty] [int] NOT NULL,
-	[Amount] [decimal](18, 0) NOT NULL,
-	[TotalAmount] [decimal](18, 0) NOT NULL,
- CONSTRAINT [PK_BillDetails] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_Qty]  DEFAULT ((0)) FOR [Qty]
-GO
-
-ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_Amount]  DEFAULT ((0)) FOR [Amount]
-GO
-
-ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_TotalAmount]  DEFAULT ((0)) FOR [TotalAmount]
-GO
-
-
-
-
-
-
------------------------------------------------
----------------23.08.2025-----------------
------------------------------------------------ 
-USE [hmsystem]
-GO
-
-/****** Object:  Table [dbo].[Bills]    Script Date: 23-Aug-25 3:33:19 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Bills](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[BillNo] [nvarchar](50) NULL,
-	[BillDate] [date] NULL,
-	[PatientId] [int] NULL,
-	[TotalAmount] [decimal](18, 0) NOT NULL,
-	[Discount] [decimal](18, 0) NOT NULL,
-	[NetAmount] [decimal](18, 0) NOT NULL,
-	[Status] [int] NULL,
-	[CreateDate] [date] NOT NULL,
- CONSTRAINT [PK_Bills] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_TotalAmount]  DEFAULT ((0)) FOR [TotalAmount]
-GO
-
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_Discount]  DEFAULT ((0)) FOR [Discount]
-GO
-
-ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
-GO
-
-
-
------------------------------------------------
----------------22.08.2025-----------------
------------------------------------------------ 
-USE [hmsystem]
-GO
-
-/****** Object:  Table [dbo].[ServiceItems]    Script Date: 22-Aug-25 10:51:32 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[ServiceItems](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[ItemName] [nvarchar](50) NULL,
-	[Amount] [decimal](18, 0) NULL,
-	[IsActive] [bit] NULL,
- CONSTRAINT [PK_ServiceItems] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-
-
------------------------------------------------
----------------21.08.2025-----------------
------------------------------------------------ 
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Prescriptions ADD
-	AppointmentId int NOT NULL CONSTRAINT DF_Prescriptions_AppointmentId DEFAULT 0
-GO
-ALTER TABLE dbo.Prescriptions SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
------------------------------------------------
----------------21.08.2025-----------------
------------------------------------------------ 
-
-  ALTER TABLE Patients
-ADD CONSTRAINT UQ_Patient_Mobile UNIQUE (Phone);
-
------------------------------------------------
----------------03.08.2025-----------------
------------------------------------------------ 
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Schedules ADD
-	Date date NULL,
-	CreateDate date NOT NULL CONSTRAINT DF_Schedules_CreateDate DEFAULT getDate()
-GO
-ALTER TABLE dbo.Schedules SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
------------------------------------------------
----------------02.08.2025-----------------
------------------------------------------------ 
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Appointments ADD
-	CreateDate datetime NOT NULL CONSTRAINT DF_Appointments_CreateDate DEFAULT getDate()
-GO
-ALTER TABLE dbo.Appointments SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
------------------------------------------------
----------------02.08.2025-----------------
------------------------------------------------ 
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Prescriptions ADD
-	CreateDate date NOT NULL CONSTRAINT DF_Prescriptions_CreateDate DEFAULT getDate()
-GO
-ALTER TABLE dbo.Prescriptions SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
-
------------------------------------------------
----------------02.08.2025-----------------
------------------------------------------------  
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Patients ADD
-	CreateDate date NOT NULL CONSTRAINT DF_Patients_CreateDate DEFAULT getDate()
-GO
-ALTER TABLE dbo.Patients SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
------------------------------------------------
----------------30.07.2025-----------------
------------------------------------------------  
-ALTER TABLE Admissions
-ADD Declaration BIT NOT NULL DEFAULT 0;
------------------------------------------------
----------------30.07.2025-----------------
------------------------------------------------  
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Admissions ADD
-	AttendentName nvarchar(50) NULL,
-	AttendentRelation nvarchar(50) NULL,
-	AttendentPhone nvarchar(50) NULL,
-	ForReason nvarchar(250) NULL
-	
-GO
-ALTER TABLE dbo.Admissions SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
------------------------------------------------
----------------27.07.2025-----------------
------------------------------------------------  
-alter table Admissions
-  drop column AdmitDate
-
------------------------------------------------
----------------27.07.2025-----------------
------------------------------------------------
-
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Admissions ADD
-	AdmitDate date NULL
-GO
-ALTER TABLE dbo.Admissions SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
-
------------------------------------------------
----------------27.07.2025-----------------
------------------------------------------------
-  alter table Patients 
-  add FatherName nvarchar(50)
-
-
------------------------------------------------
----------------24.07.2025-----------------
------------------------------------------------
-
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Admissions](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[PatientId] [int] NOT NULL,
-	[DoctorId] [int] NOT NULL,
-	[BedId] [int] NOT NULL,
-	[AdmitDate] [datetime] NULL,
-	[Status] [int] NOT NULL,
-	[CreateDate] [datetime] NOT NULL,
- CONSTRAINT [PK_Admissions] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_PatientId]  DEFAULT ((0)) FOR [PatientId]
-GO
-
-ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_DoctorId]  DEFAULT ((0)) FOR [DoctorId]
-GO
-
-ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_BedId]  DEFAULT ((0)) FOR [BedId]
-GO
-
-ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_Status]  DEFAULT ((0)) FOR [Status]
-GO
-
-ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
-GO
-
-
-
-
-
------------------------------------------------
----------------24.07.2025-----------------
------------------------------------------------
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Beds](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[BedNumber] [nvarchar](50) NULL,
-	[WardId] [int] NOT NULL,
-	[RatePerDay] [decimal](18, 0) NOT NULL,
-	[BedType] [nvarchar](50) NULL,
-	[IsOccupied] [bit] NULL,
- CONSTRAINT [PK_Beds] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[Beds] ADD  CONSTRAINT [DF_Beds_WardId]  DEFAULT ((0)) FOR [WardId]
-GO
-
-ALTER TABLE [dbo].[Beds] ADD  CONSTRAINT [DF_Beds_RatePerDay]  DEFAULT ((0)) FOR [RatePerDay]
-GO
-
-
-
------------------------------------------------
----------------24.07.2025-----------------
------------------------------------------------
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-CREATE TABLE dbo.Wards
-	(
-	Id int NOT NULL IDENTITY (1, 1),
-	Name nvarchar(50) NULL,
-	Type int NULL,
-	DepartmentId int NOT NULL,
-	FloorNo nvarchar(50) NULL,
-	TotalBeds int NULL
-	)  ON [PRIMARY]
-GO
-ALTER TABLE dbo.Table_1 ADD CONSTRAINT
-	DF_Table_1_DepartmentId DEFAULT (0) FOR DepartmentId
-GO
-ALTER TABLE dbo.Table_1 ADD CONSTRAINT
-	PK_Table_1 PRIMARY KEY CLUSTERED 
-	(
-	Id
-	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
-GO
-ALTER TABLE dbo.Table_1 SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
-
------------------------------------------------
----------------20.07.2025-----------------
------------------------------------------------
- alter table PrescriptionDetails 
- drop column MedicineId
------------------------------------------------
----------------20.07.2025-----------------
------------------------------------------------
- alter table PrescriptionDetails
- add  MedicineId int not null default 0;
-
------------------------------------------------
----------------14.07.2025-----------------
------------------------------------------------
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Prescriptions ADD
-	Note nvarchar(50) NULL,
-	NextFlowUp date NULL
-GO
-ALTER TABLE dbo.Prescriptions SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
------------------------------------------------
----------------14.07.2025-----------------
------------------------------------------------
-EXEC sp_rename 'PrescriptionDetails.PDId', 'Id', 'COLUMN';
------------------------------------------------
----------------14.07.2025-----------------
------------------------------------------------
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[PrescriptionDetails](
-	[PDId] [int] IDENTITY(1,1) NOT NULL,
-	[PrescriptionId] [int] NOT NULL,
-	[MedicineId] [nchar](10) NULL,
-	[Dose] [nvarchar](50) NULL,
-	[Duration] [nvarchar](50) NULL,
-	[Instructions] [bit] NULL,
- CONSTRAINT [PK_PrescriptionDetails] PRIMARY KEY CLUSTERED 
-(
-	[PDId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[PrescriptionDetails] ADD  CONSTRAINT [DF_PrescriptionDetails_PrescriptionId]  DEFAULT ((0)) FOR [PrescriptionId]
-GO
-
-
-
-
------------------------------------------------
----------------13.07.2025-----------------
------------------------------------------------
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Prescriptions](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Date] [date] NULL,
-	[PatientId] [int] NOT NULL,
-	[DoctorId] [int] NOT NULL,
-	[DepartmentId] [int] NULL,
-	[Status] [int] NULL,
- CONSTRAINT [PK_Prescriptions] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[Prescriptions] ADD  CONSTRAINT [DF_Prescriptions_PatientId]  DEFAULT ((0)) FOR [PatientId]
-GO
-
-ALTER TABLE [dbo].[Prescriptions] ADD  CONSTRAINT [DF_Prescriptions_DoctorId]  DEFAULT ((0)) FOR [DoctorId]
-GO
-
-
------------------------------------------------
----------------11.07.2025-----------------
------------------------------------------------
-/* To prevent any potential data loss issues, you should review this script in detail before running it outside the context of the database designer.*/
-BEGIN TRANSACTION
-SET QUOTED_IDENTIFIER ON
-SET ARITHABORT ON
-SET NUMERIC_ROUNDABORT OFF
-SET CONCAT_NULL_YIELDS_NULL ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-COMMIT
-BEGIN TRANSACTION
-GO
-ALTER TABLE dbo.Appointments ADD
-	PatientID int NOT NULL CONSTRAINT DF_Appointments_PatientID DEFAULT (0)
-GO
-ALTER TABLE dbo.Appointments SET (LOCK_ESCALATION = TABLE)
-GO
-COMMIT
-
------------------------------------------------
----------------11.07.2025-----------------
------------------------------------------------
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[PatientHistorys](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[PatientId] [int] NULL,
-	[DoctorId] [int] NULL,
-	[Description] [nvarchar](200) NULL,
-	[AttachFile] [nvarchar](250) NULL,
- CONSTRAINT [PK_PatientHistorys] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
------------------------------------------------
----------------06.07.2025-----------------
------------------------------------------------
-  ALTER TABLE Appointments
-ALTER COLUMN AppoinmentDate DATETIME NULL;
-
------------------------------------------------
----------------06.07.2025-----------------
------------------------------------------------
-alter table Appointments
-drop column [ScheduleId]
------------------------------------------------
----------------06.07.2025-----------------
------------------------------------------------
-/****** Object:  Table [dbo].[Appointments]    Script Date: 7/6/2025 10:34:20 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Appointments](
-	[AppointmentId] [int] IDENTITY(1,1) NOT NULL,
-	[PatientPhoneNumber] [nvarchar](50) NULL,
-	[DepartmentId] [int] NULL,
-	[ScheduleId] [int] NULL,
-	[DoctorId] [int] NULL,
-	[AppoinmentDate] [time](7) NULL,
-	[SerialNumber] [int] NULL,
-	[Problem] [nvarchar](max) NULL,
-	[Status] [bit] NULL,
- CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED 
-(
-	[AppointmentId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-
-
-
------------------------------------------------
----------------03.07.2025-----------------
------------------------------------------------
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Roles](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [nvarchar](50) NULL,
- CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-
-
-
------------------------------------------------
----------------02.07.2025-----------------
------------------------------------------------
-ALTER TABLE Users
-ALTER COLUMN Password VARCHAR(100)
-
------------------------------------------------
----------------all table Query-----------------
------------------------------------------------
-USE [hmsystem]
-GO
-
-/****** Object:  Table [dbo].[Appointments]    Script Date: 6/17/2025 11:12:06 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Appointments](
-	[AppointmentId] [int] IDENTITY(1,1) NOT NULL,
-	[PatientPhoneNumber] [nvarchar](50) NULL,
-	[DepartmentId] [int] NULL,
-	[ScheduleId] [int] NULL,
-	[DoctorId] [int] NULL,
-	[AppoinmentDate] [datetime] NULL,
-	[SerialNumber] [int] NOT NULL,
-	[Problem] [nvarchar](250) NULL,
-	[Status] [bit] NULL,
- CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED 
-(
-	[AppointmentId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-
-
---------------------------------------------
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 CREATE TABLE [dbo].[Departments](
 	[DepartmentId] [int] IDENTITY(1,1) NOT NULL,
 	[DepartmentName] [nvarchar](50) NULL,
 	[Status] [bit] NULL,
- CONSTRAINT [PK_Departmens] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Departments] PRIMARY KEY CLUSTERED 
 (
 	[DepartmentId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-
-ALTER TABLE [dbo].[Departments] ADD  CONSTRAINT [DF_Departmens_Status]  DEFAULT ((1)) FOR [Status]
-GO
-
-
-
------------------------------------------------
-USE [hmsystem]
-GO
-
-/****** Object:  Table [dbo].[Users]    Script Date: 6/16/2025 11:06:04 PM ******/
+/****** Object:  Table [dbo].[Designations]    Script Date: 11-Oct-25 11:32:05 PM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-CREATE TABLE [dbo].[Users](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [nvarchar](50) NULL,
-	[MobileNo] [nvarchar](50) NULL,
-	[UserName] [nvarchar](50) NULL,
-	[Password] [nvarchar](50) NULL,
+CREATE TABLE [dbo].[Designations](
+	[DesignationId] [int] IDENTITY(1,1) NOT NULL,
+	[DesignationName] [nvarchar](50) NULL,
 	[Status] [bit] NULL,
- CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Designations] PRIMARY KEY CLUSTERED 
 (
-	[Id] ASC
+	[DesignationId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-
-
-
-------------------------------------
-
-
-/****** Object:  Table [dbo].[Schedules]    Script Date: 6/16/2025 11:05:57 PM ******/
+/****** Object:  Table [dbo].[Doctors]    Script Date: 11-Oct-25 11:32:05 PM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-CREATE TABLE [dbo].[Schedules](
-	[ScheduleId] [int] IDENTITY(1,1) NOT NULL,
-	[DoctorId] [int] NULL,
-	[DepartmentId] [int] NULL,
-	[DayOfWeek] [nvarchar](50) NULL,
-	[StartTime] [time](7) NULL,
-	[EndTime] [time](7) NULL,
-	[IsAvailable] [bit] NULL,
- CONSTRAINT [PK_Schedules] PRIMARY KEY CLUSTERED 
-(
-	[ScheduleId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-
-
-------------------------------------
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Patients](
-	[PatientID] [int] IDENTITY(1,1) NOT NULL,
-	[FirstName] [nvarchar](50) NULL,
-	[LastName] [nvarchar](50) NULL,
-	[Email] [nvarchar](50) NULL,
-	[Password] [nvarchar](50) NULL,
-	[Phone] [nvarchar](50) NULL,
-	[BloodGroup] [nvarchar](50) NULL,
-	[Sex] [nchar](10) NULL,
-	[DateOfBirth] [datetime] NULL,
-	[Address] [nvarchar](50) NULL,
-	[EmergencyContact] [nvarchar](50) NULL,
-	[Picture] [nvarchar](255) NULL,
-	[Status] [bit] NULL,
- CONSTRAINT [PK_Patientss] PRIMARY KEY CLUSTERED 
-(
-	[PatientID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-
-------------------------------------
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 CREATE TABLE [dbo].[Doctors](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[FirstName] [nvarchar](50) NULL,
@@ -875,26 +162,281 @@ CREATE TABLE [dbo].[Doctors](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-
-
-
-
-------------------1------------------
+/****** Object:  Table [dbo].[Medicines]    Script Date: 11-Oct-25 11:32:05 PM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-CREATE TABLE [dbo].[Designations](
-	[DesignationId] [int] IDENTITY(1,1) NOT NULL,
-	[DesignationName] [nvarchar](50) NULL,
-	[Status] [bit] NULL,
- CONSTRAINT [PK_Designations] PRIMARY KEY CLUSTERED 
+CREATE TABLE [dbo].[Medicines](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NULL,
+	[GenericName] [nvarchar](50) NULL,
+	[Strength] [nvarchar](50) NULL,
+	[Form] [nvarchar](50) NULL,
+	[IsActive] [bit] NULL,
+ CONSTRAINT [PK_Medicines_Id] PRIMARY KEY CLUSTERED 
 (
-	[DesignationId] ASC
+	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-
-
+/****** Object:  Table [dbo].[PatientHistorys]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PatientHistorys](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[PatientId] [int] NULL,
+	[DoctorId] [int] NULL,
+	[Description] [nvarchar](200) NULL,
+	[AttachFile] [nvarchar](250) NULL,
+ CONSTRAINT [PK_PatientHistorys] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Patients]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Patients](
+	[PatientID] [int] IDENTITY(1,1) NOT NULL,
+	[FirstName] [nvarchar](50) NULL,
+	[LastName] [nvarchar](50) NULL,
+	[Email] [nvarchar](50) NULL,
+	[Password] [nvarchar](50) NULL,
+	[Phone] [nvarchar](50) NULL,
+	[BloodGroup] [nvarchar](50) NULL,
+	[Sex] [nchar](10) NULL,
+	[DateOfBirth] [datetime] NULL,
+	[Address] [nvarchar](50) NULL,
+	[EmergencyContact] [nvarchar](50) NULL,
+	[Picture] [nvarchar](255) NULL,
+	[Status] [bit] NULL,
+	[FatherName] [nvarchar](50) NULL,
+	[CreateDate] [date] NOT NULL,
+ CONSTRAINT [PK_Patientss] PRIMARY KEY CLUSTERED 
+(
+	[PatientID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_Patient_Mobile] UNIQUE NONCLUSTERED 
+(
+	[Phone] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Payments]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Payments](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[BillId] [int] NOT NULL,
+	[PaymentDate] [datetime] NOT NULL,
+	[PaymentAmount] [decimal](18, 2) NOT NULL,
+	[PaymentMethod] [varchar](50) NULL,
+	[CreatedDate] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PrescriptionDetails]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PrescriptionDetails](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[PrescriptionId] [int] NOT NULL,
+	[Dose] [nvarchar](50) NULL,
+	[Duration] [nvarchar](50) NULL,
+	[Instructions] [bit] NULL,
+	[MedicineId] [int] NOT NULL,
+ CONSTRAINT [PK_PrescriptionDetails] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Prescriptions]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Prescriptions](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Date] [datetime] NOT NULL,
+	[PatientId] [int] NOT NULL,
+	[DoctorId] [int] NOT NULL,
+	[DepartmentId] [int] NULL,
+	[Status] [int] NULL,
+	[Note] [nvarchar](50) NULL,
+	[NextFlowUp] [datetime] NULL,
+	[CreateDate] [date] NOT NULL,
+	[AppointmentId] [int] NOT NULL,
+ CONSTRAINT [PK_Prescriptions] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Roles]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Roles](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NULL,
+ CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Schedules]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Schedules](
+	[ScheduleId] [int] IDENTITY(1,1) NOT NULL,
+	[DoctorId] [int] NULL,
+	[DepartmentId] [int] NULL,
+	[DayOfWeek] [nvarchar](50) NULL,
+	[StartTime] [time](7) NULL,
+	[EndTime] [time](7) NULL,
+	[IsAvailable] [bit] NULL,
+	[Date] [date] NULL,
+	[CreateDate] [date] NOT NULL,
+ CONSTRAINT [PK_Schedules] PRIMARY KEY CLUSTERED 
+(
+	[ScheduleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ServiceItems]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ServiceItems](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ItemName] [nvarchar](50) NULL,
+	[Amount] [decimal](18, 0) NULL,
+	[IsActive] [bit] NULL,
+ CONSTRAINT [PK_ServiceItems] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NULL,
+	[MobileNo] [nvarchar](50) NULL,
+	[UserName] [nvarchar](50) NULL,
+	[Password] [varchar](100) NULL,
+	[Status] [bit] NULL,
+	[RoleId] [int] NULL,
+	[DoctorId] [int] NOT NULL,
+ CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Wards]    Script Date: 11-Oct-25 11:32:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Wards](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NULL,
+	[Type] [int] NULL,
+	[DepartmentId] [int] NOT NULL,
+	[FloorNo] [nvarchar](50) NULL,
+	[TotalBeds] [int] NULL,
+ CONSTRAINT [PK_Table_1] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_PatientId]  DEFAULT ((0)) FOR [PatientId]
+GO
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_DoctorId]  DEFAULT ((0)) FOR [DoctorId]
+GO
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_BedId]  DEFAULT ((0)) FOR [BedId]
+GO
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_Status]  DEFAULT ((0)) FOR [Status]
+GO
+ALTER TABLE [dbo].[Admissions] ADD  CONSTRAINT [DF_Admissions_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [dbo].[Admissions] ADD  DEFAULT ((0)) FOR [InvoiceNo]
+GO
+ALTER TABLE [dbo].[Admissions] ADD  DEFAULT ((0)) FOR [Declaration]
+GO
+ALTER TABLE [dbo].[Appointments] ADD  CONSTRAINT [DF_Appointments_PatientID]  DEFAULT ((0)) FOR [PatientID]
+GO
+ALTER TABLE [dbo].[Appointments] ADD  CONSTRAINT [DF_Appointments_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [dbo].[Beds] ADD  CONSTRAINT [DF_Beds_WardId]  DEFAULT ((0)) FOR [WardId]
+GO
+ALTER TABLE [dbo].[Beds] ADD  CONSTRAINT [DF_Beds_RatePerDay]  DEFAULT ((0)) FOR [RatePerDay]
+GO
+ALTER TABLE [dbo].[Beds] ADD  DEFAULT ((0)) FOR [BedType]
+GO
+ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_Qty]  DEFAULT ((0)) FOR [Qty]
+GO
+ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_Amount]  DEFAULT ((0)) FOR [Amount]
+GO
+ALTER TABLE [dbo].[BillDetails] ADD  CONSTRAINT [DF_BillDetails_TotalAmount]  DEFAULT ((0)) FOR [TotalAmount]
+GO
+ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_TotalAmount]  DEFAULT ((0)) FOR [TotalAmount]
+GO
+ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_Discount]  DEFAULT ((0)) FOR [Discount]
+GO
+ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_PaymentAmt]  DEFAULT ((0)) FOR [PaymentAmt]
+GO
+ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_DueAmount]  DEFAULT ((0)) FOR [DueAmount]
+GO
+ALTER TABLE [dbo].[Bills] ADD  CONSTRAINT [DF_Bills_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [dbo].[Patients] ADD  CONSTRAINT [DF_Patients_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [dbo].[Payments] ADD  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+ALTER TABLE [dbo].[PrescriptionDetails] ADD  CONSTRAINT [DF_PrescriptionDetails_PrescriptionId]  DEFAULT ((0)) FOR [PrescriptionId]
+GO
+ALTER TABLE [dbo].[PrescriptionDetails] ADD  DEFAULT ((0)) FOR [MedicineId]
+GO
+ALTER TABLE [dbo].[Prescriptions] ADD  CONSTRAINT [DF_Prescriptions_PatientId]  DEFAULT ((0)) FOR [PatientId]
+GO
+ALTER TABLE [dbo].[Prescriptions] ADD  CONSTRAINT [DF_Prescriptions_DoctorId]  DEFAULT ((0)) FOR [DoctorId]
+GO
+ALTER TABLE [dbo].[Prescriptions] ADD  CONSTRAINT [DF_Prescriptions_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [dbo].[Prescriptions] ADD  CONSTRAINT [DF_Prescriptions_AppointmentId]  DEFAULT ((0)) FOR [AppointmentId]
+GO
+ALTER TABLE [dbo].[Schedules] ADD  CONSTRAINT [DF_Schedules_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_DoctorId]  DEFAULT ((0)) FOR [DoctorId]
+GO
+ALTER TABLE [dbo].[Wards] ADD  CONSTRAINT [DF_Table_1_DepartmentId]  DEFAULT ((0)) FOR [DepartmentId]
+GO
+ALTER TABLE [dbo].[Payments]  WITH CHECK ADD FOREIGN KEY([BillId])
+REFERENCES [dbo].[Bills] ([Id])
+GO
