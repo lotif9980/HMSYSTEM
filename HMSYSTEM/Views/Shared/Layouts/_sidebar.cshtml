@@ -14,8 +14,7 @@
 
 
 <!--begin::Sidebar-->
-@if (User.Identity.IsAuthenticated)
-{
+@if (User.Identity != null && User.Identity.IsAuthenticated){
     <aside class="app-sidebar sidebarUser shadow" data-bs-theme="dark">
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">

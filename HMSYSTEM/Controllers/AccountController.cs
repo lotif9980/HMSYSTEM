@@ -30,54 +30,53 @@ namespace HMSYSTEM.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
+                return View(model);
+
+            var user = _unitOfWork.UserRepository.GetUser(model.Username?.Trim(), model.Password?.Trim());
+
+            if (user == null)
             {
+                ModelState.AddModelError("", "❌ Invalid username or password!");
                 return View(model);
             }
 
-            var user = _unitOfWork.UserRepository.GetUser(model.Username, model.Password);
-
-            if (user != null)
+            if (user.Status == false)
             {
-                if (user.Status==false)
-                {
-                    ViewBag.Error = "Your account is inactive. Please contact admin.";
-                    return View(model);
-                }
-                var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim("RoleId", user.RoleId?.ToString() ?? "0"),
-                        new Claim("FullName",user.Name?.ToString()??"0")
-                    };
-
-                if (user.DoctorId > 0)
-                {
-                    claims.Add(new Claim("DoctorId", user.DoctorId.ToString()));
-                }
-
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                HttpContext.Session.SetString("Username", user.UserName);
-
-                return RedirectToAction("Index", "Home");
+                ModelState.AddModelError("", "⚠️ Your account is inactive. Please contact admin.");
+                return View(model);
             }
 
-            ViewBag.Error = "Invalid Username or Password";
-            return View(model);
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim("RoleId", user.RoleId?.ToString() ?? "0"),
+        new Claim("FullName", user.Name ?? "")
+    };
+
+            if (user.DoctorId != null && user.DoctorId > 0)
+                claims.Add(new Claim("DoctorId", user.DoctorId.ToString()));
+
+            var claimsIdentity = new ClaimsIdentity(claims, "MyCookieAuth");
+
+            await HttpContext.SignInAsync(
+                "MyCookieAuth",
+                new ClaimsPrincipal(claimsIdentity),
+                new AuthenticationProperties
+                {
+                    IsPersistent = false,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+                });
+
+            return RedirectToAction("Index", "Home");
         }
 
 
         [Authorize] 
         public async Task<IActionResult> Logout()
         {
-            
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.Session.Clear();
 
-            return RedirectToAction("Index", "Home");
+            await HttpContext.SignOutAsync("MyCookieAuth");
+            return RedirectToAction("Login", "Account");
         }
     }
 }

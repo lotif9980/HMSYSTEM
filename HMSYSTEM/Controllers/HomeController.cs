@@ -44,10 +44,10 @@ public class HomeController : Controller
         };
 
 
-        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
-        {
-            return RedirectToAction("Login", "Account");
-        }
+        //if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+        //{
+        //    return RedirectToAction("Login", "Account");
+        //}
 
         return View(data);
     }

@@ -153,36 +153,34 @@
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
 
     <div class="app-wrapper">
-        <!--begin::Header-->
-        @{
-            var username = Context.Session.GetString("Username");
-           
-        }
-
-        @if (!string.IsNullOrEmpty(username))
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             <partial name="Layouts/_navbar" />
             <partial name="Layouts/_sidebar" />
             <partial name="Layouts/_AlertMessage" />
-    
-     
-        
+
             <main class="app-main">
                 @RenderBody()
             </main>
+
+            <footer class="app-footer">
+                <div class="float-end d-none d-sm-inline">Anything you want</div>
+                <strong>
+                    &copy; 2025-2026
+                    <a href="/Home/Index" class="text-decoration-none">
+                        Release Tracking Management
+                    </a>. All rights reserved.
+                </strong>
+            </footer>
         }
-        <footer class="app-footer">
-        <!--begin::To the end-->
-        <div class="float-end d-none d-sm-inline">Anything you want</div>
-        <!--end::To the end-->
-        <!--begin::Copyright-->
-        <strong>
-            Copyright &copy; 2025-2026&nbsp;
-            <a href="/Home/Index" class="text-decoration-none">Hospital Management</a>.
-        </strong>
-        All rights reserved.
-        <!--end::Copyright-->
-    </footer>
+        else
+        {
+            <!-- লগইন না করা অবস্থায় view -->
+            <main class="app-main">
+                @RenderBody()  <!-- login view inject হবে -->
+                <partial name="Layouts/_AlertMessage" />
+            </main>
+        }
     </div>
     <!--end::App Wrapper-->
     <!--begin::Script-->
