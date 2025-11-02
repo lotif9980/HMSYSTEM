@@ -1,7 +1,6 @@
 ﻿using HMSYSTEM.Models;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
-
 using static System.Net.Mime.MediaTypeNames;
 
 namespace HMSYSTEM.Data

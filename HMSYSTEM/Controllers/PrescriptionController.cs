@@ -2,12 +2,14 @@
 using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static HMSYSTEM.Helpers.QueryableExtensions;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class PrescriptionController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

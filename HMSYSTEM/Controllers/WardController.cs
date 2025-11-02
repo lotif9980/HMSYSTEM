@@ -1,11 +1,13 @@
 ﻿using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class WardController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

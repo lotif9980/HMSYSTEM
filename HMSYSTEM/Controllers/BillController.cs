@@ -2,10 +2,12 @@
 using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class BillController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

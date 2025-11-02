@@ -1,8 +1,10 @@
 ﻿using HMSYSTEM.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class PatientHistoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

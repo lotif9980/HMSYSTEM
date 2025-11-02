@@ -1,11 +1,13 @@
 ﻿using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 
 namespace HMSYSTEM.Controllers
 {
+    [Authorize]
     public class ReportController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
