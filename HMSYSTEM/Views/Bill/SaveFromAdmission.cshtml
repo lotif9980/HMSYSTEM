@@ -1,5 +1,7 @@
 ﻿@model HMSYSTEM.ViewModels.BillViewModel
-
+@{
+    ViewData["Title"] = "Admission";
+}
 @{
     var serviceList = ViewBag.ServiceItem as List<HMSYSTEM.Models.ServiceItem>;
     var patientList = ViewBag.Patient as List<HMSYSTEM.Models.Patient>;
