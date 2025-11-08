@@ -21,30 +21,10 @@ namespace HMSYSTEM.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(int page=1, int pageSize=5)
+        public IActionResult Index()
         {
-            var totalMedicine=_unitOfWork.MedicineRepo.GetAllMedicines().OrderBy(i=>i.Id);
-
-            var totalItems=totalMedicine.Count();
-            var totalPage=(int)Math.Ceiling((double)totalItems / pageSize);
-
-            var medicine=totalMedicine
-                         .OrderBy(m=>m.Id)
-                         .Skip((page-1)*pageSize)
-                         .Take(pageSize)
-                         .ToList();
-
-            var studentsViewModel = new PaginationViewModel<Medicine>
-            {
-                Items = medicine,
-                CurrentPage=page,
-                PageSize=pageSize,
-                TotalPages=totalPage,
-                TotalItems = totalItems,
-
-            };
-    
-            return View(studentsViewModel);
+            var medicine=_unitOfWork.MedicineRepo.GetAllMedicines().OrderBy(i=>i.Id);
+            return View(medicine);
         }
 
         [HttpGet]

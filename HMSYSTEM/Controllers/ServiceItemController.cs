@@ -14,14 +14,12 @@ namespace HMSYSTEM.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public IActionResult Index(int page = 1, int pageSize = 10)
+        public IActionResult Index()
         {
            var data = _unitOfWork.serviceItemRepository.GetAll()
                       .OrderBy(d=>d.Id)
-                      .AsQueryable()
-                      .ToPagedList(page,pageSize);
+                      .AsQueryable();
             return View(data);
-
         }
 
         [HttpGet]

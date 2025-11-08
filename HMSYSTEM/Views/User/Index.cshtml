@@ -1,11 +1,6 @@
-﻿@* @model IEnumerable<User> *@
+﻿@model IEnumerable<User>
 @using HMSYSTEM.ViewModels
-@model PaginationViewModel<User>
 
-@* @foreach(Patient patient in Model)
-{
-   @patient.Name
-} *@
 
 <div class="container-fluid mt-3">
     <div class="row">
@@ -21,7 +16,7 @@
 
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                    <table id="userTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width:80px">Sl No</th>
@@ -36,7 +31,7 @@
                             @{
                                 int count = 1;
                             }
-                            @foreach (User item in Model.Items)
+                            @foreach (User item in Model)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -74,28 +69,7 @@
                     </table>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                        <ul class="pagination pagination-sm m-0 float-end">
-                            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                                <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
-                            </li>
-
-                            <!-- Page Numbers -->
-                            @for (int i = 1; i <= Model.TotalPages; i++)
-                            {
-                                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                    <a class="page-link" href="?page=@i">@i</a>
-                                </li>
-                            }
-
-                            <!-- Next Button -->
-                            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                                <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
-                            </li>
-                        </ul>
-                    </ul>
-                </div>
+                
             </div>
             <!-- /.card -->
         </div>
@@ -107,47 +81,29 @@
 
 
 <script>
-    $(document).ready(function(){
-        $("#searchBox").on('keyup',function(){
-            var name=$(this).val();
-
-            $.ajax({
-                url:'/User/GetSearch',
-                data:{name:name},
-                success:function(data){
-                    let rows='';
-
-                    data.forEach((item,index)=>{
-                        rows+=`<tr>
-                        <td>${index + 1}</td>
-                        <td>${item.name}</td>
-                        <td>${item.mobileNo}</td>
-                        <td>${item.userName}</td>
-                        <td>${item.status==true ? "Active" : "Invactive"}</td>
-                        <td>
-                            <div class="d-flex justify-content-center btn-group-sm">
-                                    <a class="btn btn-primary ms-2" href="/User/Edit/${item.id}">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-
-                                    <a class="btn btn-danger ms-2" href="/User/Delete/${item.id}">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-
-                                    <a class="btn btn-success ms-2" href="/User/Details/${item.id}">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                </div>
-                        </td>
-                        </tr>`
-                    })
-
-                    $("#dataShow").html(rows);
-                }
-            })
-        });
+    $(document).ready(function () {
+            var table = $('#userTable').DataTable({
+                "pageLength": 10,
+                "lengthMenu": [5, 10, 20, 50],
+                "ordering": true,
+                "paging": true,
+                "info": true,
+                "language": {
+                    "search": "",
+                    "searchPlaceholder": "Search",
+                    "lengthMenu": "_MENU_ rows",
+                    "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                    "paginate": {
+                        "previous": "⬅️ Previous",
+                        "next": "Next ➡️"
+                    }
+                },
+                "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+            });
 
 
-
-    })
+            $('#searchBox').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+      });
 </script>

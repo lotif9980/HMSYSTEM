@@ -22,26 +22,10 @@ namespace HMSYSTEM.Controllers
 
 
         [Authorize]
-        public IActionResult Index(int page = 1, int pageSize = 10)
+        public IActionResult Index()
         {
-            var allDoctors = _unitOf.doctorRepo.getAll(); 
-
-            int totalCount = allDoctors.Count();
-
-            var pagedDoctors = allDoctors
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            var viewModel = new PaginationViewModel<Doctor>
-            {
-                Items = pagedDoctors,
-                CurrentPage = page,
-                PageSize = pageSize,
-                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
-            };
-
-            return View(viewModel);
+            var doctors = _unitOf.doctorRepo.getAll(); 
+            return View(doctors);
         }
 
         public IActionResult Details(int Id)

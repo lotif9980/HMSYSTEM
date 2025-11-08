@@ -1,7 +1,6 @@
-﻿@* @model IEnumerable<Bed> *@
+﻿@model IEnumerable<ServiceItem>
 @using HMSYSTEM.ViewModels
-@* @model PaginationViewModel<ServiceItem> *@
-@model HMSYSTEM.ViewModels.PagedResult<ServiceItem>
+
 
 
 <div class="container-fluid mt-3">
@@ -19,7 +18,7 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                    <table id="serviceTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">sl</th>
@@ -31,9 +30,9 @@
                         </thead>
                         <tbody id="dataShow">
                             @{
-                                int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
+                                int count =  1;
                             }
-                            @foreach (ServiceItem item in Model.Items)
+                            @foreach (ServiceItem item in Model)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -62,26 +61,7 @@
                     </table>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
-                        </li>
-
-                        <!-- Page Numbers -->
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
-                            </li>
-                        }
-
-                        <!-- Next Button -->
-                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
-                        </li>
-                    </ul>
-                </div>
+                
             </div>
             <!-- /.card -->
         </div>
@@ -90,40 +70,29 @@
 
 
 <script>
-    $(document).ready(function(){
-        $("#searchBox").on('keyup',function(){
-            var name=$(this).val();
+    $(document).ready(function () {
+           var table = $('#serviceTable').DataTable({
+               "pageLength": 10,
+               "lengthMenu": [5, 10, 20, 50],
+               "ordering": true,
+               "paging": true,
+               "info": true,
+               "language": {
+                   "search": "",
+                   "searchPlaceholder": "Search",
+                   "lengthMenu": "_MENU_ rows",
+                   "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                   "paginate": {
+                       "previous": "⬅️ Previous",
+                       "next": "Next ➡️"
+                   }
+               },
+               "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+           });
 
-            $.ajax({
-                url:'/Bed/GetSearch',
-                data:{name:name},
-                success:function(data){
-                    let rows="";
 
-                    data.forEach(item=>{
-                        rows+=`<tr>
-                            <td>${item.id}</td>
-                            <td>${item.wardName}</td>
-                            <td>${item.bedName}</td>
-                            <td>${item.bedName}</td>
-                            <td>
-                                  <div class="d-flex justify-content-center">
-                                    ${item.isOccupied ? "Empty" : "Occupied"}
-                                  </div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center btn-group-sm ">
-                                            <a class="btn btn-danger ms-2" href="/Bed/Delete/${item.id}">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
-                                </td>
-                        </tr>`
-                    })
-
-                    $("#dataShow").html(rows);
-                }
-            })
-        })
-    })
+           $('#searchBox').on('keyup', function () {
+               table.search(this.value).draw();
+           });
+     });
 </script>

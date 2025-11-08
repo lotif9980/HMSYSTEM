@@ -16,29 +16,10 @@ namespace HMSYSTEM.Controllers
         }
 
 
-        public IActionResult Index(int page=1, int pageSize=5)
+        public IActionResult Index()
         {
             var totalBeds =_unitOfWork.bedRepository.getAllBed().OrderBy(s=>s.Id);
-            var totalItem=totalBeds.Count();
-
-            var totalPage=(int)Math.Ceiling((double)totalItem/pageSize);
-
-            var beds = totalBeds
-                .OrderBy(s => s.Id)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            var viewModels = new PaginationViewModel<Bed>
-            {
-                Items= beds,
-                CurrentPage=page,
-                TotalPages=totalPage,
-                PageSize=pageSize,
-                TotalItems=totalItem
-                
-            };
-            return View(viewModels);
+            return View(totalBeds);
         }
 
         [HttpGet]

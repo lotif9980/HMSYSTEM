@@ -18,7 +18,7 @@ namespace HMSYSTEM.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index( int pageSize=10 , int page=1)
+        public IActionResult Index( )
         {
             int roleId = Helper.GetRoleId(User);
             int doctorId=Helper.GetDoctorId(User);
@@ -35,22 +35,8 @@ namespace HMSYSTEM.Controllers
             }
             
             totalPrescription= totalPrescription.OrderByDescending(p=>p.Id);
-            var totalItem= totalPrescription.Count();
-            var totalPage=(int)Math.Ceiling((decimal)totalItem/pageSize);
-            var prescription = totalPrescription
-                               .Skip((page - 1) * pageSize)
-                               .Take(pageSize)
-                               .ToList();
-
-            var viewModel = new PaginationViewModel<Prescription>
-            {
-                Items= prescription,
-                TotalItems= totalItem,
-                PageSize= pageSize,
-                TotalPages= totalPage,
-                CurrentPage=page
-            };
-            return View(viewModel);
+            
+            return View(totalPrescription);
         }
 
 

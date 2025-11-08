@@ -1,7 +1,5 @@
-﻿@* @model IEnumerable<Admission> *@
+﻿ @model IEnumerable<Admission> 
 @using HMSYSTEM.ViewModels
-@* @model PaginationViewModel<Admission> *@
-@model HMSYSTEM.ViewModels.PagedResult<Admission>
 @using HMSYSTEM.Enum
 
 
@@ -11,12 +9,12 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Admission List</h3></div>
-                      <div><input placeholder="Search Patient Name" id="SearchBox" class="form-control" /></div>
+                    <div><input placeholder="Search Patient Name" id="customSearchBox" class="form-control" /></div>
                     <div> <a class="btn btn-info" asp-controller="Admission" asp-action="Save">Create</a></div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                    <table id="admissionTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">Id</th>
@@ -32,9 +30,9 @@
                         </thead>
                         <tbody id="dataShow">
                             @{
-                                int count =((Model.CurrentPage-1)*Model.PageSize)+1;
+                                int count =1;
                             }
-                            @foreach (Admission item in Model.Items)
+                            @foreach (var item in Model)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -74,7 +72,7 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
-                    @await Html.PartialAsync("_Pagination", Model)
+                    @* @await Html.PartialAsync("_Pagination", Model) *@
                 </div>
             </div>
             <!-- /.card -->
@@ -82,8 +80,35 @@
     </div>
 </div>
 
-
 <script>
+    $(document).ready(function () {
+        var table = $('#admissionTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [5, 10, 20, 50],
+            "ordering": true,
+            "paging": true,
+            "info": true,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Search",
+                "lengthMenu": "_MENU_ rows",
+                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                "paginate": {
+                    "previous": "⬅️ Previous",
+                    "next": "Next ➡️"
+                }
+            },
+            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+        });
+
+
+        $('#customSearchBox').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+    });
+</script>
+
+@* <script>
     $(document).ready(function(){
 
         $("#SearchBox").on('keyup',function(){
@@ -136,4 +161,4 @@
         
         });
     })
-</script>
+</script> *@

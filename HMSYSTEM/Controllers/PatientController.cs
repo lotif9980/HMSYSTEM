@@ -27,7 +27,7 @@ namespace HMSYSTEM.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(int page=1, int pageSize=10)
+        public IActionResult Index()
         {
             #region Previous Pagination
             //var totalStudents=  _unit.PatienRepo.getAll();
@@ -53,8 +53,7 @@ namespace HMSYSTEM.Controllers
 
             var patients = _unit.PatienRepo.getAll()
                           .OrderBy(p => p.PatientID)
-                          .AsQueryable()
-                          .ToPagedList(page, pageSize);
+                          .AsQueryable();
             return View(patients);
         }
 

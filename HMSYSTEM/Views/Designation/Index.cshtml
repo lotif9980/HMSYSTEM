@@ -1,12 +1,7 @@
-﻿@* @model IEnumerable<Designation> *@
-
-@* @foreach(Patient patient in Model)
-{
-   @patient.Name
-} *@
+﻿@model IEnumerable<Designation>
 
 @using HMSYSTEM.ViewModels
-@model PaginationViewModel<Designation>
+
 
 
 <div class="container-fluid mt-3">
@@ -15,7 +10,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-around">
                     <div> <h3 class="card-title">Existing Designation List</h3></div>
-                    <div><input class="form-control" placeholder="Search Designation" id="SearchBox"/></div>
+                    <div><input class="form-control" placeholder="Search Designation" id="CustomSearch" /></div>
                     <div> <a class="btn btn-info" asp-controller="Designation" asp-action="Save">Create</a></div>
 
                 </div>
@@ -24,7 +19,7 @@
 
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                    <table id="designationTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">Id</th>
@@ -35,9 +30,9 @@
                         </thead>
                         <tbody id="dataShow">
                             @{
-                                int count =((Model.CurrentPage-1)*Model.PageSize)+1;
+                                int count =1;
                             }
-                            @foreach (Designation designation in Model.Items)
+                            @foreach (var designation in Model)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -63,7 +58,7 @@
                     </table>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer clearfix">
+                @* <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-end">
                         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                             <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
@@ -82,13 +77,43 @@
                             <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
                         </li>
                     </ul>
-                </div>
+                </div> *@
             </div>
             <!-- /.card -->
         </div>
     </div>
 </div>
+
+
 <script>
+    $(document).ready(function () {
+        var table = $('#designationTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [5, 10, 20, 50],
+            "ordering": true,
+            "paging": true,
+            "info": true,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Search",
+                "lengthMenu": "_MENU_ rows",
+                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                "paginate": {
+                    "previous": "⬅️ Previous",
+                    "next": "Next ➡️"
+                }
+            },
+            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+        });
+
+
+        $('#CustomSearch').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+    });
+</script>
+
+@* <script>
     $(document).ready(function(){
         $("#SearchBox").on('keyup',function(){
             var name=$(this).val();
@@ -123,4 +148,4 @@
             })
         })
     })
-</script>
+</script> *@

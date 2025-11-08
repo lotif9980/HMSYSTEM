@@ -1,8 +1,6 @@
 ﻿using HMSYSTEM.Data;
 using HMSYSTEM.Repository;
 using Microsoft.EntityFrameworkCore;
-using HMSYSTEM.Data;
-using HMSYSTEM.Repository;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +10,24 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<Db>(options => options.UseSqlServer(Db.ConnectionString));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IPatientRepository, PatientRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
+builder.Services.AddScoped<IDesignationRepository, DesignationRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPatientHistoryRepository, PatientHistoryRepository>();
+builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
+builder.Services.AddScoped<IWardRepository, WardRepository>();
+builder.Services.AddScoped<IBedRepository, BedRepository>();
+builder.Services.AddScoped<IAdmissionRepository, AdmissionRepository>();
+builder.Services.AddScoped<IServiceItemRepository, ServiceItemRepository>();
+builder.Services.AddScoped<IBillRepository, BillRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IHomeRepository, HomeRepository>();
 
 
 

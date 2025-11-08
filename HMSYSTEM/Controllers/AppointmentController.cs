@@ -22,7 +22,7 @@ namespace HMSYSTEM.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(int pageSize = 10, int page = 1)
+        public IActionResult Index()
         {
             DateTime fromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             DateTime toDate = fromDate.AddMonths(1).AddDays(-1);
@@ -47,8 +47,7 @@ namespace HMSYSTEM.Controllers
            
 
             var pagedData = query
-                .OrderByDescending(p => p.AppointmentId)
-                .ToPagedList(page, pageSize);
+                .OrderByDescending(p => p.AppointmentId);
 
 
             return View(pagedData);

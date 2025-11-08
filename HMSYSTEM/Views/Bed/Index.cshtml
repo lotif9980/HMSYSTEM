@@ -1,6 +1,6 @@
-﻿@* @model IEnumerable<Bed> *@
+﻿@model IEnumerable<Bed>
 @using HMSYSTEM.ViewModels
-@model PaginationViewModel<Bed>
+@* @model PaginationViewModel<Bed> *@
 @using HMSYSTEM.Enum
 
 <div class="container-fluid mt-3">
@@ -11,12 +11,12 @@
                     <div> <h3 class="card-title">Existing Bed List</h3></div>
                     <div> <a class="btn btn-info" asp-controller="Bed" asp-action="Save">Create</a></div>
                     <div>
-                        <input type="text" class="form-control" id="searchBox" placeholder="Search Bed Name" />
+                        <input type="text" class="form-control" id="customSearchBox" placeholder="Search Bed Name" />
                     </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                    <table id="bedTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">Id</th>
@@ -29,9 +29,9 @@
                         </thead>
                         <tbody id="dataShow">
                             @{
-                                int count = ((Model.CurrentPage-1)*Model.PageSize)+1;
+                                int count = 1;
                             }
-                            @foreach (Bed item in Model.Items)
+                            @foreach (var item in Model)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -63,7 +63,7 @@
                     </table>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer clearfix">
+                @* <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-end">
                         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                             <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
@@ -82,7 +82,7 @@
                             <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
                         </li>
                     </ul>
-                </div>
+                </div> *@
             </div>
             <!-- /.card -->
         </div>
@@ -90,6 +90,38 @@
 </div>
 
 
+
+<script>
+    $(document).ready(function () {
+        var table = $('#bedTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [5, 10, 20, 50],
+            "ordering": true,
+            "paging": true,
+            "info": true,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Search",
+                "lengthMenu": "_MENU_ rows",
+                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                "paginate": {
+                    "previous": "⬅️ Previous",
+                    "next": "Next ➡️"
+                }
+            },
+            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+        });
+
+
+        $('#customSearchBox').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+    });
+</script>
+
+
+
+@* 
 <script>
     $(document).ready(function(){
         $("#searchBox").on('keyup',function(){
@@ -127,4 +159,4 @@
             })
         })
     })
-</script>
+</script> *@

@@ -17,26 +17,12 @@ namespace HMSYSTEM.Controllers
         }
 
         [Authorize]
-        public IActionResult Index(int page=1, int pageSize=5)
+        public IActionResult Index()
         {
             
-            var totalDesignation = _unitOf.designationRepo.getAll().OrderBy(d=>d.DesignationId);
-            var totalItem = totalDesignation.Count();
-            var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
-            var designation = totalDesignation
-                            .Skip((page - 1) * pageSize)
-                            .Take(pageSize)
-                            .ToList();
-
-            var viewModel = new PaginationViewModel<Designation>
-            {
-                Items=designation,
-                CurrentPage=page,
-                PageSize=pageSize,
-                TotalItems=totalItem,
-                TotalPages=totalPage,
-            };
-            return View(viewModel);
+            var designation = _unitOf.designationRepo.getAll().OrderBy(d=>d.DesignationId);
+           
+            return View(designation);
         }
 
         [HttpGet]

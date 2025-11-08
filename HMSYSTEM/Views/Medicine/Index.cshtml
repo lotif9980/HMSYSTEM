@@ -1,7 +1,7 @@
 ﻿@using HMSYSTEM.ViewModels
 @using HMSYSTEM.Enum
-@model PaginationViewModel<Medicine>
-@* @model IEnumerable<Medicine> *@
+@* @model PaginationViewModel<Medicine> *@
+@model IEnumerable<Medicine>
 
 
 <div class="container-fluid mt-3">
@@ -21,7 +21,7 @@
 
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                    <table id="medicineTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">Sl</th>
@@ -34,10 +34,10 @@
                         </thead>
                         <tbody id="medicineBoady">
                             @{
-                                int count = ((Model.CurrentPage-1)*Model.PageSize)+1;
+                                int count =1;
                                 // int count = ((Model.CurrentPage - 1) * Model.PageSize) + 1;
                             }
-                            @foreach (Medicine item in Model.Items)
+                            @foreach (Medicine item in Model)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -65,7 +65,7 @@
                     </table>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer clearfix">
+               @*  <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-end">
                         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                             <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
@@ -84,7 +84,7 @@
                             <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
                         </li>
                     </ul>
-                </div>
+                </div> *@
             </div>
             <!-- /.card -->
         </div>
@@ -92,6 +92,35 @@
 </div>
 
 
+
+<script>
+    $(document).ready(function () {
+        var table = $('#medicineTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [5, 10, 20, 50],
+            "ordering": true,
+            "paging": true,
+            "info": true,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Search",
+                "lengthMenu": "_MENU_ rows",
+                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                "paginate": {
+                    "previous": "⬅️ Previous",
+                    "next": "Next ➡️"
+                }
+            },
+            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+        });
+
+
+        $('#searchBox').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+    });
+</script>
+@* 
 <script>
 
     $(document).ready(function () {
@@ -135,4 +164,4 @@
         });
     });
 
-</script>
+</script> *@

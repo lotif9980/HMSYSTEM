@@ -1,11 +1,7 @@
-﻿@* @model IEnumerable<Schedule> *@
+﻿
 @using HMSYSTEM.ViewModels
-@model PaginationViewModel<Schedule>
+@model IEnumerable<Schedule>
 
-@* @foreach(Patient patient in Model)
-{
-   @patient.Name
-} *@
 
 <div class="container-fluid mt-3">
     <div class="row">
@@ -23,7 +19,7 @@
 
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                    <table id="scheduleTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">Id</th>
@@ -39,9 +35,9 @@
                         </thead>
                         <tbody id="tableBoady">
                             @{
-                                int count = ((Model.CurrentPage-1)*Model.PageSize)+1;
+                                int count =1;
                             }
-                            @foreach (Schedule schedule in Model.Items)
+                            @foreach (Schedule schedule in Model)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -80,26 +76,7 @@
                     </table>
                 </div>
             
-                <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
-                        </li>
-
-                        <!-- Page Numbers -->
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
-                            </li>
-                        }
-
-                        <!-- Next Button -->
-                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
-                        </li>
-                    </ul>
-                </div>
+                
             </div>
             <!-- /.card -->
         </div>
@@ -107,65 +84,32 @@
 </div>
 
 <script>
-    $(document).ready(function(){
-        $('#searchBox').on({
-            keyup:function(){
-                var name=$(this).val();
 
-                $.ajax({
-                    url:'/Schedule/GetSearch',
-                    data:{name:name},
-                    success:function(data){
-                        console.log(data);
-                       let rows='';
+    $(document).ready(function () {
+          var table = $('#scheduleTable').DataTable({
+              "pageLength": 10,
+              "lengthMenu": [5, 10, 20, 50],
+              "ordering": true,
+              "paging": true,
+              "info": true,
+              "language": {
+                  "search": "",
+                  "searchPlaceholder": "Search",
+                  "lengthMenu": "_MENU_ rows",
+                  "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                  "paginate": {
+                      "previous": "⬅️ Previous",
+                      "next": "Next ➡️"
+                  }
+              },
+              "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+          });
 
-                       
 
-                       data.forEach((item,index)=>{
-                          
-
-                        let date = item.date
-                             ? new Date(item.date).toLocaleDateString('en-GB', {
-                                   day: 'numeric',
-                                   month: 'short',
-                                   year: 'numeric'
-                               })
-                             : "N/A";
-                           rows+=`<tr>
-                                <td>${index + 1}</td>
-                                <td>${date}</td>
-                                <td>${item.name}</td>
-                                <td>${item.departmentName}</td>
-                                <td>${item.dayOfWeek}</td>
-                                <td>${convertToAMPM(item.startTime)}</td>
-                                <td>${convertToAMPM(item.endTime)}</td>
-                                <td>${item.isAvailable==true ? "Active" : "Inactive"}</td>
-                                <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" href="/Schedule/Edit/${item.id}">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-
-                                            <a class="btn btn-danger ms-2" href="/Schedule/Delete/${item.id}">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                               
-                           </tr>`
-                       })
-
-                       $('#tableBoady').html(rows);
-
-                    }
-                });
-
-            }
-        });
-
-    })
-
+          $('#searchBox').on('keyup', function () {
+              table.search(this.value).draw();
+          });
+    });
     function convertToAMPM(time) {
         if (!time) return "N/A";
 

@@ -17,28 +17,10 @@ namespace HMSYSTEM.Controllers
         }
 
 
-        public IActionResult Index(int pageSize=5, int page=1)
+        public IActionResult Index()
         {
-            var totalWard= _unitOfWork.wardRepository.GetAll().OrderBy(i=>i.Id);
-            var totalItems=totalWard.Count();
-
-            var totalPage=(int)Math.Ceiling((double)totalItems/pageSize);
-
-            var wards=totalWard
-                .Skip((page-1)*pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            var viewModel = new PaginationViewModel<Ward>
-            {
-                Items= wards,
-                CurrentPage=page,
-                TotalPages=totalPage,
-                PageSize=pageSize,
-                TotalItems=totalItems,
-            };
-
-            return View(viewModel);
+            var Ward= _unitOfWork.wardRepository.GetAll();
+            return View(Ward);
         }
 
         [HttpGet]

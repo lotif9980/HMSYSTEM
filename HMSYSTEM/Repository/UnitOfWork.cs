@@ -28,29 +28,47 @@ namespace HMSYSTEM.Repository
         public IBillRepository billRepository { get; set; }
         public IReportRepository reportRepository {  get; set; }
 
-        public UnitOfWork( Db _db, IWebHostEnvironment _env)
+        public UnitOfWork( Db _db, IWebHostEnvironment _env,
+                          IPatientRepository _patientRepository,
+                          IDepartmentRepository _departmentRepository,
+                          IDoctorRepository _doctorRepository,
+                          IDesignationRepository _designationRepository,
+                          IScheduleRepository _scheduleRepository,
+                          IAppointmentRepository _appointmentRepository,
+                          IUserRepository _userRepository,
+                          IRoleRepository _roleRepository,
+                          IPatientHistoryRepository _patientHistoryRepository,
+                          IPrescriptionRepository _prescriptionRepository,
+                          IMedicineRepository _medicineRepository,
+                          IWardRepository _wardRepository,
+                          IBedRepository _bedRepository,
+                          IAdmissionRepository _admissionRepository,
+                          IHomeRepository _homeRepository,
+                          IServiceItemRepository _serviceItemRepository,
+                          IBillRepository _billRepository,
+                          IReportRepository _reportRepository
+                          )
         {
             this.env = _env;
             this.db = _db;
-
-            PatienRepo = new PatientRepository(db,env);
-            departmentRepo = new DepartmentRepository(db);
-            doctorRepo = new DoctorRepository(db,env);
-            designationRepo = new DesignationRepository(db);
-            scheduleRepo = new ScheduleRepository(db);
-            AppointmentRepository = new AppointmentRepository(db);
-            UserRepository = new UserRepository(db);
-            RoleRepository= new RoleRepository(db);
-            PatienHistoryRepo = new PatientHistoryRepository(db);
-            PrescriptioRepository = new PrescriptionRepository(db);
-            MedicineRepo = new MedicineRepository(db);
-            wardRepository = new WardRepository(db);
-            bedRepository = new BedRepository(db);
-            admissionRepository = new AdmissionRepository(db);
-            homeRepository= new HomeRepository(db);
-            serviceItemRepository= new ServiceItemRepository(db);
-            billRepository=new BillRepository (db);
-            reportRepository=new ReportRepository(db);
+            PatienRepo = _patientRepository;
+            departmentRepo= _departmentRepository;
+            doctorRepo = _doctorRepository;
+            designationRepo=_designationRepository;
+            scheduleRepo=_scheduleRepository;
+            AppointmentRepository=_appointmentRepository;
+            UserRepository= _userRepository;
+            RoleRepository= _roleRepository;
+            PatienHistoryRepo= _patientHistoryRepository;
+            PrescriptioRepository= _prescriptionRepository;
+            MedicineRepo=_medicineRepository;
+            wardRepository= _wardRepository;
+            bedRepository= _bedRepository;
+            admissionRepository=_admissionRepository;
+            homeRepository= _homeRepository;
+            serviceItemRepository = _serviceItemRepository;
+            billRepository=_billRepository;
+            reportRepository=_reportRepository;
         }
 
         public async Task<int> Save()

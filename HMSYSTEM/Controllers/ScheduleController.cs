@@ -20,7 +20,7 @@ namespace HMSYSTEM.Controllers
         }
 
         [Authorize]
-        public IActionResult Index( int page=1, int pageSize=10)
+        public IActionResult Index()
         {
             int roleId = Helper.GetRoleId(User);
             int doctorId=Helper.GetDoctorId(User);
@@ -35,25 +35,8 @@ namespace HMSYSTEM.Controllers
             {
                 totalSchedule= _unitofWork.scheduleRepo.getAll().OrderBy(d => d.ScheduleId);
             }
-
-       
-            var totalItem=totalSchedule.Count();
-            var totalPage = (int)Math.Ceiling((double)totalItem / pageSize);
-
-            var schedule=totalSchedule
-                        .Skip((page-1)*pageSize)
-                        .Take(pageSize)
-                        .ToList();
-
-            var viewModel = new PaginationViewModel<Schedule>
-            {
-                Items = schedule,
-                TotalItems = totalItem,
-                CurrentPage = page,
-                PageSize = pageSize,
-                TotalPages = totalPage
-            };
-            return View(viewModel);
+            
+            return View(totalSchedule);
         }
 
         [HttpGet]

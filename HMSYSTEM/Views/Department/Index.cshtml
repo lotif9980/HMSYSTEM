@@ -1,12 +1,5 @@
-﻿@* @model IEnumerable<Department> *@
+﻿@model IEnumerable<Department>
 @using HMSYSTEM.ViewModels
-@model PaginationViewModel<Department>
-
-
-@* @foreach(Patient patient in Model)
-{
-   @patient.Name
-} *@
 
 <div class="container-fluid mt-3">
     <div class="row">
@@ -22,7 +15,7 @@
 
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                    <table id="DepartmentTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">Id</th>
@@ -32,10 +25,10 @@
                             </tr>
                         </thead>
                         @{
-                            int count =((Model.CurrentPage-1)*Model.PageSize)+1;
+                            int count =1;
                         }
                         <tbody id="dataTable">
-                            @foreach (Department department in Model.Items)
+                            @foreach (var department in Model)
                             {
                                 <tr>
                                     <td>@count</td>
@@ -61,7 +54,7 @@
                     </table>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer clearfix">
+                @* <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-end">
                         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
                             <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
@@ -80,13 +73,42 @@
                             <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
                         </li>
                     </ul>
-                </div>
+                </div> *@
             </div>
             <!-- /.card -->
         </div>
     </div>
 </div>
 
+<script>
+    $(document).ready(function () {
+        var table = $('#DepartmentTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [5, 10, 20, 50],
+            "ordering": true,
+            "paging": true,
+            "info": true,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Search",
+                "lengthMenu": "_MENU_ rows",
+                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                "paginate": {
+                    "previous": "⬅️ Previous",
+                    "next": "Next ➡️"
+                }
+            },
+            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+        });
+
+
+        $('#departmentName').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+    });
+</script>
+
+@* 
 <script>
     $(document).ready(function(){
         $('#departmentName').on('keyup',function(){
@@ -130,4 +152,4 @@
         });
     
     })
-</script>
+</script> *@
