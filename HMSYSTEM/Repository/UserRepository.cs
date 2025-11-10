@@ -90,10 +90,17 @@ namespace HMSYSTEM.Repository
 
         public void Update(User user)
         {
-            
-               _db.Update(user);
-               _db.SaveChanges(); 
-           
+            var exestingData = _db.Users.Find(user.Id);
+            if (exestingData != null)
+            {
+                exestingData.Name = user.Name;
+                exestingData.MobileNo=user.MobileNo;
+                exestingData.UserName=user.UserName;
+                exestingData.RoleId=user.RoleId;
+                exestingData.DoctorId=user.DoctorId;
+
+                _db.SaveChanges();
+            }
         }
 
         public void GetStatus(int id)

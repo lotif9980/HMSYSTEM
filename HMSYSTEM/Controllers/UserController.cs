@@ -65,8 +65,20 @@ namespace HMSYSTEM.Controllers
 
         public IActionResult Delete(int Id)
         {
-            unitofwork.UserRepository.Delete(Id);
-            return RedirectToAction("Index");
+            try
+            {
+                unitofwork.UserRepository.Delete(Id);
+                TempData["Message"] = "✅ Successfully Delete!";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "❌ " + (ex?.Message ?? "An error occurred.");
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Index");
+            }
+            
         }
 
         [HttpGet]
@@ -83,6 +95,7 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Update(User user)
         {
+
             unitofwork.UserRepository.Update(user);
             return RedirectToAction("Index");
         }
