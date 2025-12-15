@@ -9,7 +9,7 @@ namespace HMSYSTEM.Data
     {
         public static string ConnectionString = "Server=localhost;Database=hmsystem;User Id=sa;Password=Test_123;Encrypt=False";
 
-        //public static string ConnectionString = "Server=103.125.252.243;Database=ebikeuat;User Id=oct_ebikeuat;Password=foabwl7pdigzystxecvq;Encrypt=False";
+     
 
         public Db()
         {
