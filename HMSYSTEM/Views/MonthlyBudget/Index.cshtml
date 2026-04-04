@@ -1,0 +1,96 @@
+﻿@model IEnumerable<MonthlyBudget>
+@using HMSYSTEM.ViewModels
+@using HMSYSTEM.Enum
+@{
+    ViewData["Title"] = "Monthly Budget";
+}
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-around">
+                    <div> <h3 class="card-title">Existing Monthly Budget List</h3></div>
+                    <div><input placeholder="Search Month Name" id="customSearchBox" class="form-control" /></div>
+                    <div> <a class="btn btn-info" asp-controller="Admission" asp-action="Save">Create</a></div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="monthlyBudgetTable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">Id</th>
+                                <th>Date</th>
+                                <th>Monthly Budget</th>
+                                <th style="width:20px;text-align:center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataShow">
+                            @{
+                                int count = 1;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@count</td>
+
+                                    <td>
+                                            @item.MonthName @item.MonthYear.Split('-')[0]
+                                      
+                                    </td>
+                                    <td>@item.TotalBudget</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center btn-group-sm ">
+
+                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Details">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                count++;
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    @* @await Html.PartialAsync("_Pagination", Model) *@
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#monthlyBudgetTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [5, 10, 20, 50],
+            "ordering": true,
+            "paging": true,
+            "info": true,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Search",
+                "lengthMenu": "_MENU_ rows",
+                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                "paginate": {
+                    "previous": "⬅️ Previous",
+                    "next": "Next ➡️"
+                }
+            },
+            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+        });
+
+
+        $('#customSearchBox').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+    });
+</script>

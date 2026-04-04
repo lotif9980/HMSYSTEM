@@ -23,6 +23,7 @@ namespace HMSYSTEM.Repository
         IServiceItemRepository serviceItemRepository { get; }
         IBillRepository billRepository { get; }
         IReportRepository reportRepository { get; }
+        IMonthlyBudgetRepository monthlyBudgetRepository { get; }
 
         void Complete();
         Task<int> Save();

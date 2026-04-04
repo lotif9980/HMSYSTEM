@@ -27,6 +27,7 @@ namespace HMSYSTEM.Repository
         public IServiceItemRepository serviceItemRepository {  get; set; }
         public IBillRepository billRepository { get; set; }
         public IReportRepository reportRepository {  get; set; }
+        public IMonthlyBudgetRepository monthlyBudgetRepository { get; set; }
 
         public UnitOfWork( Db _db, IWebHostEnvironment _env,
                           IPatientRepository _patientRepository,
@@ -46,7 +47,8 @@ namespace HMSYSTEM.Repository
                           IHomeRepository _homeRepository,
                           IServiceItemRepository _serviceItemRepository,
                           IBillRepository _billRepository,
-                          IReportRepository _reportRepository
+                          IReportRepository _reportRepository,
+                          IMonthlyBudgetRepository _monthlyBudgetRepository
                           )
         {
             this.env = _env;
@@ -69,6 +71,7 @@ namespace HMSYSTEM.Repository
             serviceItemRepository = _serviceItemRepository;
             billRepository=_billRepository;
             reportRepository=_reportRepository;
+            monthlyBudgetRepository= _monthlyBudgetRepository;
         }
 
         public async Task<int> Save()

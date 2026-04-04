@@ -1,0 +1,93 @@
+﻿@model MonthlyBudget
+
+@{
+    ViewData["Title"] = "Budget Save";
+}
+<!-- jQuery -->
+
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card card-warning card-outline mb-4">
+
+                <!-- Header -->
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="fs-4 text-uppercase">Admission Information</div>
+                    <a class="btn btn-primary btn-sm" asp-route-id="" asp-controller="Admission" asp-action="Index">
+                        <i class="fa fa-list"></i> List
+                    </a>
+                </div>
+
+                <!-- Form Start -->
+                <form id="admissionForm" asp-action="Save" method="post" enctype="multipart/form-data">
+                    <div class="card-body">
+
+                        <!-- Admit Date & Invoice No -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="MonthYear" class="form-label">Admit Date</label>
+                                <div class="input-group">
+                                    <input type="text" id="MonthYear" name="MonthYear" class="form-control" />
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="TotalBudget" class="form-label">Invoice No</label>
+                                <input asp-for="TotalBudget" class="form-control" id="TotalBudget" name="TotalBudget" />
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    <!-- Footer Buttons -->
+                    <div class="card-footer d-flex justify-content-center">
+                        <button type="submit" class="btn btn-warning me-2">Save</button>
+                        <button type="reset" class="btn btn-danger me-2">Reset</button>
+                    </div>
+                </form>
+                <!-- Form End -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+
+
+       $(function () {
+
+        $("#MonthYear").datepicker({
+            dateFormat: "yy-mm",
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $(".input-group-text").click(function () {
+            $("#MonthYear").focus();
+        });
+
+        $("#admissionForm").on('submit', function(e) {
+
+            var admitDate = $("#MonthYear").val().trim();
+            var totalBudget = $("#TotalBudget").val().trim();
+
+            $(".field-alert").remove();
+
+            if(admitDate === "") {
+                alert("Admit Date is Required");
+                e.preventDefault();
+            }
+
+            if(totalBudget === "") {
+                alert("Budget is Required");
+                e.preventDefault();
+            }
+        });
+
+    });
+</script>

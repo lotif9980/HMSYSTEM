@@ -28,6 +28,7 @@ builder.Services.AddScoped<IServiceItemRepository, ServiceItemRepository>();
 builder.Services.AddScoped<IBillRepository, BillRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IHomeRepository, HomeRepository>();
+builder.Services.AddScoped<IMonthlyBudgetRepository, MonthlyBudgetRepository>();
 
 
 

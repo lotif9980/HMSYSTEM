@@ -53,7 +53,7 @@ namespace HMSYSTEM.Data
             public DbSet<BillDetail> BillDetails { get; set; }
             
             public DbSet<Payment> Payments { get; set; }
-
-
+            public DbSet<MonthlyBudget> MonthlyBudgets{ get; set; }
+            public DbSet<DailyExpenses> DailyExpenses{ get; set; }
     }
 }
