@@ -1,0 +1,237 @@
+@using HMSYSTEM.ViewModels
+@model AppointmentVM
+@{
+    ViewData["Title"] = "Appointment Edit";
+}
+
+
+<div class="container-fluid mt-4">
+    <div class="row g-4">
+        <div class="col-12 d-flex justify-content-center">
+            <div class="col-md-10">
+
+                <!--begin::Horizontal Form-->
+                <div class="card card-warning card-outline mb-4">
+                    <div class="btn-group-sm">
+                        <a class="btn btn-primary" asp-route-id="" asp-controller="Appointment" asp-action="Index">
+                            <i class="fa fa-list"></i>
+                            Appointment List
+                        </a>
+                    </div>
+                    <!--begin::Header-->
+                    <div class="card-header d-flex justify-content-center  fs-1"><div class="">Edit Appointment Information</div></div>
+                    <!--end::Header-->
+                    <!--begin::Form-->
+                    <form asp-action="Edit" method="post" id="myForm" enctype="multipart/form-data">
+                        <!--begin::Body-->
+                        <div class="card-body">
+
+                            <!-- Hidden Fields -->
+                            <input type="hidden" asp-for="AppointmentId" />
+                            <input type="hidden" asp-for="PatientID" id="patientId" />
+
+                            <!-- Phone Number & Patient Name -->
+                            <div class="row mb-3">
+                                <div class="col-md-6 col-12">
+                                    <label asp-for="PatientPhoneNumber" class="form-label">Search Phone Number</label>
+                                    <input asp-for="PatientPhoneNumber" class="form-control" id="patientPhoneNumber">
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label class="form-label">Patient Name</label>
+                                    <input class="form-control" id="patientName" asp-for="PatientName" readonly>
+                                  
+                                </div>
+                            </div>
+
+                            <!-- Department & Doctor -->
+                            <div class="row mb-3">
+                                <div class="col-md-6 col-12">
+                                    <label for="DepartmentId" class="form-label">Department</label>
+                                    <select asp-for="DepartmentId" class="form-control form-select department-dropdown">
+                                        <option value="">-- Select Department --</option>
+                                        @foreach (var item in ViewBag.Department)
+                                        {
+                                            <option value="@item.DepartmentId">@item.DepartmentName</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label for="DoctorId" class="form-label">Doctor</label>
+                                    <select asp-for="DoctorId" class="form-control form-select doctor-dropdown">
+                                        <option value="">-- Select Doctor --</option>
+                                        @foreach (var item in ViewBag.Doctor)
+                                        {
+                                            <option value="@item.Id">@item.FirstName @item.LastName</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="DoctorId" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Appointment Date & Serial Number -->
+                            <div class="row mb-3">
+                                <div class="col-md-6 col-12">
+                                    <label asp-for="AppoinmentDate" class="form-label">Appointment Date</label>
+                                    <div class="input-group">
+                                        <input asp-for="AppoinmentDate" type="text" class="form-control" id="AppoinmentDate" value="@Model.AppoinmentDate?.ToString("dd-MM-yyyy HH:mm")" />
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <label asp-for="SerialNumber" class="form-label">Serial Number</label>
+                                    <input asp-for="SerialNumber" class="form-control" readonly id="serial" />
+                                </div>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">Status</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Status" value="1" id="statusActive" />
+                                        <label class="form-check-label" for="statusActive">Active</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Status" value="2" id="statusInProgress" />
+                                        <label class="form-check-label" for="statusInProgress">In Progress</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Status" value="3" id="statusCompleted" />
+                                        <label class="form-check-label" for="statusCompleted">Completed</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" asp-for="Status" value="9" id="statusDeleted" />
+                                        <label class="form-check-label" for="statusDeleted">Deleted</label>
+                                    </div>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Problem (Full Width) -->
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label asp-for="Problem" class="form-label">Problem</label>
+                                    <textarea asp-for="Problem" class="form-control" rows="2"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--end::Body-->
+                        <!--begin::Footer-->
+                        <div class="card-footer d-flex justify-content-center">
+                            <button type="submit" class="btn btn-warning me-2">Update</button>
+                            <a class="btn btn-danger" asp-action="Index">Cancel</a>
+                        </div>
+                        <!--end::Footer-->
+                    </form>
+                    <!--end::Form-->
+                </div>
+                <!--end::Horizontal Form-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#AppoinmentDate").datetimepicker({
+            dateFormat: "dd-mm-yy",
+            timeFormat: "HH:mm",
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $(".input-group-text").click(function () {
+            $("#AppoinmentDate").focus();
+        });
+    });
+
+
+    $(document).ready(function () {
+         $(".department-dropdown").select2({
+             placeholder: "--Select Department--",
+             allowClear: true,
+             width: '100%'
+         });
+
+
+         $(document).on('select2:open', () => {
+             document.querySelector('.select2-search__field').focus();
+         });
+    });
+
+    $(document).ready(function () {
+         $(".doctor-dropdown").select2({
+             placeholder: "--Select Doctor--",
+             allowClear: true,
+             width: '100%'
+         });
+
+
+         $(document).on('select2:open', () => {
+             document.querySelector('.select2-search__field').focus();
+         });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("patientPhoneNumber").addEventListener("blur", function () {
+            const phoneNumber = this.value.trim();
+
+            if (phoneNumber !== "") {
+                fetch(`/Appointment/GetPatientNameByPhone?phoneNumber=${phoneNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+                         var container=$("body");
+                         var offset=20;
+                        if (data.success) {
+                            // Patient found
+                            document.getElementById("patientName").value = data.name;
+                            document.getElementById('patientId').value = data.id;
+
+                            if (data.name) {
+                                offset = createAlertPrimary("✅ Patient Found with this Number", container, offset);
+                            }
+                        } else {
+                            // No patient found
+                            document.getElementById("patientName").value = "";
+                            document.getElementById("patientId").value = "";
+                            if (!data.name) {
+                                offset = createAlert("❌ No patient found with this number", container, offset);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("Error while fetching patient data.");
+                    });
+            }
+        });
+    });
+
+
+
+    $(document).ready(function(){
+        $("#myForm").on('submit',function(){
+            var patientName=$("#patientName").val().trim();
+            var departmentId=$("#DepartmentId").val().trim();
+            var doctorId=$("#DoctorId").val().trim();
+            var appoinmentDate=$("#AppoinmentDate").val().trim();
+            var serial=$("#serial").val().trim();
+
+            var container=$("body");
+            var offset=20;
+
+            if(patientName==="")offset=createAlert("❌ Patient Name Required",container,offset);
+            if(doctorId==="")offset=createAlert("❌ Doctor Required",container,offset);
+            if(departmentId==="")offset=createAlert("❌ Department is Required",container,offset);
+            if(appoinmentDate==="")offset=createAlert("❌ Appointment Date is Required",container,offset);
+            if(serial==="")offset=createAlert("❌ Serial is Required",container,offset);
+
+            if($(".field-alert").length >0) return false;
+            this.submit();
+        })
+    })
+</script>

@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Models;
+using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -19,8 +19,26 @@ namespace HMSYSTEM.Controllers
         [Authorize]
         public IActionResult Index()
         {
-          var user=  unitofwork.UserRepository.GetAll().OrderBy(m=>m.Id);
+            var user = unitofwork.UserRepository.GetAll().OrderBy(m=>m.Id);
+            ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
+            ViewBag.Doctors = unitofwork.doctorRepo.getAll();
+            ViewBag.Departments = unitofwork.departmentRepo.getAll().Where(d => d.Status == true).ToList();
             return View(user);
+        }
+
+        [HttpGet]
+        public IActionResult GetDoctorsByDepartment(int departmentId)
+        {
+            var doctors = unitofwork.doctorRepo.getAll()
+                .Where(d => d.DepartmentId == departmentId && d.Status == true)
+                .Select(d => new
+                {
+                    id = d.Id,
+                    name = d.FirstName + " " + d.LastName
+                })
+                .ToList();
+
+            return Json(doctors);
         }
 
         [HttpGet]
@@ -84,12 +102,39 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public IActionResult Edit(int Id)
         {
-            var data = unitofwork.UserRepository.Find(Id);
+            return RedirectToAction("Index", new { editId = Id });
+        }
 
-            var roles= unitofwork.RoleRepository.GetRoles();
+        [HttpGet]
+        public IActionResult GetUserById(int id)
+        {
+            var user = unitofwork.UserRepository.Find(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-            ViewBag.Role = roles;
-            return View(data);
+            int departmentId = 0;
+            if (user.DoctorId > 0)
+            {
+                var doctor = unitofwork.doctorRepo.getAll().FirstOrDefault(d => d.Id == user.DoctorId);
+                if (doctor != null)
+                {
+                    departmentId = doctor.DepartmentId ?? 0;
+                }
+            }
+
+            return Json(new
+            {
+                id = user.Id,
+                name = user.Name,
+                mobileNo = user.MobileNo,
+                userName = user.UserName,
+                roleId = user.RoleId,
+                status = user.Status,
+                doctorId = user.DoctorId,
+                departmentId = departmentId
+            });
         }
 
         [HttpPost]

@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Enum;
+using HMSYSTEM.Enum;
 using HMSYSTEM.Helpers;
 using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
@@ -306,6 +306,80 @@ namespace HMSYSTEM.Controllers
         {
             _unitofWork.AppointmentRepository.UpdateStatus(id, (AppointmentStatus)status);
             return RedirectToAction(returnAction);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var appointment = _unitofWork.AppointmentRepository.GetById(id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            var department = _unitofWork.departmentRepo.getAll()
+                .Where(c => c.Status == true)
+                .ToList();
+            var doctor = _unitofWork.doctorRepo.getAll()
+                .Where(c => c.Status == true)
+                .ToList();
+
+            ViewBag.Department = department;
+            ViewBag.Doctor = doctor;
+
+            var model = new AppointmentVM
+            {
+                AppointmentId = appointment.AppointmentId,
+                PatientID = appointment.PatientID,
+                PatientName = appointment.Patient != null ? (appointment.Patient.FirstName + " " + appointment.Patient.LastName) : "",
+                PatientPhoneNumber = appointment.PatientPhoneNumber,
+                DepartmentId = appointment.DepartmentId,
+                DoctorId = appointment.DoctorId,
+                AppoinmentDate = appointment.AppoinmentDate,
+                SerialNumber = appointment.SerialNumber,
+                Problem = appointment.Problem,
+                Status = appointment.Status
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(AppointmentVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var appointment = new Appointment
+                {
+                    AppointmentId = model.AppointmentId,
+                    PatientID = model.PatientID,
+                    PatientPhoneNumber = model.PatientPhoneNumber,
+                    DepartmentId = model.DepartmentId,
+                    DoctorId = model.DoctorId,
+                    AppoinmentDate = model.AppoinmentDate.Value,
+                    SerialNumber = model.SerialNumber,
+                    Problem = model.Problem,
+                    Status = model.Status
+                };
+
+                _unitofWork.AppointmentRepository.Update(appointment);
+                TempData["Message"] = "✅ Successfully Updated!";
+                TempData["MessageType"] = "primary";
+
+                return RedirectToAction("Index");
+            }
+
+            var department = _unitofWork.departmentRepo.getAll()
+                .Where(c => c.Status == true)
+                .ToList();
+            var doctor = _unitofWork.doctorRepo.getAll()
+                .Where(c => c.Status == true)
+                .ToList();
+
+            ViewBag.Department = department;
+            ViewBag.Doctor = doctor;
+
+            return View(model);
         }
     }
 }

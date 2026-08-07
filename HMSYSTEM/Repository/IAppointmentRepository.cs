@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Enum;
+using HMSYSTEM.Enum;
 using HMSYSTEM.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +18,8 @@ namespace HMSYSTEM.Repository
 
         int GetAppointmentsCount();
         public Task<bool> AppointmentCheck(int PatientId);
+        Appointment GetById(int id);
+        void Update(Appointment appointment);
 
     }
 }

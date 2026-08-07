@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using System;
 using System.Reflection.Metadata;
@@ -158,7 +158,30 @@ namespace HMSYSTEM.Repository
                         (p.Status==AppointmentStatus.Active || p.Status== AppointmentStatus.InProgress));
         }
 
-        
-    }
+        public Appointment GetById(int id)
+        {
+            return _db.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Department)
+                .Include(a => a.Doctor)
+                .FirstOrDefault(a => a.AppointmentId == id);
+        }
 
+        public void Update(Appointment appointment)
+        {
+            var existing = _db.Appointments.Find(appointment.AppointmentId);
+            if (existing != null)
+            {
+                existing.PatientID = appointment.PatientID;
+                existing.PatientPhoneNumber = appointment.PatientPhoneNumber;
+                existing.DepartmentId = appointment.DepartmentId;
+                existing.DoctorId = appointment.DoctorId;
+                existing.AppoinmentDate = appointment.AppoinmentDate;
+                existing.SerialNumber = appointment.SerialNumber;
+                existing.Problem = appointment.Problem;
+                existing.Status = appointment.Status;
+                _db.SaveChanges();
+            }
+        }
+    }
 }

@@ -1,33 +1,401 @@
-﻿@model IEnumerable<User>
+@model IEnumerable<User>
 @using HMSYSTEM.ViewModels
 @{
-    ViewData["Title"] = "User";
+    ViewData["Title"] = "User Management";
 }
 
+<!-- Premium Modern Styles for User Index -->
+<style>
+    .user-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
+    
+    .user-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
 
-<div class="container-fluid mt-3">
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .user-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .user-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    /* Search Input Custom Design */
+    .search-wrapper {
+        position: relative;
+        min-width: 260px;
+    }
+
+    .search-wrapper .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 0.95rem;
+        pointer-events: none;
+    }
+
+    .search-wrapper input.search-control {
+        padding-left: 50px !important;
+        padding-right: 15px !important;
+        border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        background-color: #f7fafc !important;
+    }
+
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
+
+    /* Create Button Custom Design */
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.5rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer;
+    }
+
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-gradient-create:active {
+        transform: translateY(0);
+    }
+
+    /* Custom Table Design */
+    .table-container {
+        padding: 1rem 1.5rem !important;
+    }
+
+    #userTable {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        border: none !important;
+    }
+
+    #userTable th {
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 16px 20px !important;
+        border-bottom: 2px solid #edf2f7 !important;
+        border-top: none !important;
+    }
+
+    #userTable td {
+        padding: 16px 20px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important;
+        color: #2d3748 !important;
+        font-size: 0.9rem !important;
+    }
+
+    #userTable tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    #userTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    /* Status Badges */
+    .status-badge-link {
+        text-decoration: none !important;
+        display: inline-block;
+    }
+
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        transition: all 0.2s ease;
+    }
+
+    .status-active {
+        background-color: #e6fffa;
+        color: #234e52;
+        border: 1px solid #b2f5ea;
+    }
+
+    .status-active:hover {
+        background-color: #b2f5ea;
+        transform: scale(1.03);
+    }
+
+    .status-inactive {
+        background-color: #fff5f5;
+        color: #742a2a;
+        border: 1px solid #fed7d7;
+    }
+
+    .status-inactive:hover {
+        background-color: #fed7d7;
+        transform: scale(1.03);
+    }
+
+    /* Action Buttons Group */
+    .action-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+        border: 1px solid transparent;
+    }
+
+    .action-edit {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border-color: #bee3f8;
+    }
+
+    .action-edit:hover {
+        background-color: #3182ce;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
+    }
+
+    .action-delete {
+        background-color: #fff5f5;
+        color: #c53030;
+        border-color: #fed7d7;
+    }
+
+    .action-delete:hover {
+        background-color: #e53e3e;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2);
+    }
+
+    .action-details {
+        background-color: #f0fff4;
+        color: #2f855a;
+        border-color: #c6f6d5;
+    }
+
+    .action-details:hover {
+        background-color: #38a169;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(56, 161, 105, 0.2);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .dataTables_length select {
+        padding: 6px 30px 6px 12px !important;
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.85rem !important;
+        background-color: #f7fafc !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing User List</h3></div>
-                    <div> <a class="btn btn-info" asp-controller="User" asp-action="Save">Create</a></div>
-                    <div><input type="text" class="form-control" placeholder="search Name" id="searchBox" /></div>
+            <div class="card user-card mb-4">
+                
+                <!-- Beautiful Card Header -->
+                <div class="card-header user-card-header">
+                    <div class="header-container">
+                        <div class="header-title-block">
+                            <div class="header-icon">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <div>
+                                <h3 class="user-card-title">Existing User List</h3>
+                                <p class="user-card-subtitle">Manage and monitor application user roles and statuses.</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <div class="search-wrapper" style="position: relative; min-width: 260px;">
+                                <i class="fas fa-search search-icon" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #a0aec0; font-size: 0.95rem; pointer-events: none; z-index: 5;"></i>
+                                <input type="text" class="form-control search-control" placeholder="Search Name..." id="searchBox" style="padding-left: 50px !important; padding-right: 15px !important; border-radius: 30px !important; border: 1.5px solid #e2e8f0 !important; font-size: 0.9rem !important; height: 42px !important; transition: all 0.3s ease !important; box-shadow: none !important; background-color: #f7fafc !important;" />
+                            </div>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                <i class="fas fa-user-plus me-2"></i> Create
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-
-
                 <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="userTable" class="table table-bordered table-hover">
+                <div class="card-body table-container">
+                    <table id="userTable" class="table table-hover">
                         <thead>
                             <tr>
                                 <th style="width:80px">Sl No</th>
                                 <th>Name</th>
                                 <th>Mobile No </th>
                                 <th>User Name </th>
-                                <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th style="text-align:center">Status</th>
+                                <th style="width:120px;text-align:center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="dataShow">
@@ -38,36 +406,30 @@
                             {
                                 <tr>
                                     <td>@count</td>
-
-                                    <td>@item.Name</td>
+                                    <td style="font-weight:700; color:#2d3748;">@item.Name</td>
                                     <td>@item.MobileNo</td>
-                                    <td>@item.UserName</td>
-                                    <td >
-                                        <a asp-action="GetStatusUpdate" asp-route-id="@item.Id"
-                                           class="btn btn-sm @(item.Status == true ? "btn-success" : "btn-danger")">
-                                            @(item.Status == true ? "Active" : "Inactive")
+                                    <td style="font-family:monospace; color:#4a5568;">@item.UserName</td>
+                                    <td style="text-align:center">
+                                        <a asp-action="GetStatusUpdate" asp-route-id="@item.Id" class="status-badge-link">
+                                            <span class="badge-status @(item.Status == true ? "status-active" : "status-inactive")">
+                                                <i class="fas @(item.Status == true ? "fa-check-circle" : "fa-times-circle") me-2"></i>
+                                                @(item.Status == true ? "Active" : "Inactive")
+                                            </span>
                                         </a>
                                     </td>
                                     <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" asp-route-id="@item.Id" asp-controller="User" asp-action="Edit">
-                                                <i class="fa fa-edit"></i>
+                                        <div class="action-btn-group">
+                                            <a class="action-btn action-edit edit-user-btn" href="javascript:void(0);" data-id="@item.Id" title="Edit User">
+                                                <i class="fas fa-edit"></i>
                                             </a>
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="User" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-
-                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="User" asp-action="Details">
-                                                <i class="fa fa-eye"></i>
+                                            <a class="action-btn action-delete" asp-route-id="@item.Id" asp-controller="User" asp-action="Delete" title="Delete User">
+                                                <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
                                 count++;
                             }
-
                         </tbody>
                     </table>
                 </div>
@@ -79,34 +441,455 @@
     </div>
 </div>
 
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">
+                    <i class="fas fa-user-shield me-2"></i> User Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="User" asp-action="Save" method="post" id="addUserForm">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="Name" class="form-label">Name</label>
+                            <input name="Name" id="Name" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="MobileNo" class="form-label">Mobile No</label>
+                            <input name="MobileNo" id="MobileNo" class="form-control" type="number" required />
+                        </div>
+                    </div>
 
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="UserName" class="form-label">User Name</label>
+                            <input name="UserName" id="UserName" class="form-control" required autocomplete="off" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Password" class="form-label">Password</label>
+                            <input name="Password" id="Password" class="form-control" type="password" required autocomplete="off" />
+                        </div>
+                    </div>
 
+                    <div class="row mb-3 align-items-end">
+                        <div class="col-md-6">
+                            <label for="RoleId" class="form-label">Role</label>
+                            <select name="RoleId" id="modalRoleId" class="form-control" required>
+                                <option value="">--Select Role--</option>
+                                @if (ViewBag.Roles != null)
+                                {
+                                    foreach (var item in ViewBag.Roles)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="isDoctorCheckbox">
+                                <label class="form-check-label" for="isDoctorCheckbox" style="font-weight: 700; color: #4a5568;">
+                                    Is Doctor?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="row mb-3" id="doctorFieldsRow" style="display: none;">
+                        <div class="col-md-6">
+                            <label for="DepartmentId" class="form-label">Department</label>
+                            <select id="modalDepartmentId" class="form-control">
+                                <option value="">--Select Department--</option>
+                                @if (ViewBag.Departments != null)
+                                {
+                                    foreach (var item in ViewBag.Departments)
+                                    {
+                                        <option value="@item.DepartmentId">@item.DepartmentName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="DoctorId" class="form-label">Doctor Name</label>
+                            <select name="DoctorId" id="modalDoctorId" class="form-control">
+                                <option value="0">--Select Doctor--</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i> Save 
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="editUserModalLabel">
+                    <i class="fas fa-user-edit me-2"></i> Edit User Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="User" asp-action="Update" method="post" id="editUserForm">
+                <input type="hidden" name="Id" id="editUserId" />
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editName" class="form-label">Name</label>
+                            <input name="Name" id="editName" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editMobileNo" class="form-label">Mobile No</label>
+                            <input name="MobileNo" id="editMobileNo" class="form-control" type="number" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editUserName" class="form-label">User Name</label>
+                            <input name="UserName" id="editUserName" class="form-control" required autocomplete="off" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editRoleId" class="form-label">Role</label>
+                            <select name="RoleId" id="editRoleId" class="form-control" required>
+                                <option value="">--Select Role--</option>
+                                @if (ViewBag.Roles != null)
+                                {
+                                    foreach (var item in ViewBag.Roles)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-end">
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="editIsDoctorCheckbox">
+                                <label class="form-check-label" for="editIsDoctorCheckbox" style="font-weight: 700; color: #4a5568;">
+                                    Is Doctor?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3" id="editDoctorFieldsRow" style="display: none;">
+                        <div class="col-md-6">
+                            <label for="editDepartmentId" class="form-label">Department</label>
+                            <select id="editDepartmentId" class="form-control">
+                                <option value="">--Select Department--</option>
+                                @if (ViewBag.Departments != null)
+                                {
+                                    foreach (var item in ViewBag.Departments)
+                                    {
+                                        <option value="@item.DepartmentId">@item.DepartmentName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editDoctorId" class="form-label">Doctor Name</label>
+                            <select name="DoctorId" id="editDoctorId" class="form-control">
+                                <option value="0">--Select Doctor--</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save" style="background-color: #3182ce !important; box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3) !important;">
+                        <i class="fas fa-save me-2"></i> Update
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function () {
-            var table = $('#userTable').DataTable({
-                "pageLength": 10,
-                "lengthMenu": [5, 10, 20, 50],
-                "ordering": true,
-                "paging": true,
-                "info": true,
-                "language": {
-                    "search": "",
-                    "searchPlaceholder": "Search",
-                    "lengthMenu": "_MENU_ rows",
-                    "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                    "paginate": {
-                        "previous": "⬅️ Previous",
-                        "next": "Next ➡️"
+        var table = $('#userTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [5, 10, 20, 50],
+            "ordering": true,
+            "paging": true,
+            "info": true,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Search",
+                "lengthMenu": "_MENU_ rows",
+                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
+                "paginate": {
+                    "previous": "⬅️ Previous",
+                    "next": "Next ➡️"
+                }
+            },
+            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+        });
+
+
+        $('#searchBox').on('keyup', function () {
+            table.search(this.value).draw();
+        });
+
+        // Initialize Select2 inside modal when the modal is shown
+        $('#addUserModal').on('shown.bs.modal', function () {
+            // Reset checkbox and select states
+            $('#isDoctorCheckbox').prop('checked', false);
+            $('#doctorFieldsRow').hide();
+            $('#modalDepartmentId').val('').trigger('change');
+            $('#modalDoctorId').html('<option value="0">--Select Doctor--</option>').trigger('change');
+
+            $("#modalRoleId").select2({
+                placeholder: "--Select Role--",
+                allowClear: true,
+                dropdownParent: $('#addUserModal'),
+                width: '100%'
+            });
+        });
+
+        // Toggle Department and Doctor Select containers based on 'Is Doctor?' checkbox
+        $('#isDoctorCheckbox').on('change', function () {
+            if (this.checked) {
+                $('#doctorFieldsRow').show();
+
+                $("#modalDepartmentId").select2({
+                    placeholder: "--Select Department--",
+                    allowClear: true,
+                    dropdownParent: $('#addUserModal'),
+                    width: '100%'
+                });
+
+                $("#modalDoctorId").select2({
+                    placeholder: "--Select Doctor--",
+                    allowClear: true,
+                    dropdownParent: $('#addUserModal'),
+                    width: '100%'
+                });
+            } else {
+                $('#modalDepartmentId').val('').trigger('change');
+                $('#modalDoctorId').html('<option value="0">--Select Doctor--</option>').trigger('change');
+                $('#doctorFieldsRow').hide();
+            }
+        });
+
+        // Cascading Dropdown: Load Doctors when Department changes
+        $(document).on('change', '#modalDepartmentId', function () {
+            var deptId = $(this).val();
+            if (deptId) {
+                $.getJSON('/User/GetDoctorsByDepartment', { departmentId: deptId }, function (data) {
+                    var items = '<option value="0">--Select Doctor--</option>';
+                    $.each(data, function (i, doc) {
+                        items += '<option value="' + doc.id + '">' + doc.name + '</option>';
+                    });
+                    $('#modalDoctorId').html(items).trigger('change');
+                });
+            } else {
+                $('#modalDoctorId').html('<option value="0">--Select Doctor--</option>').trigger('change');
+            }
+        });
+
+        // ==========================================
+        // Edit Modal Events and JavaScript
+        // ==========================================
+
+        // Edit User button click handler
+        $(document).on('click', '.edit-user-btn', function () {
+            var userId = $(this).data('id');
+            
+            // Fetch user details via AJAX
+            $.getJSON('/User/GetUserById', { id: userId }, function (data) {
+                // Populate modal fields
+                $('#editUserId').val(data.id);
+                $('#editName').val(data.name);
+                $('#editMobileNo').val(data.mobileNo);
+                $('#editUserName').val(data.userName);
+                
+                // Initialize/Reset Select2 for Role
+                $("#editRoleId").select2({
+                    placeholder: "--Select Role--",
+                    allowClear: true,
+                    dropdownParent: $('#editUserModal'),
+                    width: '100%'
+                });
+                $('#editRoleId').val(data.roleId).trigger('change');
+                
+                // Check if user is associated with a doctor
+                if (data.doctorId > 0) {
+                    $('#editIsDoctorCheckbox').prop('checked', true);
+                    $('#editDoctorFieldsRow').show();
+                    
+                    // Initialize Select2 for Department and Doctor
+                    $("#editDepartmentId").select2({
+                        placeholder: "--Select Department--",
+                        allowClear: true,
+                        dropdownParent: $('#editUserModal'),
+                        width: '100%'
+                    });
+                    $('#editDepartmentId').val(data.departmentId).trigger('change');
+                    
+                    // Load doctors cascade for selected department and pre-set doctor
+                    $.getJSON('/User/GetDoctorsByDepartment', { departmentId: data.departmentId }, function (doctors) {
+                        var items = '<option value="0">--Select Doctor--</option>';
+                        $.each(doctors, function (i, doc) {
+                            items += '<option value="' + doc.id + '">' + doc.name + '</option>';
+                        });
+                        $('#editDoctorId').html(items);
+                        
+                        $("#editDoctorId").select2({
+                            placeholder: "--Select Doctor--",
+                            allowClear: true,
+                            dropdownParent: $('#editUserModal'),
+                            width: '100%'
+                        });
+                        $('#editDoctorId').val(data.doctorId).trigger('change');
+                    });
+                } else {
+                    $('#editIsDoctorCheckbox').prop('checked', false);
+                    $('#editDoctorFieldsRow').hide();
+                    $('#editDepartmentId').val('').trigger('change');
+                    $('#editDoctorId').html('<option value="0">--Select Doctor--</option>').trigger('change');
+                }
+                
+                // Show Edit Modal
+                $('#editUserModal').modal('show');
+            }).fail(function() {
+                alert("Error loading user data.");
+            });
+        });
+
+        // Initialize Select2 inside edit modal when the modal is shown
+        $('#editUserModal').on('shown.bs.modal', function () {
+            $("#editRoleId").select2({
+                placeholder: "--Select Role--",
+                allowClear: true,
+                dropdownParent: $('#editUserModal'),
+                width: '100%'
+            });
+        });
+
+        // Toggle Department and Doctor Select containers based on 'Is Doctor?' checkbox in Edit Modal
+        $('#editIsDoctorCheckbox').on('change', function () {
+            if (this.checked) {
+                $('#editDoctorFieldsRow').show();
+
+                $("#editDepartmentId").select2({
+                    placeholder: "--Select Department--",
+                    allowClear: true,
+                    dropdownParent: $('#editUserModal'),
+                    width: '100%'
+                });
+
+                $("#editDoctorId").select2({
+                    placeholder: "--Select Doctor--",
+                    allowClear: true,
+                    dropdownParent: $('#editUserModal'),
+                    width: '100%'
+                });
+            } else {
+                $('#editDepartmentId').val('').trigger('change');
+                $('#editDoctorId').html('<option value="0">--Select Doctor--</option>').trigger('change');
+                $('#editDoctorFieldsRow').hide();
+            }
+        });
+
+        // Cascading Dropdown: Load Doctors when Department changes in Edit Modal
+        $(document).on('change', '#editDepartmentId', function () {
+            var deptId = $(this).val();
+            if (deptId) {
+                $.getJSON('/User/GetDoctorsByDepartment', { departmentId: deptId }, function (data) {
+                    var items = '<option value="0">--Select Doctor--</option>';
+                    $.each(data, function (i, doc) {
+                        items += '<option value="' + doc.id + '">' + doc.name + '</option>';
+                    });
+                    $('#editDoctorId').html(items).trigger('change');
+                });
+            } else {
+                $('#editDoctorId').html('<option value="0">--Select Doctor--</option>').trigger('change');
+            }
+        });
+
+        // Check for editId URL query parameter and trigger edit if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('editId');
+        if (editId) {
+            // Find edit button with the specific user ID and trigger click
+            const editBtn = $(`.edit-user-btn[data-id="${editId}"]`);
+            if (editBtn.length) {
+                editBtn.click();
+            } else {
+                // If the user is on another page of DataTable, we can call the loading logic directly
+                $.getJSON('/User/GetUserById', { id: editId }, function (data) {
+                    $('#editUserId').val(data.id);
+                    $('#editName').val(data.name);
+                    $('#editMobileNo').val(data.mobileNo);
+                    $('#editUserName').val(data.userName);
+                    
+                    $("#editRoleId").select2({
+                        placeholder: "--Select Role--",
+                        allowClear: true,
+                        dropdownParent: $('#editUserModal'),
+                        width: '100%'
+                    });
+                    $('#editRoleId').val(data.roleId).trigger('change');
+                    
+                    if (data.doctorId > 0) {
+                        $('#editIsDoctorCheckbox').prop('checked', true);
+                        $('#editDoctorFieldsRow').show();
+                        
+                        $("#editDepartmentId").select2({
+                            placeholder: "--Select Department--",
+                            allowClear: true,
+                            dropdownParent: $('#editUserModal'),
+                            width: '100%'
+                        });
+                        $('#editDepartmentId').val(data.departmentId).trigger('change');
+                        
+                        $.getJSON('/User/GetDoctorsByDepartment', { departmentId: data.departmentId }, function (doctors) {
+                            var items = '<option value="0">--Select Doctor--</option>';
+                            $.each(doctors, function (i, doc) {
+                                items += '<option value="' + doc.id + '">' + doc.name + '</option>';
+                            });
+                            $('#editDoctorId').html(items);
+                            
+                            $("#editDoctorId").select2({
+                                placeholder: "--Select Doctor--",
+                                allowClear: true,
+                                dropdownParent: $('#editUserModal'),
+                                width: '100%'
+                            });
+                            $('#editDoctorId').val(data.doctorId).trigger('change');
+                        });
+                    } else {
+                        $('#editIsDoctorCheckbox').prop('checked', false);
+                        $('#editDoctorFieldsRow').hide();
+                        $('#editDepartmentId').val('').trigger('change');
+                        $('#editDoctorId').html('<option value="0">--Select Doctor--</option>').trigger('change');
                     }
-                },
-                "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
-            });
-
-
-            $('#searchBox').on('keyup', function () {
-                table.search(this.value).draw();
-            });
-      });
+                    
+                    $('#editUserModal').modal('show');
+                });
+            }
+            // Clean up the URL query parameters so refreshing doesn't keep opening it
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
 </script>

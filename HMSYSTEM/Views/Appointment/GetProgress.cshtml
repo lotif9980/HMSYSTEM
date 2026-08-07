@@ -1,4 +1,4 @@
-﻿@using HMSYSTEM.Enum 
+@using HMSYSTEM.Enum 
 @* @model IEnumerable<Appointment> *@
 @using HMSYSTEM.ViewModels
 @model PaginationViewModel<Appointment>
@@ -60,7 +60,7 @@
 
                                     <td>
                                         <div class="dropdown">
-                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button"                id="statusDropdown_@appointment.AppointmentId" data-bs-toggle="dropdown"
+                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="statusDropdown_@appointment.AppointmentId" data-bs-toggle="dropdown" data-bs-boundary="viewport"
                                                     aria-expanded="false">
                                                 @(appointment.Status == AppointmentStatus.Active ? "Active" :
                                                     appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
@@ -75,7 +75,7 @@
                                                     asp-route-id="@appointment.AppointmentId" 
                                                     asp-route-status="3"
                                                     asp-route-returnAction="GetProgress">
-                                                       
+                                                        Completed
                                                     </a>
                                                 </li>
                                             </ul>

@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Models;
+using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -39,19 +39,35 @@ namespace HMSYSTEM.Controllers
                 _unitOf.designationRepo.Save(designation);
 
                 TempData["Message"] = "✅ Successfully Added!";
-                TempData["MessageType"] = "primary";
-                return RedirectToAction("Save");
+                TempData["MessageType"] = "success";
+                return RedirectToAction("Index");
             }
            
-            return View(designation);  
+            TempData["Message"] = "❌ Invalid Designation data submitted.";
+            TempData["MessageType"] = "danger";
+            return RedirectToAction("Index");  
         }
 
         [HttpGet]
         public IActionResult Edit(int Id)
         {
-            var data = _unitOf.designationRepo.Find(Id);
-          
-            return View(data);
+            return RedirectToAction("Index", new { editId = Id });
+        }
+
+        [HttpGet]
+        public IActionResult GetDesignationById(int id)
+        {
+            var designation = _unitOf.designationRepo.Find(id);
+            if (designation == null)
+            {
+                return NotFound();
+            }
+            return Json(new
+            {
+                designationId = designation.DesignationId,
+                designationName = designation.DesignationName,
+                status = designation.Status
+            });
         }
 
         [HttpPost]
@@ -59,8 +75,8 @@ namespace HMSYSTEM.Controllers
         {
             _unitOf.designationRepo.Update(designation);
 
-            TempData["Message"] = "✅ Successfully Added!";
-            TempData["MessageType"] = "primary";
+            TempData["Message"] = "✅ Successfully Updated!";
+            TempData["MessageType"] = "success";
 
             return RedirectToAction("Index");
         }

@@ -1,90 +1,495 @@
-﻿@model IEnumerable<Designation>
+@model IEnumerable<Designation>
 @using HMSYSTEM.ViewModels
 @{
-    ViewData["Title"] = "Designation";
+    ViewData["Title"] = "Designation Management";
 }
 
+<!-- Premium Modern Styles for Designation Index -->
+<style>
+    .designation-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
+    
+    .designation-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
 
-<div class="container-fluid mt-3">
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .designation-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .designation-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    /* Search Input Custom Design */
+    .search-wrapper {
+        position: relative;
+        min-width: 260px;
+    }
+
+    .search-wrapper .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 0.95rem;
+        pointer-events: none;
+    }
+
+    .search-wrapper input.search-control {
+        padding-left: 50px !important;
+        padding-right: 15px !important;
+        border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        background-color: #f7fafc !important;
+    }
+
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
+
+    /* Create Button Custom Design */
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.5rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer;
+    }
+
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-gradient-create:active {
+        transform: translateY(0);
+    }
+
+    /* Custom Table Design */
+    .table-container {
+        padding: 1rem 1.5rem !important;
+    }
+
+    #designationTable {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        border: none !important;
+    }
+
+    #designationTable th {
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 16px 20px !important;
+        border-bottom: 2px solid #edf2f7 !important;
+        border-top: none !important;
+    }
+
+    #designationTable td {
+        padding: 16px 20px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important;
+        color: #2d3748 !important;
+        font-size: 0.9rem !important;
+    }
+
+    #designationTable tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    #designationTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    /* Status Badges */
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+    }
+
+    .status-active {
+        background-color: #e6fffa;
+        color: #234e52;
+        border: 1px solid #b2f5ea;
+    }
+
+    .status-inactive {
+        background-color: #fff5f5;
+        color: #742a2a;
+        border: 1px solid #fed7d7;
+    }
+
+    /* Action Buttons Group */
+    .action-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+        border: 1px solid transparent;
+    }
+
+    .action-edit {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border-color: #bee3f8;
+    }
+
+    .action-edit:hover {
+        background-color: #3182ce;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
+    }
+
+    .action-delete {
+        background-color: #fff5f5;
+        color: #c53030;
+        border-color: #fed7d7;
+    }
+
+    .action-delete:hover {
+        background-color: #e53e3e;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    
+    <!-- Toast Alert Display -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-@TempData["MessageType"] alert-dismissible fade show" role="alert" style="border-radius: 12px; font-weight: 600;">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Designation List</h3></div>
-                    <div><input class="form-control" placeholder="Search Designation" id="CustomSearch" /></div>
-                    <div> <a class="btn btn-info" asp-controller="Designation" asp-action="Save">Create</a></div>
-
+            <div class="card designation-card mb-4">
+                
+                <!-- Premium Card Header -->
+                <div class="card-header designation-card-header">
+                    <div class="header-container">
+                        <div class="header-title-block">
+                            <div class="header-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div>
+                                <h3 class="designation-card-title">Existing Designation List</h3>
+                                <p class="designation-card-subtitle">Manage system job roles and titles.</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <div class="search-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="form-control search-control" placeholder="Search Designation..." id="CustomSearch" />
+                            </div>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addDesignationModal">
+                                <i class="fas fa-plus-circle me-2"></i> Create
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-
-
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="designationTable" class="table table-bordered table-hover">
+                <!-- Card Body -->
+                <div class="card-body table-container">
+                    <table id="designationTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Id</th>
+                                <th style="width: 80px">Sl No</th>
                                 <th>Designation Name</th>
-                                <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th style="text-align: center">Status</th>
+                                <th style="width: 120px; text-align: center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="dataShow">
                             @{
-                                int count =1;
+                                int count = 1;
                             }
                             @foreach (var designation in Model)
                             {
                                 <tr>
                                     <td>@count</td>
-                                    <td>@designation.DesignationName</td>
-                                    <td>@(designation.Status ? "Active" : "Inactive")</td>
+                                    <td style="font-weight: 700; color: #2d3748;">@designation.DesignationName</td>
+                                    <td style="text-align: center">
+                                        <span class="badge-status @(designation.Status ? "status-active" : "status-inactive")">
+                                            <i class="fas @(designation.Status ? "fa-check-circle" : "fa-times-circle") me-2"></i>
+                                            @(designation.Status ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
                                     <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" asp-route-id="@designation.DesignationId" asp-controller="Designation" asp-action="Edit">
-                                                <i class="fa fa-edit"></i>
+                                        <div class="action-btn-group">
+                                            <a class="action-btn action-edit edit-designation-btn" href="javascript:void(0);" data-id="@designation.DesignationId" title="Edit Designation">
+                                                <i class="fas fa-edit"></i>
                                             </a>
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@designation.DesignationId" asp-controller="Designation" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
+                                            <a class="action-btn action-delete" asp-route-id="@designation.DesignationId" asp-controller="Designation" asp-action="Delete" title="Delete Designation" onclick="return confirm('Are you sure you want to delete this designation?');">
+                                                <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
                                 count++;
                             }
-
                         </tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                @* <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
-                        </li>
-
-                        <!-- Page Numbers -->
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
-                            </li>
-                        }
-
-                        <!-- Next Button -->
-                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
-                        </li>
-                    </ul>
-                </div> *@
+                
             </div>
-            <!-- /.card -->
         </div>
     </div>
 </div>
 
+<!-- Add Designation Modal -->
+<div class="modal fade" id="addDesignationModal" tabindex="-1" aria-labelledby="addDesignationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDesignationModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i> Create Designation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Designation" asp-action="Save" method="post" id="addDesignationForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="addDesignationName" class="form-label">Designation Name</label>
+                        <input name="DesignationName" id="addDesignationName" class="form-control" placeholder="Enter designation name" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Status</label>
+                        <div class="form-check form-check-inline mt-1">
+                            <input class="form-check-input" type="radio" name="Status" value="true" id="addStatusActive" checked />
+                            <label class="form-check-label" for="addStatusActive" style="font-weight: 600; color: #4a5568;">Active</label>
+                        </div>
+                        <div class="form-check form-check-inline mt-1">
+                            <input class="form-check-input" type="radio" name="Status" value="false" id="addStatusInactive" />
+                            <label class="form-check-label" for="addStatusInactive" style="font-weight: 600; color: #4a5568;">Inactive</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i> Save 
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Designation Modal -->
+<div class="modal fade" id="editDesignationModal" tabindex="-1" aria-labelledby="editDesignationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="editDesignationModalLabel">
+                    <i class="fas fa-edit me-2"></i> Edit Designation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="Designation" asp-action="Update" method="post" id="editDesignationForm">
+                <input type="hidden" name="DesignationId" id="editDesignationId" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editDesignationName" class="form-label">Designation Name</label>
+                        <input name="DesignationName" id="editDesignationName" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Status</label>
+                        <div class="form-check form-check-inline mt-1">
+                            <input class="form-check-input" type="radio" name="Status" value="true" id="editStatusActive" />
+                            <label class="form-check-label" for="editStatusActive" style="font-weight: 600; color: #4a5568;">Active</label>
+                        </div>
+                        <div class="form-check form-check-inline mt-1">
+                            <input class="form-check-input" type="radio" name="Status" value="false" id="editStatusInactive" />
+                            <label class="form-check-label" for="editStatusInactive" style="font-weight: 600; color: #4a5568;">Inactive</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save" style="background-color: #3182ce !important; box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3) !important;">
+                        <i class="fas fa-save me-2"></i> Update
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function () {
@@ -107,46 +512,53 @@
             "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
         });
 
-
         $('#CustomSearch').on('keyup', function () {
             table.search(this.value).draw();
         });
+
+        // Edit designation click trigger
+        $(document).on('click', '.edit-designation-btn', function () {
+            var id = $(this).data('id');
+            
+            $.getJSON('/Designation/GetDesignationById', { id: id }, function (data) {
+                $('#editDesignationId').val(data.designationId);
+                $('#editDesignationName').val(data.designationName);
+                
+                if (data.status === true) {
+                    $('#editStatusActive').prop('checked', true);
+                } else {
+                    $('#editStatusInactive').prop('checked', true);
+                }
+                
+                $('#editDesignationModal').modal('show');
+            }).fail(function () {
+                alert("Error loading designation data.");
+            });
+        });
+
+        // Check for editId URL query parameter and trigger edit if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('editId');
+        if (editId) {
+            const editBtn = $(`.edit-designation-btn[data-id="${editId}"]`);
+            if (editBtn.length) {
+                editBtn.click();
+            } else {
+                $.getJSON('/Designation/GetDesignationById', { id: editId }, function (data) {
+                    $('#editDesignationId').val(data.designationId);
+                    $('#editDesignationName').val(data.designationName);
+                    
+                    if (data.status === true) {
+                        $('#editStatusActive').prop('checked', true);
+                    } else {
+                        $('#editStatusInactive').prop('checked', true);
+                    }
+                    
+                    $('#editDesignationModal').modal('show');
+                });
+            }
+            // Clear parameter from URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
     });
 </script>
-
-@* <script>
-    $(document).ready(function(){
-        $("#SearchBox").on('keyup',function(){
-            var name=$(this).val();
-
-            $.ajax({
-                url:'/Designation/GetSearch',
-                data:{name:name},
-                success: function(data){
-                    var rows='';
-
-                    data.forEach((item,index)=>{
-                        rows+=`<tr>
-                        <td>${index + 1}</td>
-                        <td>${item.designationName}</td>
-                        <td>${item.status?"Active":"Inactive"}</td>
-                        <td>
-                            <div class="d-flex justify-content-center btn-group-sm ">
-
-                               <a class="btn btn-primary ms-2" href="/Designation/Edit/${item.designationId}">
-                                 <i class="fa fa-edit"></i>
-                               </a>
-
-                               <a class="btn btn-danger ms-2" href="/Designation/Details/${item.designationId}">
-                                  <i class="fa fa-trash"></i>
-                               </a>
-                            </div>
-                        </td>
-                        </tr>`
-                    })
-                    $("#dataShow").html(rows);
-                }
-            })
-        })
-    })
-</script> *@
