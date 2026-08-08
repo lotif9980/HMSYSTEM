@@ -19,10 +19,42 @@ namespace HMSYSTEM.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            
-            var designation = _unitOf.designationRepo.getAll().OrderBy(d=>d.DesignationId);
-           
-            return View(designation);
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetDesignations(string search = "", int page = 1, int pageSize = 10)
+        {
+            var query = _unitOf.designationRepo.getAll().AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim().ToLower();
+                query = query.Where(d => !string.IsNullOrEmpty(d.DesignationName) && d.DesignationName.ToLower().Contains(search));
+            }
+
+            query = query.OrderBy(d => d.DesignationId);
+
+            var totalItem = query.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItem / pageSize);
+
+            var data = query.Skip((page - 1) * pageSize).Take(pageSize)
+                .Select(d => new
+                {
+                    designationId = d.DesignationId,
+                    designationName = d.DesignationName,
+                    status = d.Status
+                })
+                .ToList();
+
+            return Json(new
+            {
+                issuccess = true,
+                totalPages = totalPages,
+                totalItem = totalItem,
+                currentPage = page,
+                data = data
+            });
         }
 
         [HttpGet]
@@ -34,18 +66,16 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(Designation designation)
         {
+           
             if (ModelState.IsValid) 
-            { 
+            {
+                designation.Status = true;
                 _unitOf.designationRepo.Save(designation);
-
-                TempData["Message"] = "✅ Successfully Added!";
-                TempData["MessageType"] = "success";
-                return RedirectToAction("Index");
+               return Json(new { success = true, message = "✅ Successfully Added!" });
             }
            
-            TempData["Message"] = "❌ Invalid Designation data submitted.";
-            TempData["MessageType"] = "danger";
-            return RedirectToAction("Index");  
+            return Json(new { success = false, message = "❌ Invalid Designation data submitted." });
+            
         }
 
         [HttpGet]
@@ -73,23 +103,50 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Update(Designation designation)
         {
-            _unitOf.designationRepo.Update(designation);
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (ModelState.IsValid)
+            {
+                _unitOf.designationRepo.Update(designation);
+                if (isAjax)
+                {
+                    return Json(new { success = true, message = "✅ Successfully Updated!" });
+                }
+                TempData["Message"] = "✅ Successfully Updated!";
+                TempData["MessageType"] = "success";
+                return RedirectToAction("Index");
+            }
 
-            TempData["Message"] = "✅ Successfully Updated!";
-            TempData["MessageType"] = "success";
-
+            if (isAjax)
+            {
+                return Json(new { success = false, message = "❌ Invalid Designation data submitted." });
+            }
             return RedirectToAction("Index");
         }
 
-    
         public IActionResult Delete(int Id)
         {
-            _unitOf.designationRepo.Delete(Id);
-
-            TempData["Message"] = "✅ Successfully Delete!";
-            TempData["MessageType"] = "danger";
-
-            return RedirectToAction("Index");
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            try
+            {
+                _unitOf.designationRepo.Delete(Id);
+                if (isAjax)
+                {
+                    return Json(new { success = true, message = "✅ Successfully Deleted!" });
+                }
+                TempData["Message"] = "✅ Successfully Deleted!";
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                if (isAjax)
+                {
+                    return Json(new { success = false, message = "❌ " + (ex?.Message ?? "An error occurred.") });
+                }
+                TempData["Message"] = "❌ " + (ex?.Message ?? "An error occurred.");
+                TempData["MessageType"] = "danger";
+                return RedirectToAction("Index");
+            }
         }
 
         public IActionResult GetSearch(string name)
@@ -106,6 +163,28 @@ namespace HMSYSTEM.Controllers
                         }).ToList();
 
             return Json(result);
+        }
+
+        public IActionResult UpdateStatus(int id)
+        {
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            try
+            {
+                _unitOf.designationRepo.StatusUpdate(id);
+                if (isAjax)
+                {
+                    return Json(new { success = true, message = "✅ Status updated successfully!" });
+                }
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                if (isAjax)
+                {
+                    return Json(new { success = false, message = "❌ " + (ex?.Message ?? "An error occurred.") });
+                }
+                return RedirectToAction("Index");
+            }
         }
     }
 }

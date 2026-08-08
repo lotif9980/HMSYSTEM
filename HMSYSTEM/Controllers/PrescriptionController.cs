@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Enum;
+using HMSYSTEM.Enum;
 using HMSYSTEM.Models;
 using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
@@ -18,25 +18,69 @@ namespace HMSYSTEM.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index( )
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetPrescriptions(string search = "", int page = 1, int pageSize = 10)
         {
             int roleId = Helper.GetRoleId(User);
-            int doctorId=Helper.GetDoctorId(User);
+            int doctorId = Helper.GetDoctorId(User);
 
-            IQueryable<Prescription> totalPrescription;
+            IQueryable<Prescription> query;
 
-            if (roleId==(int)RoleEnum.Doctor && doctorId > 0)
+            if (roleId == (int)RoleEnum.Doctor && doctorId > 0)
             {
-                totalPrescription= _unitOfWork.PrescriptioRepository.GetAll(doctorId);
+                query = _unitOfWork.PrescriptioRepository.GetAll(doctorId);
             }
             else
             {
-                totalPrescription = _unitOfWork.PrescriptioRepository.GetAll();
+                query = _unitOfWork.PrescriptioRepository.GetAll();
             }
-            
-            totalPrescription= totalPrescription.OrderByDescending(p=>p.Id);
-            
-            return View(totalPrescription);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim().ToLower();
+                query = query.Where(p =>
+                    (p.Patient != null && (
+                        (!string.IsNullOrEmpty(p.Patient.FirstName) && p.Patient.FirstName.ToLower().Contains(search)) ||
+                        (!string.IsNullOrEmpty(p.Patient.LastName) && p.Patient.LastName.ToLower().Contains(search))
+                    )) ||
+                    (p.Doctor != null && (
+                        (!string.IsNullOrEmpty(p.Doctor.FirstName) && p.Doctor.FirstName.ToLower().Contains(search)) ||
+                        (!string.IsNullOrEmpty(p.Doctor.LastName) && p.Doctor.LastName.ToLower().Contains(search))
+                    )) ||
+                    (p.Department != null && !string.IsNullOrEmpty(p.Department.DepartmentName) && p.Department.DepartmentName.ToLower().Contains(search))
+                );
+            }
+
+            query = query.OrderByDescending(p => p.Id);
+
+            var totalItem = query.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItem / pageSize);
+
+            var data = query.Skip((page - 1) * pageSize).Take(pageSize)
+                .Select(p => new
+                {
+                    id = p.Id,
+                    date = p.Date != null ? p.Date.Value.ToString("dd-MM-yyyy") : "N/A",
+                    patientName = p.Patient != null ? (p.Patient.FirstName + " " + p.Patient.LastName) : "N/A",
+                    doctorName = p.Doctor != null ? (p.Doctor.FirstName + " " + p.Doctor.LastName) : "N/A",
+                    departmentName = p.Department != null ? p.Department.DepartmentName : "N/A",
+                    status = p.Status
+                })
+                .ToList();
+
+            return Json(new
+            {
+                issuccess = true,
+                totalPages,
+                totalItem,
+                currentPage = page,
+                data
+            });
         }
 
 

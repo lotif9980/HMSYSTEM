@@ -50,5 +50,16 @@ namespace HMSYSTEM.Repository
 
             return _db.Designations.ToList();
         }
+
+        public void StatusUpdate(int id)
+        {
+           var data= _db.Designations.Find(id);
+            if (data != null)
+            {
+                data.Status = !data.Status;
+                Update(data);
+            }
+
+        }
     }
 }

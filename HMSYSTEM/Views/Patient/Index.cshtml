@@ -1,30 +1,461 @@
-﻿
 @model IEnumerable<Patient>
+@using HMSYSTEM.ViewModels
 @{
-    ViewData["Title"] = "Patient";
+    ViewData["Title"] = "Patient Management";
 }
 
+<!-- Premium Modern Styles for Patient Index -->
+<style>
+    .patient-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
+    
+    .patient-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
 
-<div class="container-fluid mt-3">
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .patient-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .patient-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    /* Search Input Custom Design */
+    .search-wrapper {
+        position: relative;
+        min-width: 260px;
+    }
+
+    .search-wrapper .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 0.95rem;
+        pointer-events: none;
+        z-index: 5;
+    }
+
+    .search-wrapper input.search-control {
+        padding-left: 50px !important;
+        padding-right: 15px !important;
+        border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        background-color: #f7fafc !important;
+    }
+
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
+
+    /* Create Button Custom Design */
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.5rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-gradient-create:active {
+        transform: translateY(0);
+    }
+
+    /* Custom Table Design */
+    .table-container {
+        padding: 1rem 1.5rem !important;
+    }
+
+    #patientTable {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        border: none !important;
+    }
+
+    #patientTable th {
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 16px 20px !important;
+        border-bottom: 2px solid #edf2f7 !important;
+        border-top: none !important;
+    }
+
+    #patientTable td {
+        padding: 16px 20px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important;
+        color: #2d3748 !important;
+        font-size: 0.9rem !important;
+    }
+
+    #patientTable tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    #patientTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    /* Action Buttons Group */
+    .action-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+        border: 1px solid transparent;
+    }
+
+    .action-edit {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border-color: #bee3f8;
+    }
+
+    .action-edit:hover {
+        background-color: #3182ce;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
+    }
+
+    .action-delete {
+        background-color: #fff5f5;
+        color: #e53e3e;
+        border-color: #fed7d7;
+    }
+
+    .action-delete:hover {
+        background-color: #e53e3e;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2);
+    }
+
+    /* Status Badges */
+    .badge-status {
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-active {
+        background-color: #c6f6d5;
+        color: #22543d;
+    }
+
+    .status-inactive {
+        background-color: #fed7d7;
+        color: #742a2a;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+
+    /* Toastr Custom Design Overrides to fix white text visibility */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 50px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+
+    /* Image Lightbox */
+    .patient-thumb {
+        cursor: zoom-in;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .patient-thumb:hover {
+        transform: scale(1.12);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+    }
+
+    #imgPreviewModal .modal-content {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    #imgPreviewModal .modal-body {
+        padding: 0 !important;
+        background: transparent !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #imgPreviewModal .modal-dialog {
+        max-width: 480px;
+    }
+
+    #imgPreviewFull {
+        width: 100%;
+        max-width: 460px;
+        max-height: 460px;
+        object-fit: contain;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        animation: zoomIn 0.25s ease;
+    }
+
+    #imgPreviewName {
+        text-align: center;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-top: 14px;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    @@keyframes zoomIn {
+        from { transform: scale(0.7); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+    }
+
+    /* Pagination Styles */
+    .pagination .page-link {
+        box-shadow: none !important;
+    }
+    
+    .pagination .page-item:not(.disabled) .page-link:hover {
+        background-color: #3182ce !important;
+        color: #ffffff !important;
+        border-color: #3182ce !important;
+    }
+    
+    .pagination .page-item.disabled .page-link {
+        color: #a0aec0 !important;
+        background-color: #f7fafc !important;
+        border-color: #edf2f7 !important;
+        pointer-events: none;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Patient</h3></div>
-                    <div>
-                        <input type="text" name="name" id="searchBox" class="form-control" placeholder="Search Patient" />
+            <div class="card patient-card mb-4">
+                
+                <!-- Premium Card Header -->
+                <div class="card-header patient-card-header">
+                    <div class="header-container">
+                        <div class="header-title-block">
+                            <div class="header-icon">
+                                <i class="fas fa-user-injured"></i>
+                            </div>
+                            <div>
+                                <h3 class="patient-card-title">Existing Patient List</h3>
+                                <p class="patient-card-subtitle">Manage medical records and contact details of active patients.</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="search-wrapper">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="form-control search-control" placeholder="Search Patient..." id="searchBox" />
+                                </div>
+                            <button type="button" id="btnSearch" class="btn btn-primary"
+                                style="border-radius: 30px; height: 42px; padding: 0 1.5rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                            </div>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addPatientModal">
+                                <i class="fas fa-plus me-2"></i> Create
+                            </button>
+                        </div>
                     </div>
-                    <div> <a class="btn btn-info" asp-controller="Patient" asp-action="Save">Create</a></div>
                 </div>
 
-
-
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="patientTable" class="table table-bordered table-hover">
+                <!-- Card Body -->
+                <div class="card-body table-container">
+                    <table id="patientTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Id</th>
+                                <th style="width: 60px">Sl No</th>
+                                <th style="width: 80px">Picture</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Address</th>
@@ -32,149 +463,634 @@
                                 <th>BloodGroup</th>
                                 <th>DateOfBirth</th>
                                 <th>Status</th>
-                                <th style="width:20px;text-align:ce">Action</th>
+                                <th style="width: 120px; text-align: center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="tableBoady">
-                            @{
-                                int count =  1;
-                            }
-                            @foreach(var item in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@item.FirstName  @item.LastName</td>
-                                    <td>@item.Email</td>
-                                    <td>@item.Address</td>
-                                    <td>@item.Phone</td>
-                                    <td>@item.BloodGroup</td>
-                                   
-                                    <td>
-                                        @(item.DateOfBirth.HasValue
-                                            ? item.DateOfBirth.Value.ToString("d-MMM-yyyy")
-                                            : "N/A")
-                                    </td>
-                                <td>@(item.Status == true ? "Active" : "Invactive")</td>
-                                    
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" asp-route-id="@item.PatientID" asp-controller="Patient" asp-action="Edit">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                            <a class="btn btn-info ms-2" asp-route-id="@item.PatientID" asp-controller="Patient" asp-action="Details">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.PatientID" asp-controller="Patient" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                          
-                                        </div>
-                                    </td>
-                                </tr>
-                                  count++;
-                            } 
-
+                            <!-- Populated dynamically via AJAX -->
                         </tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    @* @await Html.PartialAsync("_Pagination", Model) *@
+
+                <!-- Pagination Footer -->
+                <div class="card-footer" style="background-color: #ffffff; border-top: 1px solid #f1f2f6; padding: 1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size: 0.85rem;">
+                                Showing page <span id="cpage" class="fw-bold text-dark">0</span> of <span id="tpage" class="fw-bold text-dark">0</span> (<span id="tentries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap: 5px;">
+                                    <li class="page-item" id="prevLi">
+                                        <a id="btnPrevious" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">⬅️ Previous</a>
+                                    </li>
+                                    <li class="page-item" id="nextLi">
+                                        <a id="btnNext" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">Next ➡️</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-        <!-- /.card -->
         </div>
     </div>
 </div>
 
+<!-- Image Preview Lightbox Modal -->
+<div class="modal fade" id="imgPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-end mb-2">
+                    <button type="button" class="btn btn-sm" data-bs-dismiss="modal"
+                        style="background:rgba(255,255,255,0.15); color:#fff; border-radius:50%; width:36px; height:36px; font-size:1.1rem; line-height:1;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <img id="imgPreviewFull" src="" alt="Patient Photo" />
+                <p id="imgPreviewName"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Patient Modal -->
+<div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPatientModalLabel">
+                    <i class="fas fa-user-injured me-2"></i> Patient Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Patient" asp-action="Save" method="post" id="addPatientForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addFirstName" class="form-label" style="font-weight: 700; color: #4a5568;">Full Name</label>
+                            <input name="FirstName" id="addFirstName" class="form-control" placeholder="Enter first name" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addLastName" class="form-label" style="font-weight: 700; color: #4a5568;">Nick Name</label>
+                            <input name="LastName" id="addLastName" class="form-control" placeholder="Enter last name" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addEmail" class="form-label" style="font-weight: 700; color: #4a5568;">Email</label>
+                            <input type="email" name="Email" id="addEmail" class="form-control" placeholder="example@hms.com" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addPassword" class="form-label" style="font-weight: 700; color: #4a5568;">Password</label>
+                            <input type="password" name="Password" id="addPassword" class="form-control" placeholder="Password" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addPhone" class="form-label" style="font-weight: 700; color: #4a5568;">Phone</label>
+                            <input name="Phone" id="addPhone" class="form-control" placeholder="Phone Number" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addBloodGroup" class="form-label" style="font-weight: 700; color: #4a5568;">Blood Group</label>
+                            <select name="BloodGroup" id="addBloodGroup" class="form-select">
+                                <option value="">--Select Blood Group--</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label d-block" style="font-weight: 700; color: #4a5568;">Gender</label>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Male" id="addSexMale" checked />
+                                <label class="form-check-label" for="addSexMale">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Female" id="addSexFemale" />
+                                <label class="form-check-label" for="addSexFemale">Female</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Other" id="addSexOther" />
+                                <label class="form-check-label" for="addSexOther">Other</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addFatherName" class="form-label" style="font-weight: 700; color: #4a5568;">Father's Name</label>
+                            <input name="FatherName" id="addFatherName" class="form-control" placeholder="Father's Name" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addDateOfBirth" class="form-label" style="font-weight: 700; color: #4a5568;">Date of Birth</label>
+                            <input type="date" name="DateOfBirth" id="addDateOfBirth" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addEmergencyContact" class="form-label" style="font-weight: 700; color: #4a5568;">Emergency Contact</label>
+                            <input name="EmergencyContact" id="addEmergencyContact" class="form-control" placeholder="Emergency Contact" required />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="addAddress" class="form-label" style="font-weight: 700; color: #4a5568;">Address</label>
+                            <textarea name="Address" id="addAddress" class="form-control" rows="2" placeholder="Patient Permanent/Current Address" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addImageFile" class="form-label" style="font-weight: 700; color: #4a5568;">Picture</label>
+                            <input type="file" name="ImageFile" id="addImageFile" class="form-control" accept="image/*" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Patient Modal -->
+<div class="modal fade" id="editPatientModal" tabindex="-1" aria-labelledby="editPatientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="editPatientModalLabel">
+                    <i class="fas fa-edit me-2"></i> Edit Patient Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="Patient" asp-action="Edit" method="post" id="editPatientForm" enctype="multipart/form-data">
+                <input type="hidden" name="PatientID" id="editPatientID" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editFirstName" class="form-label" style="font-weight: 700; color: #4a5568;">First Name</label>
+                            <input name="FirstName" id="editFirstName" class="form-control" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editLastName" class="form-label" style="font-weight: 700; color: #4a5568;">Last Name</label>
+                            <input name="LastName" id="editLastName" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editEmail" class="form-label" style="font-weight: 700; color: #4a5568;">Email</label>
+                            <input type="email" name="Email" id="editEmail" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editPassword" class="form-label" style="font-weight: 700; color: #4a5568;">Password</label>
+                            <input type="password" name="Password" id="editPassword" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editPhone" class="form-label" style="font-weight: 700; color: #4a5568;">Phone</label>
+                            <input name="Phone" id="editPhone" class="form-control" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editBloodGroup" class="form-label" style="font-weight: 700; color: #4a5568;">Blood Group</label>
+                            <select name="BloodGroup" id="editBloodGroup" class="form-select">
+                                <option value="">--Select Blood Group--</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label d-block" style="font-weight: 700; color: #4a5568;">Gender</label>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Male" id="editSexMale" />
+                                <label class="form-check-label" for="editSexMale">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Female" id="editSexFemale" />
+                                <label class="form-check-label" for="editSexFemale">Female</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Other" id="editSexOther" />
+                                <label class="form-check-label" for="editSexOther">Other</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editFatherName" class="form-label" style="font-weight: 700; color: #4a5568;">Father's Name</label>
+                            <input name="FatherName" id="editFatherName" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editDateOfBirth" class="form-label" style="font-weight: 700; color: #4a5568;">Date of Birth</label>
+                            <input type="date" name="DateOfBirth" id="editDateOfBirth" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editEmergencyContact" class="form-label" style="font-weight: 700; color: #4a5568;">Emergency Contact</label>
+                            <input name="EmergencyContact" id="editEmergencyContact" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="editAddress" class="form-label" style="font-weight: 700; color: #4a5568;">Address</label>
+                            <textarea name="Address" id="editAddress" class="form-control" rows="2" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center">
+                        <div class="col-md-6 mb-3">
+                            <label for="editImageFile" class="form-label" style="font-weight: 700; color: #4a5568;">Change Picture</label>
+                            <input type="file" name="ImageFile" id="editImageFile" class="form-control" accept="image/*" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label d-block" style="font-weight: 700; color: #4a5568;">Status</label>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Status" value="true" id="editStatusActive" />
+                                <label class="form-check-label" for="editStatusActive">Active</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Status" value="false" id="editStatusInactive" />
+                                <label class="form-check-label" for="editStatusInactive">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i> Update
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
-    $(document).ready(function () {
-        var table = $('#patientTable').DataTable({
-            "pageLength": 10,
-            "lengthMenu": [5, 10, 20, 50],
-            "ordering": true,
-            "paging": true,
-            "info": true,
-            "language": {
-                "search": "",
-                "searchPlaceholder": "Search",
-                "lengthMenu": "_MENU_ rows",
-                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                "paginate": {
-                    "previous": "⬅️ Previous",
-                    "next": "Next ➡️"
+    var currentPage = 1;
+    var totalPages = 1;
+
+    // Helper notification wrappers
+    function showSuccess(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.success(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    function showError(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    // Helper function to create row HTML for a patient
+    function createrow(index, item) {
+        var statusBadge = item.status === true 
+            ? `<span class="badge-status status-active"><i class="fas fa-check-circle me-2"></i>Active</span>`
+            : `<span class="badge-status status-inactive"><i class="fas fa-times-circle me-2"></i>Inactive</span>`;
+
+        var picSrc = (item.picture && item.picture !== 'default.png')
+            ? `/Patients/${item.picture}`
+            : `/images/default.png`;
+
+        var fullName = `${item.firstName || ''} ${item.lastName || ''}`.trim();
+
+        return `<tr>
+            <td>${index}</td>
+            <td style="text-align:center;">
+                <img src="${picSrc}" alt="Patient" width="50" height="50"
+                     class="patient-thumb"
+                     data-fullsrc="${picSrc}"
+                     data-name="${fullName}"
+                     style="border-radius:50%; object-fit:cover; border:2px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.08);" />
+            </td>
+            <td style="font-weight: 700; color: #2d3748;">${item.firstName}</td>
+            <td>${item.email || ''}</td>
+            <td>${item.address || ''}</td>
+            <td>${item.phone || ''}</td>
+            <td>${item.bloodGroup || 'N/A'}</td>
+            <td>${item.dateOfBirth || 'N/A'}</td>
+            <td>${statusBadge}</td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-edit edit-patient-btn" href="javascript:void(0);" data-id="${item.patientID}" title="Edit Patient">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="action-btn action-delete delete-patient-btn" href="javascript:void(0);" data-id="${item.patientID}" title="Delete Patient">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    // Function to load patients via AJAX and update #tableBoady directly
+    function loadPatients(page) {
+        currentPage = page || 1;
+
+        $("#tableBoady").html(`
+            <tr>
+                <td colspan="9" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted mb-0">Loading patients...</p>
+                </td>
+            </tr>
+        `);
+
+        var searchQuery = $('#searchBox').val() || '';
+
+        $.ajax({
+            url: "@Url.Action("GetPatients", "Patient")",
+            type: "GET",
+            data: {
+                search: searchQuery,
+                page: currentPage,
+                pageSize: 10
+            },
+            dataType: "json",
+            cache: false,
+            success: function (response) {
+                if (response.issuccess === true) {
+                    $("#tableBoady").empty();
+
+                    totalPages = response.totalPages || 1;
+                    var totalItem = response.totalItem || 0;
+
+                    // Update UI indicators
+                    $("#cpage").text(currentPage);
+                    $("#tpage").text(totalPages);
+                    $("#tentries").text(totalItem);
+
+                    // Update pagination buttons state
+                    if (currentPage <= 1) {
+                        $("#prevLi").addClass("disabled");
+                    } else {
+                        $("#prevLi").removeClass("disabled");
+                    }
+
+                    if (currentPage >= totalPages) {
+                        $("#nextLi").addClass("disabled");
+                    } else {
+                        $("#nextLi").removeClass("disabled");
+                    }
+
+                    if (response.data && response.data.length > 0) {
+                        $.each(response.data, function (i, v) {
+                            var rowIdx = ((currentPage - 1) * 10) + (i + 1);
+                            var row = createrow(rowIdx, v);
+                            $("#tableBoady").append(row);
+                        });
+                    } else {
+                        $("#tableBoady").html(`
+                            <tr>
+                                <td colspan="9" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle fs-4"></i>
+                                    <p class="mt-2 mb-0">No patients found.</p>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                } else {
+                    $("#tableBoady").html(`
+                        <tr>
+                            <td colspan="9" class="text-center py-4 text-danger">
+                                <i class="fas fa-exclamation-triangle fs-4"></i>
+                                <p class="mt-2 mb-0">Failed to load data.</p>
+                            </td>
+                        </tr>
+                    `);
                 }
             },
-            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+            error: function (xhr, textStatus, error) {
+                $("#tableBoady").html(`
+                    <tr>
+                        <td colspan="9" class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-triangle fs-4"></i>
+                            <p class="mt-2 mb-0">Failed to load data: ${error || xhr.statusText}</p>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
+
+    function changePage(direction) {
+        var targetPage = currentPage + direction;
+        if (targetPage >= 1 && targetPage <= totalPages) {
+            loadPatients(targetPage);
+        }
+    }
+
+    $(document).ready(function () {
+        // Load patients on init
+        loadPatients(1);
+
+        // Click handlers for next/previous links
+        $('#btnPrevious').on('click', function (e) {
+            e.preventDefault();
+            changePage(-1);
         });
 
-
-        $('#searchBox').on('keyup', function () {
-            table.search(this.value).draw();
+        $('#btnNext').on('click', function (e) {
+            e.preventDefault();
+            changePage(1);
         });
-    });
-</script>
 
-@* 
- <script>
-        $(document).ready(function () {
-        $("#searchBox").on('keyup', function () {
-            var name = $(this).val();
-                  
+        // Search button click handler
+        $('#btnSearch').on('click', function () {
+            loadPatients(1);
+        });
+
+        // Trigger search on Enter keypress inside search box
+        $('#searchBox').on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                loadPatients(1);
+            }
+        });
+
+        // Handle Add Patient Form Submission via AJAX (with File Upload)
+        $('#addPatientForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var formData = new FormData(this);
+
             $.ajax({
-                url: '/Patient/GetName',
-                data: { name: name },
-
-                success: function (data) {
-                    console.log(data)
-                    let rows = '';
-                    
-                    data.forEach((item,index) => {
-                        let dob = item.dateOfBirth
-                            ? new Date(item.dateOfBirth).toLocaleDateString('en-GB', {
-                                  day: 'numeric',
-                                  month: 'short',
-                                  year: 'numeric'
-                              })
-                            : "N/A";
-
-                        let status = item.status ? "Active" : "Inactive";
-
-                        rows += `<tr>
-                            <td>${index + 1}</td>
-                            <td>${item.name}</td>
-                            <td>${item.email}</td>
-                            <td>${item.address}</td>
-                            <td>${item.phone}</td>
-                            <td>${item.bloodGroup}</td>
-                            <td>${dob}</td>
-                            <td>${status}</td>
-                            <td>
-                                <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" href="/Patient/Edit/${item.patientID}">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                            <a class="btn btn-info ms-2" href="/Patient/Details/${item.patientID}">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                            <a class="btn btn-danger ms-2" href="/Patient/Delete/${item.patientID}">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-
-                                </div>
-                            </td>
-                        </tr>`;
-                    });
-
-                    $('#tableBoady').html(rows);
+                url: form.attr('action'),
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#addPatientModal').modal('hide');
+                        form[0].reset();
+                        loadPatients(1);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
                 }
             });
         });
+
+        // Handle Edit click: Fetch details via AJAX and open modal
+        $(document).on('click', '.edit-patient-btn', function () {
+            var id = $(this).data('id');
+            $.getJSON('@Url.Action("GetPatientById", "Patient")', { id: id }, function (data) {
+                $('#editPatientID').val(data.patientID);
+                $('#editFirstName').val(data.firstName);
+                $('#editLastName').val(data.lastName);
+                $('#editEmail').val(data.email);
+                $('#editPassword').val(data.password);
+                $('#editPhone').val(data.phone);
+                $('#editBloodGroup').val(data.bloodGroup || "");
+                
+                // Radio button matching for sex
+                if (data.sex === "Male") {
+                    $('#editSexMale').prop('checked', true);
+                } else if (data.sex === "Female") {
+                    $('#editSexFemale').prop('checked', true);
+                } else {
+                    $('#editSexOther').prop('checked', true);
+                }
+
+                $('#editFatherName').val(data.fatherName);
+                $('#editDateOfBirth').val(data.dateOfBirth);
+                $('#editEmergencyContact').val(data.emergencyContact);
+                $('#editAddress').val(data.address);
+
+                // Radio button status
+                if (data.status === true) {
+                    $('#editStatusActive').prop('checked', true);
+                } else {
+                    $('#editStatusInactive').prop('checked', true);
+                }
+
+                $('#editPatientModal').modal('show');
+            }).fail(function () {
+                showError("Error loading patient data.");
+            });
+        });
+
+        // Handle Edit Patient Form Submission via AJAX (with File Upload)
+        $('#editPatientForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#editPatientModal').modal('hide');
+                        loadPatients(currentPage);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Image Lightbox click
+        $(document).on('click', '.patient-thumb', function () {
+            var src  = $(this).data('fullsrc');
+            var name = $(this).data('name');
+            $('#imgPreviewFull').attr('src', src);
+            $('#imgPreviewName').text(name);
+            $('#imgPreviewModal').modal('show');
+        });
+
+        // Close lightbox on backdrop click
+        $('#imgPreviewModal').on('click', function (e) {
+            if ($(e.target).is('#imgPreviewModal')) {
+                $(this).modal('hide');
+            }
+        });
+
+        // Handle Delete click
+        $(document).on('click', '.delete-patient-btn', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            if (confirm("Are you sure you want to delete this patient?")) {
+                var clickedBtn = $(this);
+                clickedBtn.css('pointer-events', 'none');
+                $.ajax({
+                    url: '/Patient/Delete/' + id,
+                    type: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (response) {
+                        if (response.success) {
+                            showSuccess(response.message);
+                            loadPatients(currentPage);
+                        } else {
+                            showError(response.message);
+                            clickedBtn.css('pointer-events', 'auto');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        showError("An error occurred: " + error);
+                        clickedBtn.css('pointer-events', 'auto');
+                    }
+                });
+            }
+        });
     });
-
- </script>
-
- *@
+</script>

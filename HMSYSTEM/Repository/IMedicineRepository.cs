@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Models;
+using HMSYSTEM.Models;
 
 namespace HMSYSTEM.Repository
 {
@@ -8,6 +8,8 @@ namespace HMSYSTEM.Repository
         List<Medicine> GetAllMedicines();
         public void Save(Medicine medicine);
         public void Delete(int Id);
+        public void Update(Medicine medicine);
+        public Medicine Find(int Id);
 
 
 

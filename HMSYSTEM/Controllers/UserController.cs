@@ -19,11 +19,49 @@ namespace HMSYSTEM.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            var user = unitofwork.UserRepository.GetAll().OrderBy(m=>m.Id);
             ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
             ViewBag.Doctors = unitofwork.doctorRepo.getAll();
             ViewBag.Departments = unitofwork.departmentRepo.getAll().Where(d => d.Status == true).ToList();
-            return View(user);
+            return View(new List<User>());
+        }
+
+        [HttpGet]
+        public IActionResult GetUsersJson(string search = "", int page = 1, int pageSize = 10)
+        {
+            var query = unitofwork.UserRepository.GetAll().AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim().ToLower();
+                query = query.Where(u => (!string.IsNullOrEmpty(u.Name) && u.Name.ToLower().Contains(search)) ||
+                                         (!string.IsNullOrEmpty(u.UserName) && u.UserName.ToLower().Contains(search)) ||
+                                         (!string.IsNullOrEmpty(u.MobileNo) && u.MobileNo.ToLower().Contains(search)));
+            }
+
+            query = query.OrderBy(m => m.Id);
+
+            var totalItem = query.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItem / pageSize);
+
+            var data = query.Skip((page - 1) * pageSize).Take(pageSize)
+                .Select(u => new
+                {
+                    id = u.Id,
+                    name = u.Name,
+                    mobileNo = u.MobileNo,
+                    userName = u.UserName,
+                    status = u.Status
+                })
+                .ToList();
+
+            return Json(new
+            {
+                issuccess = true,
+                totalPages = totalPages,
+                totalItem = totalItem,
+                currentPage = page,
+                data = data
+            });
         }
 
         [HttpGet]
@@ -53,8 +91,14 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(User user)
         {
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
             if (!ModelState.IsValid)  
             {
+                if (isAjax)
+                {
+                    return Json(new { success = false, message = "❌ Invalid user data submitted." });
+                }
                 TempData["Message"] = "❌ Invalid user data submitted.";
                 TempData["MessageType"] = "danger";
                 ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
@@ -65,12 +109,20 @@ namespace HMSYSTEM.Controllers
             try
             {
                 unitofwork.UserRepository.Save(user);
+                if (isAjax)
+                {
+                    return Json(new { success = true, message = "✅ Successfully added!" });
+                }
                 TempData["Message"] = "✅ Successfully added!";
                 TempData["MessageType"] = "success";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
+                if (isAjax)
+                {
+                    return Json(new { success = false, message = "❌ " + (ex?.Message ?? "An error occurred.") });
+                }
                 TempData["Message"] = "❌ " + (ex?.Message ?? "An error occurred.");
                 TempData["MessageType"] = "danger";
                 ViewBag.Roles = unitofwork.RoleRepository.GetRoles();
@@ -79,24 +131,17 @@ namespace HMSYSTEM.Controllers
             }
         }
 
-
-
         public IActionResult Delete(int Id)
         {
             try
             {
                 unitofwork.UserRepository.Delete(Id);
-                TempData["Message"] = "✅ Successfully Delete!";
-                TempData["MessageType"] = "success";
-                return RedirectToAction("Index");
+                return Json(new { success = true, message = "✅ Successfully Deleted!" });
             }
             catch (Exception ex)
             {
-                TempData["Message"] = "❌ " + (ex?.Message ?? "An error occurred.");
-                TempData["MessageType"] = "danger";
-                return RedirectToAction("Index");
+                return Json(new { success = false, message = "❌ " + (ex?.Message ?? "An error occurred.") });
             }
-            
         }
 
         [HttpGet]
@@ -140,9 +185,34 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Update(User user)
         {
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
-            unitofwork.UserRepository.Update(user);
-            return RedirectToAction("Index");
+            if (!ModelState.IsValid)
+            {
+                if (isAjax)
+                {
+                    return Json(new { success = false, message = "❌ Invalid user data submitted." });
+                }
+                return RedirectToAction("Index");
+            }
+
+            try
+            {
+                unitofwork.UserRepository.Update(user);
+                if (isAjax)
+                {
+                    return Json(new { success = true, message = "✅ Successfully updated!" });
+                }
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                if (isAjax)
+                {
+                    return Json(new { success = false, message = "❌ " + (ex?.Message ?? "An error occurred.") });
+                }
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpGet]
@@ -178,9 +248,15 @@ namespace HMSYSTEM.Controllers
        
         public IActionResult GetStatusUpdate(int id)
         {
-            unitofwork.UserRepository.GetStatus(id);
-           
-            return RedirectToAction("Index");
+            try
+            {
+                unitofwork.UserRepository.GetStatus(id);
+                return Json(new { success = true, message = "✅ Status updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "❌ " + (ex?.Message ?? "An error occurred.") });
+            }
         }
     }
 }

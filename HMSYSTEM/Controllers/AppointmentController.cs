@@ -30,27 +30,86 @@ namespace HMSYSTEM.Controllers
             ViewBag.FromDate = fromDate.ToString("yyyy-MM-dd");
             ViewBag.ToDate = toDate.ToString("yyyy-MM-dd");
 
+            ViewBag.Department = _unitofWork.departmentRepo.getAll().Where(c => c.Status == true).ToList();
+            ViewBag.Doctor = _unitofWork.doctorRepo.getAll().Where(c => c.Status == true).ToList();
+
+            var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
+                            .OrderByDescending(a => a.SerialNumber)
+                            .Select(a => a.SerialNumber)
+                            .FirstOrDefault();
+
+            int nextSerial = (lastSerial ?? 0) + 1001; 
+            ViewBag.NextSerial = nextSerial;
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetAppointments(string search = "", string fromDate = "", string toDate = "", int page = 1, int pageSize = 10)
+        {
             int roleId = Helper.GetRoleId(User);
             int doctorId = Helper.GetDoctorId(User);
 
+            DateTime fDate = string.IsNullOrEmpty(fromDate)
+                ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)
+                : DateTime.Parse(fromDate);
+            DateTime tDate = string.IsNullOrEmpty(toDate)
+                ? fDate.AddMonths(1).AddDays(-1)
+                : DateTime.Parse(toDate);
+
             IQueryable<Appointment> query;
 
-            if (roleId==(int)RoleEnum.Doctor && doctorId > 0)
+            if (roleId == (int)RoleEnum.Doctor && doctorId > 0)
             {
-                query=_unitofWork.AppointmentRepository.GetAppointmentsByDoctorId(doctorId,fromDate,toDate);
+                query = _unitofWork.AppointmentRepository.GetAppointmentsByDoctorId(doctorId, fDate, tDate);
             }
             else
             {
-                 query = _unitofWork.AppointmentRepository.GetAppointmentsByDoctorId(null,fromDate, toDate);
+                query = _unitofWork.AppointmentRepository.GetAppointmentsByDoctorId(null, fDate, tDate);
             }
 
-           
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim().ToLower();
+                query = query.Where(a =>
+                    (a.Patient != null && (
+                        (!string.IsNullOrEmpty(a.Patient.FirstName) && a.Patient.FirstName.ToLower().Contains(search)) ||
+                        (!string.IsNullOrEmpty(a.Patient.LastName) && a.Patient.LastName.ToLower().Contains(search))
+                    )) ||
+                    (!string.IsNullOrEmpty(a.PatientPhoneNumber) && a.PatientPhoneNumber.Contains(search)) ||
+                    (a.Doctor != null && !string.IsNullOrEmpty(a.Doctor.FirstName) && a.Doctor.FirstName.ToLower().Contains(search)) ||
+                    (a.Department != null && !string.IsNullOrEmpty(a.Department.DepartmentName) && a.Department.DepartmentName.ToLower().Contains(search))
+                );
+            }
 
-            var pagedData = query
-                .OrderByDescending(p => p.AppointmentId);
+            query = query.OrderByDescending(a => a.AppointmentId);
 
+            var totalItem = query.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItem / pageSize);
 
-            return View(pagedData);
+            var data = query.Skip((page - 1) * pageSize).Take(pageSize)
+                .Select(a => new
+                {
+                    appointmentId = a.AppointmentId,
+                    date = a.AppoinmentDate.ToString("dd-MM-yyyy"),
+                    time = a.AppoinmentDate.ToString("hh:mm tt"),
+                    serialNumber = a.SerialNumber,
+                    patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName) : "N/A",
+                    phone = a.PatientPhoneNumber,
+                    department = a.Department != null ? a.Department.DepartmentName : "N/A",
+                    doctor = a.Doctor != null ? a.Doctor.FirstName + " " + a.Doctor.LastName : "N/A",
+                    status = (int)a.Status
+                })
+                .ToList();
+
+            return Json(new
+            {
+                issuccess = true,
+                totalPages,
+                totalItem,
+                currentPage = page,
+                data
+            });
         }
 
         [Authorize]
@@ -110,8 +169,15 @@ namespace HMSYSTEM.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPatientNameByPhone(string phoneNumber)
         {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                return Json(new { success = false });
+            }
+
+            phoneNumber = phoneNumber.Trim();
+
             var patient = _unitofWork.PatienRepo.getAll()
-                .FirstOrDefault(p => p.Phone == phoneNumber && p.Status == true);
+                .FirstOrDefault(p => p.Phone != null && p.Phone.Trim() == phoneNumber && p.Status == true);
 
             if (patient != null)
             {
@@ -123,17 +189,19 @@ namespace HMSYSTEM.Controllers
                     {
                         success = false,
                         alreadyAdded = true,
-                        
+                        name = patient.FirstName + " " + patient.LastName,
+                        id = patient.PatientID
                     });
                 }
-                return Json(new { success = true, 
-                    name = patient.FirstName+" " + patient.LastName ,
-                    id=patient.PatientID
-                   
+                return Json(new
+                {
+                    success = true,
+                    name = patient.FirstName + " " + patient.LastName,
+                    id = patient.PatientID
                 });
             }
 
-            return Json(new { success = false  });
+            return Json(new { success = false });
         }
 
         [HttpPost]
@@ -191,115 +259,150 @@ namespace HMSYSTEM.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetDeleteList(int page = 1, int pageSize = 10)
+        public IActionResult GetDeleteList()
         {
-            int roleId = Helper.GetRoleId(User);
-            int doctorId = Helper.GetDoctorId(User);
-
-            IQueryable<Appointment> totalDelete;
-
-            if(roleId==(int)RoleEnum.Doctor && doctorId > 0)
-            {
-                totalDelete = _unitofWork.AppointmentRepository.GetDeleteAppointments(doctorId);
-            }
-            else
-            {
-                totalDelete = _unitofWork.AppointmentRepository.GetDeleteAppointments();
-            }
-
-           
-            var totalItem = totalDelete.Count();
-            var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
-            var progress = totalDelete
-                          .Skip((page - 1) * pageSize)
-                          .Take(pageSize)
-                          .ToList();
-
-            var viewModel = new PaginationViewModel<Appointment>
-            {
-                Items = progress,
-                TotalItems = totalItem,
-                TotalPages = totalPage,
-                CurrentPage = page,
-                PageSize = pageSize
-            };
-
-            return View(viewModel);
+            return View();
         }
 
         [HttpGet]
-        public IActionResult GetProgress(int page=1 , int pageSize=10)
+        public IActionResult GetDeleteListData(string search = "", int page = 1, int pageSize = 10)
         {
-
             int roleId = Helper.GetRoleId(User);
             int doctorId = Helper.GetDoctorId(User);
 
-
-
-            IQueryable<Appointment> totalProgress;
+            IQueryable<Appointment> query;
 
             if (roleId == (int)RoleEnum.Doctor && doctorId > 0)
-            {
-                totalProgress = _unitofWork.AppointmentRepository.GetProgress(doctorId);
-            }
+                query = _unitofWork.AppointmentRepository.GetDeleteAppointments(doctorId);
             else
+                query = _unitofWork.AppointmentRepository.GetDeleteAppointments();
+
+            if (!string.IsNullOrEmpty(search))
             {
-                totalProgress = _unitofWork.AppointmentRepository.GetProgress();
+                search = search.Trim().ToLower();
+                query = query.Where(a =>
+                    (a.Patient != null && (a.Patient.FirstName.ToLower().Contains(search) || a.Patient.LastName.ToLower().Contains(search))) ||
+                    (!string.IsNullOrEmpty(a.PatientPhoneNumber) && a.PatientPhoneNumber.Contains(search)) ||
+                    (a.Doctor != null && a.Doctor.FirstName.ToLower().Contains(search)) ||
+                    (a.Department != null && a.Department.DepartmentName.ToLower().Contains(search))
+                );
             }
 
-            var totalItem = totalProgress.Count();
-            var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
-            var progress=totalProgress
-                          .Skip((page-1)*pageSize)
-                          .Take(pageSize)
-                          .ToList();
+            query = query.OrderByDescending(a => a.AppointmentId);
+            var totalItem = query.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItem / pageSize);
+            var data = query.Skip((page - 1) * pageSize).Take(pageSize)
+                .Select(a => new {
+                    appointmentId = a.AppointmentId,
+                    date = a.AppoinmentDate.ToString("dd-MM-yyyy"),
+                    time = a.AppoinmentDate.ToString("hh:mm tt"),
+                    serialNumber = a.SerialNumber,
+                    patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName) : "N/A",
+                    phone = a.PatientPhoneNumber,
+                    department = a.Department != null ? a.Department.DepartmentName : "N/A",
+                    doctor = a.Doctor != null ? (a.Doctor.FirstName + " " + a.Doctor.LastName) : "N/A",
+                    status = (int)a.Status
+                }).ToList();
 
-            var viewModel = new PaginationViewModel<Appointment>
-            {
-               Items= progress,
-               TotalItems= totalItem,
-               TotalPages= totalPage,
-               CurrentPage= page,
-               PageSize= pageSize
-            };
-
-            return View(viewModel);
+            return Json(new { issuccess = true, totalPages, totalItem, currentPage = page, data });
         }
 
         [HttpGet]
-        public IActionResult GetComplete(int page = 1, int pageSize = 10)
+        public IActionResult GetProgress()
         {
-            int roleId=Helper.GetRoleId(User);
-            int doctorId=Helper.GetDoctorId(User);
+            return View();
+        }
 
-            IQueryable<Appointment> totalComplete;
+        [HttpGet]
+        public IActionResult GetProgressData(string search = "", int page = 1, int pageSize = 10)
+        {
+            int roleId = Helper.GetRoleId(User);
+            int doctorId = Helper.GetDoctorId(User);
 
-            if(roleId==(int)RoleEnum.Doctor && doctorId > 0)
-            {
-                totalComplete = _unitofWork.AppointmentRepository.GetComplete(doctorId);
-            }
+            IQueryable<Appointment> query;
+
+            if (roleId == (int)RoleEnum.Doctor && doctorId > 0)
+                query = _unitofWork.AppointmentRepository.GetProgress(doctorId);
             else
+                query = _unitofWork.AppointmentRepository.GetProgress();
+
+            if (!string.IsNullOrEmpty(search))
             {
-                totalComplete = _unitofWork.AppointmentRepository.GetComplete();
+                search = search.Trim().ToLower();
+                query = query.Where(a =>
+                    (a.Patient != null && (a.Patient.FirstName.ToLower().Contains(search) || a.Patient.LastName.ToLower().Contains(search))) ||
+                    (!string.IsNullOrEmpty(a.PatientPhoneNumber) && a.PatientPhoneNumber.Contains(search)) ||
+                    (a.Doctor != null && a.Doctor.FirstName.ToLower().Contains(search)) ||
+                    (a.Department != null && a.Department.DepartmentName.ToLower().Contains(search))
+                );
             }
 
-            var totalItem = totalComplete.Count();
-            var totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
-            var progress = totalComplete
-                          .Skip((page - 1) * pageSize)
-                          .Take(pageSize)
-                          .ToList();
+            query = query.OrderByDescending(a => a.AppointmentId);
+            var totalItem = query.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItem / pageSize);
+            var data = query.Skip((page - 1) * pageSize).Take(pageSize)
+                .Select(a => new {
+                    appointmentId = a.AppointmentId,
+                    date = a.AppoinmentDate.ToString("dd-MM-yyyy"),
+                    time = a.AppoinmentDate.ToString("hh:mm tt"),
+                    serialNumber = a.SerialNumber,
+                    patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName) : "N/A",
+                    phone = a.PatientPhoneNumber,
+                    department = a.Department != null ? a.Department.DepartmentName : "N/A",
+                    doctor = a.Doctor != null ? (a.Doctor.FirstName + " " + a.Doctor.LastName) : "N/A",
+                    status = (int)a.Status
+                }).ToList();
 
-            var viewModel = new PaginationViewModel<Appointment>
+            return Json(new { issuccess = true, totalPages, totalItem, currentPage = page, data });
+        }
+
+        [HttpGet]
+        public IActionResult GetComplete()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetCompleteData(string search = "", int page = 1, int pageSize = 10)
+        {
+            int roleId = Helper.GetRoleId(User);
+            int doctorId = Helper.GetDoctorId(User);
+
+            IQueryable<Appointment> query;
+
+            if (roleId == (int)RoleEnum.Doctor && doctorId > 0)
+                query = _unitofWork.AppointmentRepository.GetComplete(doctorId);
+            else
+                query = _unitofWork.AppointmentRepository.GetComplete();
+
+            if (!string.IsNullOrEmpty(search))
             {
-                Items = progress,
-                TotalItems = totalItem,
-                TotalPages = totalPage,
-                CurrentPage = page,
-                PageSize = pageSize
-            };
+                search = search.Trim().ToLower();
+                query = query.Where(a =>
+                    (a.Patient != null && (a.Patient.FirstName.ToLower().Contains(search) || a.Patient.LastName.ToLower().Contains(search))) ||
+                    (!string.IsNullOrEmpty(a.PatientPhoneNumber) && a.PatientPhoneNumber.Contains(search)) ||
+                    (a.Doctor != null && a.Doctor.FirstName.ToLower().Contains(search)) ||
+                    (a.Department != null && a.Department.DepartmentName.ToLower().Contains(search))
+                );
+            }
 
-            return View(viewModel);
+            query = query.OrderByDescending(a => a.AppointmentId);
+            var totalItem = query.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItem / pageSize);
+            var data = query.Skip((page - 1) * pageSize).Take(pageSize)
+                .Select(a => new {
+                    appointmentId = a.AppointmentId,
+                    date = a.AppoinmentDate.ToString("dd-MM-yyyy"),
+                    time = a.AppoinmentDate.ToString("hh:mm tt"),
+                    serialNumber = a.SerialNumber,
+                    patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName) : "N/A",
+                    phone = a.PatientPhoneNumber,
+                    department = a.Department != null ? a.Department.DepartmentName : "N/A",
+                    doctor = a.Doctor != null ? (a.Doctor.FirstName + " " + a.Doctor.LastName) : "N/A",
+                    status = (int)a.Status
+                }).ToList();
+
+            return Json(new { issuccess = true, totalPages, totalItem, currentPage = page, data });
         }
 
         public IActionResult ChangeStatus(int id, int status, string returnAction)

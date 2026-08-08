@@ -354,6 +354,49 @@
         font-size: 0.85rem !important;
         background-color: #f7fafc !important;
     }
+
+    /* Toastr Custom Design Overrides to fix white text visibility */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important; /* Solid Premium Green */
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important; /* Solid Premium Red */
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 50px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+
+    /* Pagination Styles */
+    .pagination .page-link {
+        box-shadow: none !important;
+    }
+    
+    .pagination .page-item:not(.disabled) .page-link:hover {
+        background-color: #3182ce !important;
+        color: #ffffff !important;
+        border-color: #3182ce !important;
+    }
+    
+    .pagination .page-item.disabled .page-link {
+        color: #a0aec0 !important;
+        background-color: #f7fafc !important;
+        border-color: #edf2f7 !important;
+        pointer-events: none;
+    }
 </style>
 
 <div class="container-fluid mt-4">
@@ -374,9 +417,14 @@
                             </div>
                         </div>
                         <div class="header-actions">
-                            <div class="search-wrapper" style="position: relative; min-width: 260px;">
-                                <i class="fas fa-search search-icon" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #a0aec0; font-size: 0.95rem; pointer-events: none; z-index: 5;"></i>
-                                <input type="text" class="form-control search-control" placeholder="Search Name..." id="searchBox" style="padding-left: 50px !important; padding-right: 15px !important; border-radius: 30px !important; border: 1.5px solid #e2e8f0 !important; font-size: 0.9rem !important; height: 42px !important; transition: all 0.3s ease !important; box-shadow: none !important; background-color: #f7fafc !important;" />
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="search-wrapper" style="position: relative; min-width: 240px;">
+                                    <i class="fas fa-search search-icon" style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #a0aec0; font-size: 0.95rem; pointer-events: none; z-index: 5;"></i>
+                                    <input type="text" class="form-control search-control" placeholder="Search Name..." id="searchBox" style="padding-left: 50px !important; padding-right: 15px !important; border-radius: 30px !important; border: 1.5px solid #e2e8f0 !important; font-size: 0.9rem !important; height: 42px !important; transition: all 0.3s ease !important; box-shadow: none !important; background-color: #f7fafc !important;" />
+                                </div>
+                                <button type="button" class="btn btn-primary" id="btnSearch" style="border-radius: 30px; height: 42px; padding: 0 1.5rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
                             </div>
                             <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addUserModal">
                                 <i class="fas fa-user-plus me-2"></i> Create
@@ -399,39 +447,31 @@
                             </tr>
                         </thead>
                         <tbody id="dataShow">
-                            @{
-                                int count = 1;
-                            }
-                            @foreach (User item in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td style="font-weight:700; color:#2d3748;">@item.Name</td>
-                                    <td>@item.MobileNo</td>
-                                    <td style="font-family:monospace; color:#4a5568;">@item.UserName</td>
-                                    <td style="text-align:center">
-                                        <a asp-action="GetStatusUpdate" asp-route-id="@item.Id" class="status-badge-link">
-                                            <span class="badge-status @(item.Status == true ? "status-active" : "status-inactive")">
-                                                <i class="fas @(item.Status == true ? "fa-check-circle" : "fa-times-circle") me-2"></i>
-                                                @(item.Status == true ? "Active" : "Inactive")
-                                            </span>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <div class="action-btn-group">
-                                            <a class="action-btn action-edit edit-user-btn" href="javascript:void(0);" data-id="@item.Id" title="Edit User">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a class="action-btn action-delete" asp-route-id="@item.Id" asp-controller="User" asp-action="Delete" title="Delete User">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                count++;
-                            }
+                            <!-- Populated dynamically via AJAX -->
                         </tbody>
                     </table>
+                </div>
+                <!-- Pagination Footer -->
+                <div class="card-footer" style="background-color: #ffffff; border-top: 1px solid #f1f2f6; padding: 1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size: 0.85rem;">
+                                Showing page <span id="cpage" class="fw-bold text-dark">0</span> of <span id="tpage" class="fw-bold text-dark">0</span> (<span id="tentries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap: 5px;">
+                                    <li class="page-item" id="prevLi">
+                                        <a id="btnPrevious" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">⬅️ Previous</a>
+                                    </li>
+                                    <li class="page-item" id="nextLi">
+                                        <a id="btnNext" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">Next ➡️</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 
@@ -625,29 +665,293 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        var table = $('#userTable').DataTable({
-            "pageLength": 10,
-            "lengthMenu": [5, 10, 20, 50],
-            "ordering": true,
-            "paging": true,
-            "info": true,
-            "language": {
-                "search": "",
-                "searchPlaceholder": "Search",
-                "lengthMenu": "_MENU_ rows",
-                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                "paginate": {
-                    "previous": "⬅️ Previous",
-                    "next": "Next ➡️"
+    var currentPage = 1;
+    var totalPages = 1;
+
+    // Helper notification wrappers in case toastr is not loaded correctly
+    function showSuccess(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.success(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    // Helper notification wrappers
+    function showError(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    // Helper function to create row HTML for a user
+    function createrow(index, item) {
+        var statusBadge = item.status === true 
+            ? `<span class="badge-status status-active"><i class="fas fa-check-circle me-2"></i>Active</span>`
+            : `<span class="badge-status status-inactive"><i class="fas fa-times-circle me-2"></i>Inactive</span>`;
+            
+        return `<tr>
+            <td>${index}</td>
+            <td style="font-weight:700; color:#2d3748;">${item.name || ''}</td>
+            <td>${item.mobileNo || ''}</td>
+            <td style="font-family:monospace; color:#4a5568;">${item.userName || ''}</td>
+            <td style="text-align:center">
+                <a href="javascript:void(0);" data-id="${item.id}" class="status-badge-link toggle-status-btn">
+                    ${statusBadge}
+                </a>
+            </td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-edit edit-user-btn" href="javascript:void(0);" data-id="${item.id}" title="Edit User">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="action-btn action-delete delete-user-btn" href="javascript:void(0);" data-id="${item.id}" title="Delete User">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    // Function to load users via AJAX and update #dataShow directly
+    function loadUsers(page) {
+        currentPage = page || 1;
+
+        $("#dataShow").html(`
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted mb-0">Loading users...</p>
+                </td>
+            </tr>
+        `);
+
+        var searchQuery = $('#searchBox').val() || '';
+
+        $.ajax({
+            url: "@Url.Action("GetUsersJson", "User")",
+            type: "GET",
+            data: {
+                search: searchQuery,
+                page: currentPage,
+                pageSize: 10
+            },
+            dataType: "json",
+            cache: false,
+            success: function (response) {
+                if (response.issuccess === true) {
+                    $("#dataShow").empty();
+
+                    totalPages = response.totalPages || 1;
+                    var totalItem = response.totalItem || 0;
+
+                    // Update UI indicators
+                    $("#cpage").text(currentPage);
+                    $("#tpage").text(totalPages);
+                    $("#tentries").text(totalItem);
+
+                    // Update pagination buttons state
+                    if (currentPage <= 1) {
+                        $("#prevLi").addClass("disabled");
+                    } else {
+                        $("#prevLi").removeClass("disabled");
+                    }
+
+                    if (currentPage >= totalPages) {
+                        $("#nextLi").addClass("disabled");
+                    } else {
+                        $("#nextLi").removeClass("disabled");
+                    }
+
+                    if (response.data && response.data.length > 0) {
+                        $.each(response.data, function (i, v) {
+                            var rowIdx = ((currentPage - 1) * 10) + (i + 1);
+                            var row = createrow(rowIdx, v);
+                            $("#dataShow").append(row);
+                        });
+                    } else {
+                        $("#dataShow").html(`
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle fs-4"></i>
+                                    <p class="mt-2 mb-0">No users found.</p>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                } else {
+                    $("#dataShow").html(`
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-danger">
+                                <i class="fas fa-exclamation-triangle fs-4"></i>
+                                <p class="mt-2 mb-0">Failed to load data.</p>
+                            </td>
+                        </tr>
+                    `);
                 }
             },
-            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+            error: function (xhr, textStatus, error) {
+                $("#dataShow").html(`
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-triangle fs-4"></i>
+                            <p class="mt-2 mb-0">Failed to load data: ${error || xhr.statusText}</p>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
+
+    function changePage(direction) {
+        var targetPage = currentPage + direction;
+        if (targetPage >= 1 && targetPage <= totalPages) {
+            loadUsers(targetPage);
+        }
+    }
+
+    $(document).ready(function () {
+        // Disable AJAX caching globally for all GET requests on this page
+        $.ajaxSetup({ cache: false });
+
+        // Load users on init
+        loadUsers(1);
+
+        // Click handlers for next/previous links
+        $('#btnPrevious').on('click', function (e) {
+            e.preventDefault();
+            changePage(-1);
         });
 
+        $('#btnNext').on('click', function (e) {
+            e.preventDefault();
+            changePage(1);
+        });
 
-        $('#searchBox').on('keyup', function () {
-            table.search(this.value).draw();
+        // Search button click handler
+        $('#btnSearch').on('click', function () {
+            loadUsers(1);
+        });
+
+        // Trigger search on Enter keypress inside search box
+        $('#searchBox').on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                loadUsers(1);
+            }
+        });
+
+        // Handle Add User Form Submission via AJAX
+        $('#addUserForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#addUserModal').modal('hide');
+                        form[0].reset();
+                        // Reset Select2 fields inside add modal
+                        $('#modalRoleId').val('').trigger('change');
+                        $('#modalDepartmentId').val('').trigger('change');
+                        $('#modalDoctorId').html('<option value="0">--Select Doctor--</option>').trigger('change');
+                        $('#isDoctorCheckbox').prop('checked', false).trigger('change');
+                        loadUsers(1);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Edit User Form Submission via AJAX
+        $('#editUserForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#editUserModal').modal('hide');
+                        loadUsers(currentPage);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Delete User click via AJAX
+        $(document).on('click', '.delete-user-btn', function (e) {
+            e.preventDefault();
+            var userId = $(this).data('id');
+
+            if (confirm("Are you sure you want to delete this user?")) {
+                var clickedBtn = $(this);
+                clickedBtn.css('pointer-events', 'none');
+
+                $.ajax({
+                    url: '@Url.Action("Delete", "User")',
+                    type: 'GET',
+                    data: { Id: userId },
+                    success: function (response) {
+                        if (response.success) {
+                            showSuccess(response.message);
+                            loadUsers(currentPage);
+                        } else {
+                            showError(response.message);
+                            clickedBtn.css('pointer-events', 'auto');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        showError("An error occurred: " + error);
+                        clickedBtn.css('pointer-events', 'auto');
+                    }
+                });
+            }
+        });
+
+        // Handle Status Toggle click via AJAX
+        $(document).on('click', '.toggle-status-btn', function (e) {
+            e.preventDefault();
+            var userId = $(this).data('id');
+            var clickedLink = $(this);
+            clickedLink.css('pointer-events', 'none');
+
+            $.ajax({
+                url: '@Url.Action("GetStatusUpdate", "User")',
+                type: 'GET',
+                data: { id: userId },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        loadUsers(currentPage);
+                    } else {
+                        showError(response.message);
+                        clickedLink.css('pointer-events', 'auto');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                    clickedLink.css('pointer-events', 'auto');
+                }
+            });
         });
 
         // Initialize Select2 inside modal when the modal is shown
@@ -695,7 +999,7 @@
         $(document).on('change', '#modalDepartmentId', function () {
             var deptId = $(this).val();
             if (deptId) {
-                $.getJSON('/User/GetDoctorsByDepartment', { departmentId: deptId }, function (data) {
+                $.getJSON('@Url.Action("GetDoctorsByDepartment", "User")', { departmentId: deptId }, function (data) {
                     var items = '<option value="0">--Select Doctor--</option>';
                     $.each(data, function (i, doc) {
                         items += '<option value="' + doc.id + '">' + doc.name + '</option>';
@@ -707,16 +1011,12 @@
             }
         });
 
-        // ==========================================
-        // Edit Modal Events and JavaScript
-        // ==========================================
-
         // Edit User button click handler
         $(document).on('click', '.edit-user-btn', function () {
             var userId = $(this).data('id');
             
             // Fetch user details via AJAX
-            $.getJSON('/User/GetUserById', { id: userId }, function (data) {
+            $.getJSON('@Url.Action("GetUserById", "User")', { id: userId }, function (data) {
                 // Populate modal fields
                 $('#editUserId').val(data.id);
                 $('#editName').val(data.name);
@@ -747,7 +1047,7 @@
                     $('#editDepartmentId').val(data.departmentId).trigger('change');
                     
                     // Load doctors cascade for selected department and pre-set doctor
-                    $.getJSON('/User/GetDoctorsByDepartment', { departmentId: data.departmentId }, function (doctors) {
+                    $.getJSON('@Url.Action("GetDoctorsByDepartment", "User")', { departmentId: data.departmentId }, function (doctors) {
                         var items = '<option value="0">--Select Doctor--</option>';
                         $.each(doctors, function (i, doc) {
                             items += '<option value="' + doc.id + '">' + doc.name + '</option>';
@@ -772,7 +1072,7 @@
                 // Show Edit Modal
                 $('#editUserModal').modal('show');
             }).fail(function() {
-                alert("Error loading user data.");
+                showError("Error loading user data.");
             });
         });
 
@@ -815,7 +1115,7 @@
         $(document).on('change', '#editDepartmentId', function () {
             var deptId = $(this).val();
             if (deptId) {
-                $.getJSON('/User/GetDoctorsByDepartment', { departmentId: deptId }, function (data) {
+                $.getJSON('@Url.Action("GetDoctorsByDepartment", "User")', { departmentId: deptId }, function (data) {
                     var items = '<option value="0">--Select Doctor--</option>';
                     $.each(data, function (i, doc) {
                         items += '<option value="' + doc.id + '">' + doc.name + '</option>';
@@ -831,13 +1131,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const editId = urlParams.get('editId');
         if (editId) {
-            // Find edit button with the specific user ID and trigger click
             const editBtn = $(`.edit-user-btn[data-id="${editId}"]`);
             if (editBtn.length) {
                 editBtn.click();
             } else {
-                // If the user is on another page of DataTable, we can call the loading logic directly
-                $.getJSON('/User/GetUserById', { id: editId }, function (data) {
+                $.getJSON('@Url.Action("GetUserById", "User")', { id: editId }, function (data) {
                     $('#editUserId').val(data.id);
                     $('#editName').val(data.name);
                     $('#editMobileNo').val(data.mobileNo);
@@ -863,7 +1161,7 @@
                         });
                         $('#editDepartmentId').val(data.departmentId).trigger('change');
                         
-                        $.getJSON('/User/GetDoctorsByDepartment', { departmentId: data.departmentId }, function (doctors) {
+                        $.getJSON('@Url.Action("GetDoctorsByDepartment", "User")', { departmentId: data.departmentId }, function (doctors) {
                             var items = '<option value="0">--Select Doctor--</option>';
                             $.each(doctors, function (i, doc) {
                                 items += '<option value="' + doc.id + '">' + doc.name + '</option>';
@@ -888,7 +1186,6 @@
                     $('#editUserModal').modal('show');
                 });
             }
-            // Clean up the URL query parameters so refreshing doesn't keep opening it
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     });

@@ -1,140 +1,306 @@
-﻿@model HMSYSTEM.ViewModels.PrescriptionViewModel
-@using System.Text.RegularExpressions
+@model HMSYSTEM.ViewModels.PrescriptionViewModel
 @{
     ViewData["Title"] = "Prescription Details";
 }
-<div class="container ">
 
-    <div style="margin:50px;" class=" shadow border border-black">
-        <div class="row  border border-opacity-25  border-black m-4 p-4 ">
-            <div class=" d-flex justify-content-end">
-                <div class="btn-group">
+<style>
+    .rx-container {
+        background: #f8fafc;
+        padding: 20px 10px;
+        min-height: 100vh;
+    }
+    .rx-card-main {
+        max-width: 850px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+    .rx-top-bar {
+        background: #ffffff;
+        padding: 15px 25px;
+        border-bottom: 1px solid #edf2f7;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .btn-rx-action {
+        border-radius: 30px;
+        padding: 6px 18px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+    .pad-body {
+        padding: 25px 30px;
+        position: relative;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .pad-header {
+        border-bottom: 2px solid #3182ce;
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+    }
+    .doc-name {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2b6cb0;
+        margin: 0 0 2px 0;
+    }
+    .doc-sub {
+        font-size: 0.82rem;
+        color: #4a5568;
+        margin: 0 0 2px 0;
+        font-weight: 600;
+    }
+    .hosp-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0 0 2px 0;
+    }
+    .hosp-sub {
+        font-size: 0.8rem;
+        color: #718096;
+        margin: 0;
+    }
+    .patient-bar {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 16px;
+        margin-bottom: 15px;
+        font-size: 0.85rem;
+    }
+    .patient-bar-item {
+        margin-bottom: 2px;
+    }
+    .patient-bar-label {
+        font-weight: 700;
+        color: #4a5568;
+    }
+    .rx-symbol {
+        font-size: 2rem;
+        font-weight: 900;
+        font-family: Georgia, serif;
+        color: #3182ce;
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+    .rx-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+    .rx-table th {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 8px 12px;
+        border-bottom: 2px solid #bee3f8;
+        text-align: left;
+    }
+    .rx-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #edf2f7;
+        font-size: 0.88rem;
+        color: #2d3748;
+        vertical-align: middle;
+    }
+    .advice-box {
+        background: #fffaf0;
+        border-left: 3px solid #ed8936;
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin-top: 12px;
+    }
+    .advice-title {
+        font-weight: 800;
+        color: #c05621;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .advice-item {
+        font-size: 0.85rem;
+        color: #4a5568;
+        margin-bottom: 2px;
+    }
+    .pad-footer {
+        margin-top: 35px;
+        padding-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+    .sig-line {
+        border-top: 1.5px solid #a0aec0;
+        width: 170px;
+        text-align: center;
+        padding-top: 4px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #4a5568;
+    }
+</style>
 
-                    <a class="btn btn-success " asp-route-id="" asp-controller="Prescription" asp-action="Save">
-                        <i class="fa fa-plus"></i>
-                        Add
-                    </a>
+<div class="rx-container">
+    <div class="rx-card-main">
 
+        <!-- Top Actions Bar -->
+        <div class="rx-top-bar no-print">
+            <h5 class="m-0 fw-bold text-dark"><i class="fas fa-prescription-bottle-alt me-2 text-primary"></i> Prescription View</h5>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary btn-rx-action" asp-controller="Prescription" asp-action="Index">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+                <button class="btn btn-primary btn-rx-action" onclick="printPrescription(@Model.Id)">
+                    <i class="fas fa-print"></i> Print Prescription
+                </button>
+            </div>
+        </div>
 
-                    <a class="btn btn-primary " asp-route-id="" asp-controller="Prescription" asp-action="Index">
-                        <i class="fa fa-list"></i>
-                        List
-                    </a>
-
-                    <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
-                        <i class="fa fa-print"></i> Print
-                    </button>
-
+        <!-- Pad Body -->
+        <div class="pad-body" id="prescriptionDisplayArea">
+            
+            <!-- Pad Header -->
+            <div class="row pad-header align-items-center">
+                <div class="col-6">
+                    <h3 class="doc-name">Dr. @Model.DoctorName</h3>
+                    <p class="doc-sub">@Model.DesignationName</p>
+                    <p class="doc-sub"><i class="fas fa-phone-alt me-1 text-primary"></i> @Model.DoctorMobile</p>
+                </div>
+                <div class="col-6 text-end">
+                    <h3 class="hosp-name">Hospital Management System</h3>
+                    <p class="hosp-sub"><i class="fas fa-map-marker-alt me-1 text-danger"></i> Charghat, Rajshahi</p>
+                    <p class="hosp-sub"><i class="fas fa-phone me-1 text-success"></i> Helpline: 01791177192</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <h3>Dr.@Model.DoctorName</h3>
-                <h6>@Model.DesignationName</h6>
-                <h6>Contact No:@Model.DoctorMobile </h6>
+
+            <!-- Patient Information Bar -->
+            <div class="patient-bar">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="patient-bar-item"><span class="patient-bar-label">Patient Name:</span> <strong>@Model.PatientName</strong></div>
+                        <div class="patient-bar-item"><span class="patient-bar-label">Phone:</span> @Model.PatientMobileNo</div>
+                        <div class="patient-bar-item"><span class="patient-bar-label">Address:</span> @Model.PatientAddress</div>
+                    </div>
+                    <div class="col-6 text-end">
+                        <div class="patient-bar-item"><span class="patient-bar-label">Date:</span> @(Model.Date?.ToString("dd MMM yyyy") ?? "N/A")</div>
+                        <div class="patient-bar-item"><span class="patient-bar-label">Department:</span> @Model.DepartmentName</div>
+                        <div class="patient-bar-item"><span class="patient-bar-label">Next Follow Up:</span> <span class="badge bg-primary">@(Model.NextFlowUp?.ToString("dd MMM yyyy") ?? "As Needed")</span></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-4">
-                <h2>Prescription Details</h2>
-            </div>
+            <!-- Rx Symbol -->
+            <div class="rx-symbol">R<sub>x</sub></div>
 
-            <div class="col-md-4">
-                <h3>Hospital Management</h3>
-                <h6>Charghat , Rajshahi</h6>
-                <h6>Mobile : 01791177192</h6>
-            </div>
-            <hr />
-        </div>
-
-        <div class="row  m-4 p-1 border border-opacity-25 border-black">
-            <div class="col-md-6">
-
-                <strong>Patient : @Model.PatientName <br /></strong>
-               <small> 
-                    Phone No :  @Model.PatientMobileNo <br />
-                    Address: @Model.PatientAddress </br>
-                </small>
-
-            </div>
-
-            <div class="col-md-6">
-                <small>
-                    Date : @Model.Date?.ToString("dd - MMM - yyyy") <br />
-                    Next Flow Up: @Model.NextFlowUp?.ToString("dd MMM yyyy") <br />
-                    Department: @Model.DepartmentName</p>
-                </small>
-            </div>
-        </div>
-
-        <div class="row m-4 t-4 ">
-            <div class="d-flex justify-content-center "><u><h4>Prescribed Medicines</h4></u></div>
-            <table class="table table-bordered border-opacity-25 border-black">
+            <!-- Medicines Table -->
+            <table class="rx-table">
                 <thead>
                     <tr>
-                        <th>Medicine Name</th>
-                        <th>Dose</th>
-                        <th>Duration</th>
-                        <th>Instructions</th>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 40%">Medicine Name</th>
+                        <th style="width: 20%">Dose</th>
+                        <th style="width: 15%">Duration</th>
+                        <th style="width: 20%">Instructions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @{ int mIdx = 1; }
                     @foreach (var detail in Model.PrescriptionDetails)
                     {
                         <tr>
+                            <td>@(mIdx++)</td>
                             <td>
-                                @detail.MedicineName
-                                <small class="text-muted">(@detail.Strength , @detail.Form)</small>
+                                <strong>@detail.MedicineName</strong>
+                                <small class="text-muted d-block">(@detail.Strength, @detail.Form)</small>
                             </td>
-                            <td>@detail.Dose</td>
+                            <td><span class="badge bg-light text-dark border font-monospace">@detail.Dose</span></td>
                             <td>@detail.Duration</td>
-                            <td>@(detail.Instructions == true ? "After Meal" : "Before Meal")</td>
+                            <td>
+                                @if (detail.Instructions == true)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">After Meal</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Before Meal</span>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </div>
 
-        @{
-            var noteLines = (Model.Note ?? "").Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            int counter = 1;
-        }
+            <!-- Advice Section -->
+            @if (!string.IsNullOrWhiteSpace(Model.Note))
+            {
+                var noteLines = Model.Note.Split(new[] { '.', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                int counter = 1;
+                <div class="advice-box">
+                    <div class="advice-title"><i class="fas fa-user-md me-1"></i> Doctor's Advice:</div>
+                    @foreach (var line in noteLines)
+                    {
+                        if (!string.IsNullOrWhiteSpace(line.Trim()))
+                        {
+                            <div class="advice-item"><strong>@(counter++).</strong> @line.Trim()</div>
+                        }
+                    }
+                </div>
+            }
 
-        <div class="row mb-5">
-            <div class="col-md-6 ps-4 ms-4">
-                <strong>Advice Given:</strong><br />
-                
-                @foreach (var line in noteLines)
-                {
-                    <div>  @(counter++). @line.Trim()</div>
-                }
-             
+            <!-- Pad Footer / Signature -->
+            <div class="pad-footer">
+                <div>
+                    <small class="text-muted">Generated by HMS | Wish you a speedy recovery!</small>
+                </div>
+                <div class="sig-line">
+                    Doctor's Signature
+                </div>
             </div>
 
-
-            <div class="col-md-6">
-               
-            </div>
         </div>
 
     </div>
 </div>
 
-<div id="printContainer" style="display:none;"></div>
-
-
 <script>
-    function loadAndPrint(id) {
+    function printPrescription(id) {
         $.ajax({
-            url: '/Prescription/GetPrescriptionPrintPartial/' + id,
+            url: '@Url.Action("GetPrescriptionPrintPartial", "Prescription")/' + id,
             type: 'GET',
-            success: function (data) {
-                $('#printContainer').html(data);
-                var printContents = document.getElementById('printContainer').innerHTML;
-                var originalContents = document.body.innerHTML;
+            success: function (htmlData) {
+                var iframe = document.createElement('iframe');
+                iframe.style.position = 'absolute';
+                iframe.style.width = '0px';
+                iframe.style.height = '0px';
+                iframe.style.border = 'none';
+                document.body.appendChild(iframe);
 
-                document.body.innerHTML = printContents;
-                window.print();
-                document.body.innerHTML = originalContents;
-                location.reload();
+                var doc = iframe.contentWindow.document;
+                doc.open();
+                doc.write(htmlData);
+                doc.close();
+
+                iframe.contentWindow.focus();
+                setTimeout(function () {
+                    iframe.contentWindow.print();
+                    document.body.removeChild(iframe);
+                }, 400);
             },
             error: function () {
                 alert("Failed to load print view.");
@@ -142,4 +308,3 @@
         });
     }
 </script>
-

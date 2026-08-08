@@ -1,125 +1,656 @@
-﻿
-@using HMSYSTEM.ViewModels
-@model IEnumerable<Schedule>
+@using HMSYSTEM.Models
 @{
-    ViewData["Title"] = "Schedule";
+    ViewData["Title"] = "Schedule Management";
+    var doctors = ViewBag.Doctors as IEnumerable<Doctor> ?? new List<Doctor>();
+    var departments = ViewBag.Department as IEnumerable<Department> ?? new List<Department>();
 }
 
+<style>
+    .schedule-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
 
-<div class="container-fluid mt-3">
+    .schedule-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block { display: flex; align-items: center; gap: 12px; }
+
+    .header-icon {
+        width: 44px; height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .schedule-card-title { font-size: 1.3rem; font-weight: 800; color: #2d3748; margin: 0; }
+    .schedule-card-subtitle { font-size: 0.82rem; color: #718096; margin: 2px 0 0 0; }
+
+    .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .search-wrapper { position: relative; min-width: 260px; }
+    .search-wrapper .search-icon {
+        position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+        color: #a0aec0; font-size: 0.95rem; pointer-events: none;
+    }
+    .search-wrapper input.search-control {
+        padding-left: 50px !important; padding-right: 15px !important;
+        border-radius: 30px !important; border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important; height: 42px !important;
+        transition: all 0.3s ease !important; box-shadow: none !important;
+        background-color: #f7fafc !important;
+    }
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important; background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
+
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important; border: none !important; border-radius: 30px !important;
+        padding: 0 1.5rem !important; font-weight: 700 !important; font-size: 0.9rem !important;
+        height: 42px !important; display: inline-flex !important; align-items: center !important;
+        gap: 8px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important; cursor: pointer; text-decoration: none !important;
+    }
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important; color: #ffffff !important;
+    }
+    .btn-gradient-create:active { transform: translateY(0); }
+
+    .table-container { padding: 1rem 1.5rem !important; }
+
+    #scheduleTable { border-collapse: separate !important; border-spacing: 0 !important; width: 100% !important; border: none !important; }
+
+    #scheduleTable th {
+        background-color: #f7fafc !important; color: #4a5568 !important; font-weight: 700 !important;
+        text-transform: uppercase !important; font-size: 0.75rem !important; letter-spacing: 0.8px !important;
+        padding: 16px 20px !important; border-bottom: 2px solid #edf2f7 !important; border-top: none !important;
+    }
+
+    #scheduleTable td {
+        padding: 14px 20px !important; vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important; color: #2d3748 !important; font-size: 0.9rem !important;
+    }
+
+    #scheduleTable tbody tr { transition: background-color 0.2s ease; }
+    #scheduleTable tbody tr:hover { background-color: #f7fafc !important; }
+
+    .action-btn-group { display: flex; justify-content: center; gap: 8px; }
+    .action-btn {
+        width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 50%; text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.9rem; border: 1px solid transparent;
+    }
+    .action-edit { background-color: #ebf8ff; color: #2b6cb0; border-color: #bee3f8; }
+    .action-edit:hover { background-color: #3182ce; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2); }
+    .action-delete { background-color: #fff5f5; color: #c53030; border-color: #fed7d7; }
+    .action-delete:hover { background-color: #e53e3e; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2); }
+
+    .badge-status {
+        padding: 5px 12px; border-radius: 30px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center;
+    }
+    .status-active { background-color: #c6f6d5; color: #22543d; }
+    .status-inactive { background-color: #fed7d7; color: #742a2a; }
+
+    .pagination .page-link { box-shadow: none !important; }
+    .pagination .page-item:not(.disabled) .page-link:hover {
+        background-color: #3182ce !important; color: #ffffff !important; border-color: #3182ce !important;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #a0aec0 !important; background-color: #f7fafc !important;
+        border-color: #edf2f7 !important; pointer-events: none;
+    }
+
+    /* Medicine Style Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Schedule List</h3></div>
-                    <div>
-                        <input type="text" class="form-control" placeholder="Search Doctor Name" id="searchBox" />
+            <div class="card schedule-card mb-4">
+
+                <div class="card-header schedule-card-header">
+                    <div class="header-container">
+                        <div class="header-title-block">
+                            <div class="header-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div>
+                                <h3 class="schedule-card-title">Existing Schedule List</h3>
+                                <p class="schedule-card-subtitle">Manage doctor schedules, availability, and time slots.</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="search-wrapper">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="form-control search-control" placeholder="Search Doctor / Department..." id="scheduleSearchBox" />
+                                </div>
+                                <button type="button" id="btnScheduleSearch" class="btn btn-primary"
+                                    style="border-radius: 30px; height: 42px; padding: 0 1.5rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addScheduleModal">
+                                <i class="fas fa-plus me-2"></i> Create
+                            </button>
+                        </div>
                     </div>
-                    <div> <a class="btn btn-info" asp-controller="Schedule" asp-action="Save">Create</a></div>
                 </div>
 
-
-
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="scheduleTable" class="table table-bordered table-hover">
+                <div class="card-body table-container">
+                    <table id="scheduleTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Id</th>
+                                <th style="width:60px">Sl No</th>
                                 <th>Date</th>
-                                <th>Doctro Name</th>
-                                <th>Department Name</th>
+                                <th>Doctor Name</th>
+                                <th>Department</th>
                                 <th>Day</th>
-                                <th>StartTime</th>
-                                <th>EndTime</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
                                 <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th style="width:110px; text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBoady">
-                            @{
-                                int count =1;
-                            }
-                            @foreach (Schedule schedule in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@(schedule.Date?.ToString("dd-MM-yyyy"))</td>
-                                    <td>@schedule.Doctor.FirstName @schedule.Doctor?.LastName</td>
-                                    <td>@schedule.Department?.DepartmentName</td>
-                                    <td>@schedule.DayOfWeek</td>
-                                    <td>
-                                        @(schedule.StartTime.HasValue
-                                            ? DateTime.Today.Add(schedule.StartTime.Value).ToString("hh:mm tt")
-                                            : "N/A")
-                                    </td>
-                                    <td>
-                                        @(schedule.EndTime.HasValue
-                                            ? DateTime.Today.Add(schedule.EndTime.Value).ToString("hh:mm tt")
-                                            : "N/A")
-                                    </td>
-                                    <td>@(schedule.IsAvailable==true ? "Active" : "Inactive")</td>
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" asp-route-id="@schedule.ScheduleId" asp-controller="Schedule" asp-action="Edit">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@schedule.ScheduleId" asp-controller="Schedule" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                count++;
-                            }
-
-                        </tbody>
+                        <tbody id="scheduleTableBody"></tbody>
                     </table>
                 </div>
-            
-                
+
+                <div class="card-footer" style="background-color:#ffffff; border-top:1px solid #f1f2f6; padding:1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size:0.85rem;">
+                                Showing page <span id="sCPage" class="fw-bold text-dark">0</span> of
+                                <span id="sTPage" class="fw-bold text-dark">0</span>
+                                (<span id="sTEntries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap:5px;">
+                                    <li class="page-item disabled" id="sPrevLi">
+                                        <a id="sBtnPrev" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                            ⬅️ Previous
+                                        </a>
+                                    </li>
+                                    <li class="page-item disabled" id="sNextLi">
+                                        <a id="sBtnNext" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                            Next ➡️
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <!-- /.card -->
+        </div>
+    </div>
+</div>
+
+<!-- Add Schedule Modal -->
+<div class="modal fade" id="addScheduleModal" tabindex="-1" aria-labelledby="addScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addScheduleModalLabel">
+                    <i class="fas fa-calendar-plus me-2"></i> Schedule Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Schedule" asp-action="Save" method="post" id="addScheduleForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="Date" id="modalScheduleDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Day Of Week</label>
+                            <select name="DayOfWeek" id="modalDayOfWeek" class="form-select" required>
+                                <option value="">-- Select Day --</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <select name="DepartmentId" id="modalDepartmentId" class="form-select" required>
+                                <option value="">-- Select Department --</option>
+                                @foreach (var dept in departments)
+                                {
+                                    <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Doctor</label>
+                            <select name="DoctorId" id="modalDoctorId" class="form-select" required>
+                                <option value="">-- Select Doctor --</option>
+                                @foreach (var doc in doctors)
+                                {
+                                    <option value="@doc.Id">@doc.FirstName @doc.LastName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" name="StartTime" class="form-control" value="@DateTime.Now.ToString("HH:mm")" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">End Time</label>
+                            <input type="time" name="EndTime" class="form-control" value="@DateTime.Now.ToString("HH:mm")" required />
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-1"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Schedule Modal -->
+<div class="modal fade" id="editScheduleModal" tabindex="-1" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="editScheduleModalLabel">
+                    <i class="fas fa-edit me-2"></i> Edit Schedule Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="Schedule" asp-action="Update" method="post" id="editScheduleForm">
+                <input type="hidden" name="ScheduleId" id="editScheduleId" />
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="Date" id="editScheduleDate" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Day Of Week</label>
+                            <select name="DayOfWeek" id="editDayOfWeek" class="form-select" required>
+                                <option value="">-- Select Day --</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <select name="DepartmentId" id="editDepartmentId" class="form-select" required>
+                                <option value="">-- Select Department --</option>
+                                @foreach (var dept in departments)
+                                {
+                                    <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Doctor</label>
+                            <select name="DoctorId" id="editDoctorId" class="form-select" required>
+                                <option value="">-- Select Doctor --</option>
+                                @foreach (var doc in doctors)
+                                {
+                                    <option value="@doc.Id">@doc.FirstName @doc.LastName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" name="StartTime" id="editStartTime" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">End Time</label>
+                            <input type="time" name="EndTime" id="editEndTime" class="form-control" required />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label d-block">Status</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="IsAvailable" value="true" id="editSchedActive" />
+                                <label class="form-check-label" for="editSchedActive">Active</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="IsAvailable" value="false" id="editSchedInactive" />
+                                <label class="form-check-label" for="editSchedInactive">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-save" style="background-color: #3182ce !important; box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3) !important;">
+                        <i class="fas fa-save me-1"></i> Update
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
+    var sCurrentPage = 1;
+    var sTotalPages = 1;
+
+    var daysMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    function updateDayFromDate(dateElemId, dayElemId) {
+        var dateVal = $('#' + dateElemId).val();
+        if (dateVal) {
+            var dt = new Date(dateVal);
+            if (!isNaN(dt.getTime())) {
+                var dayName = daysMap[dt.getDay()];
+                $('#' + dayElemId).val(dayName);
+            }
+        }
+    }
+
+    function createScheduleRow(index, item) {
+        var statusBadge = item.isAvailable === true
+            ? `<span class="badge-status status-active"><i class="fas fa-check-circle me-1"></i>Active</span>`
+            : `<span class="badge-status status-inactive"><i class="fas fa-times-circle me-1"></i>Inactive</span>`;
+
+        return `<tr>
+            <td>${index}</td>
+            <td>${item.date || 'N/A'}</td>
+            <td style="font-weight:700; color:#2d3748;">${item.doctorName || 'N/A'}</td>
+            <td>${item.departmentName || 'N/A'}</td>
+            <td><span style="background:#ebf8ff; color:#2b6cb0; padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:700;">${item.dayOfWeek || 'N/A'}</span></td>
+            <td style="font-family:monospace; color:#4a5568;">${item.startTime || 'N/A'}</td>
+            <td style="font-family:monospace; color:#4a5568;">${item.endTime || 'N/A'}</td>
+            <td>${statusBadge}</td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-edit edit-schedule-btn" href="javascript:void(0);" data-id="${item.scheduleId}" title="Edit Schedule">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="action-btn action-delete" href="/Schedule/Delete/${item.scheduleId}"
+                       onclick="return confirm('Are you sure you want to delete this schedule?')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    function loadSchedules(page) {
+        sCurrentPage = page || 1;
+        var search = $('#scheduleSearchBox').val() || '';
+
+        $('#scheduleTableBody').html(`
+            <tr><td colspan="9" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                <p class="mt-2 text-muted mb-0">Loading schedules...</p>
+            </td></tr>`);
+
+        $.ajax({
+            url: '@Url.Action("GetSchedules", "Schedule")',
+            type: 'GET',
+            data: { search: search, page: sCurrentPage, pageSize: 10 },
+            dataType: 'json',
+            cache: false,
+            success: function (res) {
+                if (res.issuccess === true) {
+                    $('#scheduleTableBody').empty();
+                    sTotalPages = res.totalPages || 1;
+                    $('#sCPage').text(sCurrentPage);
+                    $('#sTPage').text(sTotalPages);
+                    $('#sTEntries').text(res.totalItem || 0);
+                    $('#sPrevLi').toggleClass('disabled', sCurrentPage <= 1);
+                    $('#sNextLi').toggleClass('disabled', sCurrentPage >= sTotalPages);
+
+                    if (res.data && res.data.length > 0) {
+                        $.each(res.data, function (i, v) {
+                            var idx = ((sCurrentPage - 1) * 10) + (i + 1);
+                            $('#scheduleTableBody').append(createScheduleRow(idx, v));
+                        });
+                    } else {
+                        $('#scheduleTableBody').html(`
+                            <tr><td colspan="9" class="text-center py-4 text-muted">
+                                <i class="fas fa-info-circle fs-4"></i>
+                                <p class="mt-2 mb-0">No schedules found.</p>
+                            </td></tr>`);
+                    }
+                }
+            },
+            error: function () {
+                $('#scheduleTableBody').html(`<tr><td colspan="9" class="text-center py-4 text-danger">Failed to load data.</td></tr>`);
+            }
+        });
+    }
+
+    function loadDoctorsByDept(deptId, docSelectId, selectedDocId) {
+        var $docSelect = $('#' + docSelectId);
+        $docSelect.empty().append('<option value="">-- Select Doctor --</option>');
+
+        if (deptId) {
+            return $.ajax({
+                url: '@Url.Action("GetDoctorsByDepartment", "Schedule")',
+                type: 'GET',
+                data: { departmentId: deptId },
+                success: function (doctors) {
+                    if (doctors && doctors.length > 0) {
+                        $.each(doctors, function (i, d) {
+                            $docSelect.append('<option value="' + d.id + '">' + d.name + '</option>');
+                        });
+                    }
+                    if (selectedDocId) {
+                        $docSelect.val(selectedDocId);
+                    }
+                }
+            });
+        }
+    }
 
     $(document).ready(function () {
-          var table = $('#scheduleTable').DataTable({
-              "pageLength": 10,
-              "lengthMenu": [5, 10, 20, 50],
-              "ordering": true,
-              "paging": true,
-              "info": true,
-              "language": {
-                  "search": "",
-                  "searchPlaceholder": "Search",
-                  "lengthMenu": "_MENU_ rows",
-                  "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                  "paginate": {
-                      "previous": "⬅️ Previous",
-                      "next": "Next ➡️"
-                  }
-              },
-              "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
-          });
+        loadSchedules(1);
 
+        $('#sBtnPrev').on('click', function (e) { e.preventDefault(); if (sCurrentPage > 1) loadSchedules(sCurrentPage - 1); });
+        $('#sBtnNext').on('click', function (e) { e.preventDefault(); if (sCurrentPage < sTotalPages) loadSchedules(sCurrentPage + 1); });
+        $('#btnScheduleSearch').on('click', function () { loadSchedules(1); });
+        $('#scheduleSearchBox').on('keypress', function (e) { if (e.which === 13) { e.preventDefault(); loadSchedules(1); } });
 
-          $('#searchBox').on('keyup', function () {
-              table.search(this.value).draw();
-          });
+        // Add Modal Events
+        updateDayFromDate('modalScheduleDate', 'modalDayOfWeek');
+        $('#modalScheduleDate').on('change keyup', function () {
+            updateDayFromDate('modalScheduleDate', 'modalDayOfWeek');
+        });
+        $('#modalDepartmentId').on('change', function () {
+            loadDoctorsByDept($(this).val(), 'modalDoctorId');
+        });
+
+        // Edit Modal Events
+        $('#editScheduleDate').on('change keyup', function () {
+            updateDayFromDate('editScheduleDate', 'editDayOfWeek');
+        });
+        $('#editDepartmentId').on('change', function () {
+            loadDoctorsByDept($(this).val(), 'editDoctorId');
+        });
+
+        // Open Edit Modal via AJAX
+        $(document).on('click', '.edit-schedule-btn', function () {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '@Url.Action("Edit", "Schedule")',
+                type: 'GET',
+                data: { id: id },
+                success: function (res) {
+                    if (res.success) {
+                        var d = res.data;
+                        $('#editScheduleId').val(d.scheduleId);
+                        $('#editScheduleDate').val(d.date);
+                        $('#editDayOfWeek').val(d.dayOfWeek);
+                        $('#editDepartmentId').val(d.departmentId);
+                        $('#editStartTime').val(d.startTime);
+                        $('#editEndTime').val(d.endTime);
+
+                        if (d.isAvailable) {
+                            $('#editSchedActive').prop('checked', true);
+                        } else {
+                            $('#editSchedInactive').prop('checked', true);
+                        }
+
+                        // Load department doctors and select current doctor
+                        loadDoctorsByDept(d.departmentId, 'editDoctorId', d.doctorId);
+
+                        var editModal = new bootstrap.Modal(document.getElementById('editScheduleModal'));
+                        editModal.show();
+                    } else {
+                        alert(res.message || 'Error loading schedule');
+                    }
+                }
+            });
+        });
+
+        // Submit Add Form via AJAX
+        $('#addScheduleForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        $('#addScheduleModal').modal('hide');
+                        $('#addScheduleForm')[0].reset();
+                        loadSchedules(sCurrentPage);
+                    } else {
+                        alert(res.message || 'Save failed');
+                    }
+                }
+            });
+        });
+
+        // Submit Edit Form via AJAX
+        $('#editScheduleForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        $('#editScheduleModal').modal('hide');
+                        loadSchedules(sCurrentPage);
+                    } else {
+                        alert(res.message || 'Update failed');
+                    }
+                }
+            });
+        });
     });
-    function convertToAMPM(time) {
-        if (!time) return "N/A";
-
-        let [hours, minutes] = time.split(":");
-        hours = parseInt(hours);
-        let ampm = hours >= 12 ? "PM" : "AM";
-        hours = hours % 12 || 12;
-        return hours + ":" + minutes + " " + ampm;
-    }
 </script>

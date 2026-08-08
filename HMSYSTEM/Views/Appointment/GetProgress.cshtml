@@ -1,125 +1,187 @@
-@using HMSYSTEM.Enum 
-@* @model IEnumerable<Appointment> *@
-@using HMSYSTEM.ViewModels
-@model PaginationViewModel<Appointment>
 @{
-    ViewData["Title"] = "Appointment Progress";
+    ViewData["Title"] = "Appointment - In Progress";
+    string activeTab = "progress";
 }
 
+<style>
+    .appt-card { border:none !important; border-radius:16px !important; box-shadow:0 10px 30px rgba(0,0,0,0.04) !important; background:#ffffff; overflow:hidden; }
+    .appt-card-header { background:#ffffff !important; border-bottom:1px solid #f1f2f6 !important; padding:1.25rem 2rem !important; }
+    .header-icon { width:44px; height:44px; background:rgba(49,130,206,0.1); color:#3182ce; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.25rem; }
+    .appt-card-title { font-size:1.3rem; font-weight:800; color:#2d3748; margin:0; }
+    .appt-card-subtitle { font-size:0.82rem; color:#718096; margin:2px 0 0 0; }
 
-<div class="container-fluid mt-3">
+    .tab-nav-pills .tab-btn { background:#f7fafc; border:1.5px solid #e2e8f0; color:#4a5568; border-radius:30px !important; padding:6px 18px; font-size:0.85rem; font-weight:700; text-decoration:none !important; transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px; }
+    .tab-nav-pills .tab-btn:hover,.tab-nav-pills .tab-btn.active { background:linear-gradient(135deg,#3182ce 0%,#2b6cb0 100%) !important; color:#ffffff !important; border-color:#3182ce !important; box-shadow:0 4px 12px rgba(49,130,206,0.25); }
+
+    .search-wrapper { position:relative; min-width:240px; }
+    .search-wrapper .search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#a0aec0; font-size:0.9rem; pointer-events:none; }
+    .search-wrapper input.search-control { padding-left:40px !important; border-radius:30px !important; border:1.5px solid #e2e8f0 !important; font-size:0.9rem !important; height:38px !important; box-shadow:none !important; background-color:#f7fafc !important; }
+    .search-wrapper input.search-control:focus { border-color:#3182ce !important; background-color:#ffffff !important; box-shadow:0 0 0 3px rgba(66,153,225,0.15) !important; }
+
+    .table-container { padding:1rem 1.5rem !important; }
+    #progressTable { border-collapse:separate !important; border-spacing:0 !important; width:100% !important; border:none !important; }
+    #progressTable th { background-color:#f7fafc !important; color:#4a5568 !important; font-weight:700 !important; text-transform:uppercase !important; font-size:0.75rem !important; letter-spacing:0.8px !important; padding:14px 16px !important; border-bottom:2px solid #edf2f7 !important; border-top:none !important; }
+    #progressTable td { padding:13px 16px !important; vertical-align:middle !important; border-bottom:1px solid #edf2f7 !important; color:#2d3748 !important; font-size:0.88rem !important; }
+    #progressTable tbody tr:hover { background-color:#f7fafc !important; }
+
+    .action-btn-rx { background:linear-gradient(135deg,#38a169 0%,#276749 100%); color:#ffffff; border:none; border-radius:20px; padding:5px 14px; font-size:0.8rem; font-weight:700; text-decoration:none !important; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s ease; }
+    .action-btn-rx:hover { transform:translateY(-1px); box-shadow:0 4px 10px rgba(56,161,105,0.3); color:#ffffff; }
+
+    .pagination .page-link { box-shadow:none !important; }
+    .pagination .page-item:not(.disabled) .page-link:hover { background-color:#3182ce !important; color:#ffffff !important; border-color:#3182ce !important; }
+    .pagination .page-item.disabled .page-link { color:#a0aec0 !important; background-color:#f7fafc !important; border-color:#edf2f7 !important; pointer-events:none; }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div>
-                        <a class="btn btn-info" asp-controller="Appointment" asp-action="Index">Open List</a>
-                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetProgress">Progress</a>
-                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetComplete">Complete</a>
-                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetDeleteList">Delete</a>
-                    </div>
+            <div class="card appt-card mb-4">
 
-                    <div> <h3 class="card-title bg-dark-subtle border border-danger-subtle">Appointment Progress List</h3></div>
-                    @* <div> <a class="btn btn-info" asp-controller="Appointment" asp-action="Save">Create</a></div> *@
+                <div class="card-header appt-card-header">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="header-icon"><i class="fas fa-spinner"></i></div>
+                            <div>
+                                <h3 class="appt-card-title">Appointment — In Progress</h3>
+                                <p class="appt-card-subtitle">Appointments currently being attended by doctors.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <div class="search-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="form-control search-control" placeholder="Search..." id="progressSearchBox" />
+                            </div>
+                            <button type="button" id="btnProgressSearch" class="btn btn-primary"
+                                style="border-radius:30px; height:38px; padding:0 1.2rem; font-weight:700; background-color:#3182ce; border-color:#3182ce; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Tab Navigation -->
+                <div style="background:#f7fafc; border-bottom:1px solid #edf2f7; padding:0.8rem 2rem; display:flex; gap:10px; flex-wrap:wrap;">
+                    <div class="tab-nav-pills d-flex gap-2 flex-wrap">
+                        <a href="@Url.Action("Index","Appointment")" class="tab-btn"><i class="fas fa-list"></i> Open</a>
+                        <a href="@Url.Action("GetProgress","Appointment")" class="tab-btn active"><i class="fas fa-spinner"></i> Progress</a>
+                        <a href="@Url.Action("GetComplete","Appointment")" class="tab-btn"><i class="fas fa-check-double"></i> Complete</a>
+                        <a href="@Url.Action("GetDeleteList","Appointment")" class="tab-btn"><i class="fas fa-trash-alt"></i> Deleted</a>
+                    </div>
+                </div>
 
-
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table class="table table-bordered table-hover">
+                <div class="card-body table-container">
+                    <table id="progressTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Sl</th>
+                                <th style="width:55px">Sl No</th>
                                 <th>Date</th>
                                 <th>Time</th>
-                                <th>Siral Number</th>
+                                <th>Serial</th>
                                 <th>Patient Name</th>
                                 <th>Phone</th>
                                 <th>Department</th>
                                 <th>Doctor</th>
                                 <th>Status</th>
-                                <th>Prescription</th>
+                                <th style="width:130px; text-align:center">Prescription</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @{
-                                int count = ((Model.CurrentPage-1)*Model.PageSize)+1;
-                            }
-                            @foreach (Appointment appointment in Model.Items)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@(appointment.AppoinmentDate.ToString("dd-MM-yyyy"))</td>
-                                    <td>@(appointment.AppoinmentDate.ToString("HH:mm:ss"))</td>
-                                    <td>@appointment.SerialNumber</td>
-                                    <td>@appointment.Patient.FirstName @appointment.Patient.LastName</td>
-                                    <td>@appointment.PatientPhoneNumber</td>
-                                    <td>@appointment.Department.DepartmentName</td>
-                                    <td>@appointment.Doctor.FirstName  @appointment.Doctor.LastName</td>
-
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="statusDropdown_@appointment.AppointmentId" data-bs-toggle="dropdown" data-bs-boundary="viewport"
-                                                    aria-expanded="false">
-                                                @(appointment.Status == AppointmentStatus.Active ? "Active" :
-                                                    appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
-                                                    appointment.Status == AppointmentStatus.Completed ? "Completed" :
-                                                    appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="statusDropdown_@appointment.AppointmentId">
-                                                <li>
-                                                    <a class="dropdown-item" 
-                                                    asp-controller="Appointment" 
-                                                    asp-action="ChangeStatus" 
-                                                    asp-route-id="@appointment.AppointmentId" 
-                                                    asp-route-status="3"
-                                                    asp-route-returnAction="GetProgress">
-                                                        Completed
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a class="btn btn-success"
-                                           asp-controller="Prescription"
-                                           asp-action="Save"
-                                           asp-route-appointmentId="@appointment.AppointmentId">
-                                            Prescription
-                                        </a>
-                                    </td>
-                                   
-                                </tr>
-                                count++;
-                            }
-
-                        </tbody>
+                        <tbody id="progressTableBody"></tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
-                        </li>
 
-                        <!-- Page Numbers -->
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
-                            </li>
-                        }
-
-                        <!-- Next Button -->
-                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
-                        </li>
-                    </ul>
+                <div class="card-footer" style="background-color:#ffffff; border-top:1px solid #f1f2f6; padding:1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size:0.85rem;">
+                                Showing page <span id="pgCPage" class="fw-bold text-dark">0</span> of
+                                <span id="pgTPage" class="fw-bold text-dark">0</span>
+                                (<span id="pgTEntries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap:5px;">
+                                    <li class="page-item disabled" id="pgPrevLi">
+                                        <a id="pgBtnPrev" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">⬅️ Previous</a>
+                                    </li>
+                                    <li class="page-item disabled" id="pgNextLi">
+                                        <a id="pgBtnNext" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">Next ➡️</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-            <!-- /.card -->
         </div>
     </div>
 </div>
+
+<script>
+    var pgCurrentPage = 1, pgTotalPages = 1;
+
+    function createProgressRow(index, item) {
+        return `<tr>
+            <td>${index}</td>
+            <td>${item.date}</td>
+            <td style="font-family:monospace;">${item.time}</td>
+            <td><strong>${item.serialNumber}</strong></td>
+            <td style="font-weight:700; color:#2d3748;">${item.patientName}</td>
+            <td>${item.phone}</td>
+            <td>${item.department}</td>
+            <td>${item.doctor}</td>
+            <td>
+                <span style="background:#bee3f8; color:#1a365d; padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:700;">
+                    <i class="fas fa-spinner fa-spin me-1"></i> In Progress
+                </span>
+            </td>
+            <td style="text-align:center;">
+                <a class="action-btn-rx" href="/Prescription/Save?appointmentId=${item.appointmentId}">
+                    <i class="fas fa-prescription me-1"></i> Prescription
+                </a>
+            </td>
+        </tr>`;
+    }
+
+    function loadProgress(page) {
+        pgCurrentPage = page || 1;
+        var search = $('#progressSearchBox').val() || '';
+
+        $('#progressTableBody').html(`<tr><td colspan="10" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+            <p class="mt-2 text-muted mb-0">Loading...</p></td></tr>`);
+
+        $.ajax({
+            url: '@Url.Action("GetProgressData", "Appointment")',
+            type: 'GET',
+            data: { search: search, page: pgCurrentPage, pageSize: 10 },
+            dataType: 'json', cache: false,
+            success: function (res) {
+                if (res.issuccess) {
+                    $('#progressTableBody').empty();
+                    pgTotalPages = res.totalPages || 1;
+                    $('#pgCPage').text(pgCurrentPage); $('#pgTPage').text(pgTotalPages); $('#pgTEntries').text(res.totalItem || 0);
+                    $('#pgPrevLi').toggleClass('disabled', pgCurrentPage <= 1);
+                    $('#pgNextLi').toggleClass('disabled', pgCurrentPage >= pgTotalPages);
+                    if (res.data && res.data.length > 0) {
+                        $.each(res.data, function (i, v) { $('#progressTableBody').append(createProgressRow(((pgCurrentPage - 1) * 10) + i + 1, v)); });
+                    } else {
+                        $('#progressTableBody').html(`<tr><td colspan="10" class="text-center py-4 text-muted"><i class="fas fa-info-circle fs-4"></i><p class="mt-2 mb-0">No in-progress appointments found.</p></td></tr>`);
+                    }
+                }
+            },
+            error: function () { $('#progressTableBody').html(`<tr><td colspan="10" class="text-center py-4 text-danger">Failed to load data.</td></tr>`); }
+        });
+    }
+
+    $(document).ready(function () {
+        loadProgress(1);
+        $('#pgBtnPrev').on('click', function (e) { e.preventDefault(); if (pgCurrentPage > 1) loadProgress(pgCurrentPage - 1); });
+        $('#pgBtnNext').on('click', function (e) { e.preventDefault(); if (pgCurrentPage < pgTotalPages) loadProgress(pgCurrentPage + 1); });
+        $('#btnProgressSearch').on('click', function () { loadProgress(1); });
+        $('#progressSearchBox').on('keypress', function (e) { if (e.which === 13) { e.preventDefault(); loadProgress(1); } });
+    });
+</script>

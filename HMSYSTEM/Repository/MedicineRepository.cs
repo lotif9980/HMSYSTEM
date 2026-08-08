@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 
 namespace HMSYSTEM.Repository
@@ -28,6 +28,25 @@ namespace HMSYSTEM.Repository
             var data=_db.Medicines.Find(Id);
             _db.Remove(data);
             _db.SaveChanges();
+        }
+
+        public void Update(Medicine medicine)
+        {
+            var existing = _db.Medicines.Find(medicine.Id);
+            if (existing != null)
+            {
+                existing.Name = medicine.Name;
+                existing.GenericName = medicine.GenericName;
+                existing.Strength = medicine.Strength;
+                existing.Form = medicine.Form;
+                existing.IsActive = medicine.IsActive;
+                _db.SaveChanges();
+            }
+        }
+
+        public Medicine Find(int Id)
+        {
+            return _db.Medicines.Find(Id);
         }
     }
 }

@@ -1,107 +1,246 @@
-﻿@model IEnumerable<Prescription>
-@using HMSYSTEM.ViewModels
 @{
-    ViewData["Title"] = "Prescription";
+    ViewData["Title"] = "Prescription Management";
 }
 
+<style>
+    .rx-card {
+        border: none !important; border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff; overflow: hidden;
+    }
+    .rx-card-header {
+        background: #ffffff !important; border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
+    .header-icon {
+        width: 44px; height: 44px;
+        background: rgba(49, 130, 206, 0.1); color: #3182ce;
+        border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+    }
+    .rx-card-title { font-size: 1.3rem; font-weight: 800; color: #2d3748; margin: 0; }
+    .rx-card-subtitle { font-size: 0.82rem; color: #718096; margin: 2px 0 0 0; }
 
+    .search-wrapper { position: relative; min-width: 260px; }
+    .search-wrapper .search-icon {
+        position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+        color: #a0aec0; font-size: 0.95rem; pointer-events: none;
+    }
+    .search-wrapper input.search-control {
+        padding-left: 50px !important; padding-right: 15px !important;
+        border-radius: 30px !important; border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important; height: 42px !important;
+        transition: all 0.3s ease !important; box-shadow: none !important; background-color: #f7fafc !important;
+    }
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important; background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
 
-<div class="container-fluid mt-3">
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important; border: none !important; border-radius: 30px !important;
+        padding: 0 1.5rem !important; font-weight: 700 !important; font-size: 0.9rem !important;
+        height: 42px !important; display: inline-flex !important; align-items: center !important;
+        gap: 8px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important; cursor: pointer; text-decoration: none !important;
+    }
+    .btn-gradient-create:hover { transform: translateY(-1.5px); box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important; color: #ffffff !important; }
+    .btn-gradient-create:active { transform: translateY(0); }
+
+    .table-container { padding: 1rem 1.5rem !important; }
+    #rxTable { border-collapse: separate !important; border-spacing: 0 !important; width: 100% !important; border: none !important; }
+    #rxTable th {
+        background-color: #f7fafc !important; color: #4a5568 !important; font-weight: 700 !important;
+        text-transform: uppercase !important; font-size: 0.75rem !important; letter-spacing: 0.8px !important;
+        padding: 16px 20px !important; border-bottom: 2px solid #edf2f7 !important; border-top: none !important;
+    }
+    #rxTable td {
+        padding: 15px 20px !important; vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important; color: #2d3748 !important; font-size: 0.9rem !important;
+    }
+    #rxTable tbody tr:hover { background-color: #f7fafc !important; }
+
+    .action-btn-group { display: flex; justify-content: center; gap: 8px; }
+    .action-btn {
+        width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 50%; text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.9rem; border: 1px solid transparent;
+    }
+    .action-edit { background-color: #ebf8ff; color: #2b6cb0; border-color: #bee3f8; }
+    .action-edit:hover { background-color: #3182ce; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2); }
+    .action-delete { background-color: #fff5f5; color: #c53030; border-color: #fed7d7; }
+    .action-delete:hover { background-color: #e53e3e; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2); }
+    .action-view { background-color: #f0fff4; color: #276749; border-color: #c6f6d5; }
+    .action-view:hover { background-color: #38a169; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(56, 161, 105, 0.2); }
+
+    .pagination .page-link { box-shadow: none !important; }
+    .pagination .page-item:not(.disabled) .page-link:hover { background-color: #3182ce !important; color: #ffffff !important; border-color: #3182ce !important; }
+    .pagination .page-item.disabled .page-link { color: #a0aec0 !important; background-color: #f7fafc !important; border-color: #edf2f7 !important; pointer-events: none; }
+
+    #toast-container > .toast-success { background-color: #2f855a !important; color: #ffffff !important; opacity: 1 !important; }
+    #toast-container > .toast-error { background-color: #c53030 !important; color: #ffffff !important; opacity: 1 !important; }
+    #toast-container > .toast { background-image: none !important; padding: 15px 20px 15px 50px !important; border-radius: 10px !important; border: none !important; }
+    #toast-container .toast-message, #toast-container .toast-title { color: #ffffff !important; font-weight: 600 !important; }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Prescription List</h3></div>
-                    <div>
-                        <input class="form-control" id="searchBox" placeholder="Search Patinet Name"/>
+            <div class="card rx-card mb-4">
+
+                <div class="card-header rx-card-header">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="header-icon"><i class="fas fa-prescription"></i></div>
+                            <div>
+                                <h3 class="rx-card-title">Existing Prescription List</h3>
+                                <p class="rx-card-subtitle">Manage and review patient prescriptions and treatment records.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <div class="search-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="form-control search-control" placeholder="Search Patient / Doctor..." id="rxSearchBox" />
+                            </div>
+                            <button type="button" id="btnRxSearch" class="btn btn-primary"
+                                style="border-radius: 30px; height: 42px; padding: 0 1.5rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
                     </div>
-@*                     <div> <a class="btn btn-info" asp-controller="Prescription" asp-action="Save">Create</a></div> *@
                 </div>
 
-
-
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="prescriptionTable" class="table table-bordered table-hover">
+                <div class="card-body table-container">
+                    <table id="rxTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Id</th>
+                                <th style="width:60px">Sl No</th>
                                 <th>Date</th>
                                 <th>Patient Name</th>
                                 <th>Doctor Name</th>
                                 <th>Department</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th style="width:130px; text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="tableDataShow">
-                            @{
-                                int count =1;
-                            }
-                            @foreach (Prescription item in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@(item.Date?.ToString("dd-MM-yyyy"))</td>
-                                    <td>@item.Patient.FirstName @item.Patient.LastName</td>
-                                    <td>@item.Doctor.FirstName @item.Doctor.LastName</td>
-                                    <td>@item.Department.DepartmentName</td>
-
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" asp-route-id="@item.Id" asp-controller="Doctor" asp-action="Edit">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Prescription" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-
-                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="Prescription" asp-action="Details">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                count++;
-                            }
-
-                        </tbody>
+                        <tbody id="rxTableBody"></tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                
+
+                <div class="card-footer" style="background-color:#ffffff; border-top:1px solid #f1f2f6; padding:1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size:0.85rem;">
+                                Showing page <span id="rxCPage" class="fw-bold text-dark">0</span> of
+                                <span id="rxTPage" class="fw-bold text-dark">0</span>
+                                (<span id="rxTEntries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap:5px;">
+                                    <li class="page-item disabled" id="rxPrevLi">
+                                        <a id="rxBtnPrev" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                            ⬅️ Previous
+                                        </a>
+                                    </li>
+                                    <li class="page-item disabled" id="rxNextLi">
+                                        <a id="rxBtnNext" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                            Next ➡️
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <!-- /.card -->
         </div>
     </div>
 </div>
 
 <script>
+    var rxCurrentPage = 1;
+    var rxTotalPages = 1;
+
+    function createRxRow(index, item) {
+        return `<tr>
+            <td>${index}</td>
+            <td>${item.date || 'N/A'}</td>
+            <td style="font-weight:700; color:#2d3748;">${item.patientName || 'N/A'}</td>
+            <td>${item.doctorName || 'N/A'}</td>
+            <td>${item.departmentName || 'N/A'}</td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-edit" href="/Prescription/Save?id=${item.id}" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="action-btn action-delete" href="/Prescription/Delete/${item.id}"
+                       onclick="return confirm('Are you sure you want to delete this prescription?')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                    <a class="action-btn action-view" href="/Prescription/Details/${item.id}" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    function loadPrescriptions(page) {
+        rxCurrentPage = page || 1;
+        var search = $('#rxSearchBox').val() || '';
+
+        $('#rxTableBody').html(`
+            <tr><td colspan="6" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                <p class="mt-2 text-muted mb-0">Loading prescriptions...</p>
+            </td></tr>`);
+
+        $.ajax({
+            url: '@Url.Action("GetPrescriptions", "Prescription")',
+            type: 'GET',
+            data: { search: search, page: rxCurrentPage, pageSize: 10 },
+            dataType: 'json',
+            cache: false,
+            success: function (res) {
+                if (res.issuccess === true) {
+                    $('#rxTableBody').empty();
+                    rxTotalPages = res.totalPages || 1;
+                    $('#rxCPage').text(rxCurrentPage);
+                    $('#rxTPage').text(rxTotalPages);
+                    $('#rxTEntries').text(res.totalItem || 0);
+                    $('#rxPrevLi').toggleClass('disabled', rxCurrentPage <= 1);
+                    $('#rxNextLi').toggleClass('disabled', rxCurrentPage >= rxTotalPages);
+
+                    if (res.data && res.data.length > 0) {
+                        $.each(res.data, function (i, v) {
+                            var idx = ((rxCurrentPage - 1) * 10) + (i + 1);
+                            $('#rxTableBody').append(createRxRow(idx, v));
+                        });
+                    } else {
+                        $('#rxTableBody').html(`
+                            <tr><td colspan="6" class="text-center py-4 text-muted">
+                                <i class="fas fa-info-circle fs-4"></i>
+                                <p class="mt-2 mb-0">No prescriptions found.</p>
+                            </td></tr>`);
+                    }
+                }
+            },
+            error: function () {
+                $('#rxTableBody').html(`<tr><td colspan="6" class="text-center py-4 text-danger">Failed to load data.</td></tr>`);
+            }
+        });
+    }
 
     $(document).ready(function () {
-          var table = $('#prescriptionTable').DataTable({
-              "pageLength": 10,
-              "lengthMenu": [5, 10, 20, 50],
-              "ordering": true,
-              "paging": true,
-              "info": true,
-              "language": {
-                  "search": "",
-                  "searchPlaceholder": "Search",
-                  "lengthMenu": "_MENU_ rows",
-                  "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                  "paginate": {
-                      "previous": "⬅️ Previous",
-                      "next": "Next ➡️"
-                  }
-              },
-              "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
-          });
+        loadPrescriptions(1);
 
-
-          $('#searchBox').on('keyup', function () {
-              table.search(this.value).draw();
-          });
+        $('#rxBtnPrev').on('click', function (e) { e.preventDefault(); if (rxCurrentPage > 1) loadPrescriptions(rxCurrentPage - 1); });
+        $('#rxBtnNext').on('click', function (e) { e.preventDefault(); if (rxCurrentPage < rxTotalPages) loadPrescriptions(rxCurrentPage + 1); });
+        $('#btnRxSearch').on('click', function () { loadPrescriptions(1); });
+        $('#rxSearchBox').on('keypress', function (e) { if (e.which === 13) { e.preventDefault(); loadPrescriptions(1); } });
     });
 </script>

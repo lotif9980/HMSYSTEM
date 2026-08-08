@@ -1,161 +1,559 @@
 @using HMSYSTEM.Enum
-@model IEnumerable<Appointment>
-
-@using HMSYSTEM.ViewModels
+@using HMSYSTEM.Models
 @{
-    ViewData["Title"] = "Appointment";
+    ViewData["Title"] = "Appointment Management";
+    string fromDate = ViewBag.FromDate ?? DateTime.Now.ToString("yyyy-MM-dd");
+    string toDate   = ViewBag.ToDate   ?? DateTime.Now.ToString("yyyy-MM-dd");
+    var doctors = ViewBag.Doctor as IEnumerable<Doctor> ?? new List<Doctor>();
+    var departments = ViewBag.Department as IEnumerable<Department> ?? new List<Department>();
 }
 
+<style>
+    .appt-card {
+        border: none !important; border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff; overflow: hidden;
+    }
+    .appt-card-header {
+        background: #ffffff !important; border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.25rem 2rem !important;
+    }
+    .header-icon {
+        width: 44px; height: 44px;
+        background: rgba(49, 130, 206, 0.1); color: #3182ce;
+        border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+    }
+    .appt-card-title { font-size: 1.3rem; font-weight: 800; color: #2d3748; margin: 0; }
+    .appt-card-subtitle { font-size: 0.82rem; color: #718096; margin: 2px 0 0 0; }
 
-<div class="container-fluid mt-3">
+    .tab-nav-pills .tab-btn {
+        background: #f7fafc; border: 1.5px solid #e2e8f0; color: #4a5568;
+        border-radius: 30px !important; padding: 6px 18px; font-size: 0.85rem;
+        font-weight: 700; text-decoration: none !important;
+        transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .tab-nav-pills .tab-btn:hover, .tab-nav-pills .tab-btn.active {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important; border-color: #3182ce !important;
+        box-shadow: 0 4px 12px rgba(49, 130, 206, 0.25);
+    }
+
+    .search-wrapper { position: relative; min-width: 200px; }
+    .search-wrapper .search-icon {
+        position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+        color: #a0aec0; font-size: 0.9rem; pointer-events: none;
+    }
+    .search-wrapper input.search-control {
+        padding-left: 40px !important; border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important; font-size: 0.9rem !important;
+        height: 38px !important; box-shadow: none !important; background-color: #f7fafc !important;
+    }
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important; background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
+
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important; border: none !important; border-radius: 30px !important;
+        padding: 0 1.5rem !important; font-weight: 700 !important; font-size: 0.9rem !important;
+        height: 42px !important; display: inline-flex !important; align-items: center !important;
+        gap: 8px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important; cursor: pointer; text-decoration: none !important;
+    }
+    .btn-gradient-create:hover { transform: translateY(-1.5px); box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important; color: #ffffff !important; }
+
+    .date-filter-row {
+        background: #f7fafc; border-bottom: 1px solid #edf2f7;
+        padding: 0.9rem 2rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .date-filter-row label { font-size: 0.83rem; font-weight: 700; color: #4a5568; margin-bottom: 0; }
+    .date-filter-row input[type="date"] {
+        height: 36px; border-radius: 8px; border: 1.5px solid #e2e8f0;
+        padding: 4px 10px; font-size: 0.85rem; color: #2d3748;
+    }
+    .date-filter-row input[type="date"]:focus { border-color: #3182ce; outline: none; box-shadow: 0 0 0 3px rgba(66,153,225,0.12); }
+
+    .table-container { padding: 1rem 1.5rem !important; }
+    #apptTable { border-collapse: separate !important; border-spacing: 0 !important; width: 100% !important; border: none !important; }
+    #apptTable th {
+        background-color: #f7fafc !important; color: #4a5568 !important; font-weight: 700 !important;
+        text-transform: uppercase !important; font-size: 0.75rem !important; letter-spacing: 0.8px !important;
+        padding: 14px 16px !important; border-bottom: 2px solid #edf2f7 !important; border-top: none !important;
+    }
+    #apptTable td {
+        padding: 13px 16px !important; vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important; color: #2d3748 !important; font-size: 0.88rem !important;
+    }
+    #apptTable tbody tr:hover { background-color: #f7fafc !important; }
+
+    .action-btn-group { display: flex; justify-content: center; gap: 8px; }
+    .action-btn {
+        width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 50%; text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.85rem; border: 1px solid transparent;
+    }
+    .action-edit { background-color: #ebf8ff; color: #2b6cb0; border-color: #bee3f8; }
+    .action-edit:hover { background-color: #3182ce; color: #ffffff; transform: translateY(-2px); }
+    .action-delete { background-color: #fff5f5; color: #c53030; border-color: #fed7d7; }
+    .action-delete:hover { background-color: #e53e3e; color: #ffffff; transform: translateY(-2px); }
+
+    .pagination .page-link { box-shadow: none !important; }
+    .pagination .page-item:not(.disabled) .page-link:hover { background-color: #3182ce !important; color: #ffffff !important; border-color: #3182ce !important; }
+    .pagination .page-item.disabled .page-link { color: #a0aec0 !important; background-color: #f7fafc !important; border-color: #edf2f7 !important; pointer-events: none; }
+
+    /* Medicine Style Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div>
-                        <a class="btn btn-info" asp-controller="Appointment" asp-action="Index">Open List</a>
-                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetProgress">Progress</a>
-                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetComplete">Complete</a>
-                        <a class="btn btn-info" asp-controller="Appointment" asp-action="GetDeleteList">Delete</a>
+            <div class="card appt-card mb-4">
+
+                <!-- Card Header -->
+                <div class="card-header appt-card-header">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="header-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div>
+                                <h3 class="appt-card-title">Existing Appointment List</h3>
+                                <p class="appt-card-subtitle">Track patient appointments, status, and scheduling.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <div class="search-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="form-control search-control" placeholder="Search..." id="apptSearchBox" />
+                            </div>
+                            <button type="button" id="btnApptSearch" class="btn btn-primary"
+                                style="border-radius: 30px; height: 38px; padding: 0 1.2rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                            <button type="button" class="btn btn-gradient-create" style="height:38px;" data-bs-toggle="modal" data-bs-target="#addAppointmentModal">
+                                <i class="fas fa-plus me-1"></i> Create
+                            </button>
+                        </div>
                     </div>
-                    <div> <h3 class="card-title bg-dark-subtle border border-danger-subtle">Existing Appointment List</h3></div>
-                    @* <div> <a class="btn btn-info" asp-controller="Appointment" asp-action="Save">Create</a></div> *@
                 </div>
-                <div class="col-md-6">
-                    <form method="post" class="mb-3">
-                        <input type="date" name="fromDate" value="@ViewBag.FromDate" />
-                        <input type="date" name="toDate" value="@ViewBag.ToDate" />
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </form>
 
+                <!-- Tab + Date Filter Row -->
+                <div class="date-filter-row">
+                    <div class="tab-nav-pills d-flex gap-2 flex-wrap me-3">
+                        <a href="@Url.Action("Index","Appointment")" class="tab-btn active">
+                            <i class="fas fa-list"></i> Open
+                        </a>
+                        <a href="@Url.Action("GetProgress","Appointment")" class="tab-btn">
+                            <i class="fas fa-spinner"></i> Progress
+                        </a>
+                        <a href="@Url.Action("GetComplete","Appointment")" class="tab-btn">
+                            <i class="fas fa-check-double"></i> Complete
+                        </a>
+                        <a href="@Url.Action("GetDeleteList","Appointment")" class="tab-btn">
+                            <i class="fas fa-trash-alt"></i> Deleted
+                        </a>
+                    </div>
+                    <label>From:</label>
+                    <input type="date" id="apptFromDate" value="@fromDate" />
+                    <label>To:</label>
+                    <input type="date" id="apptToDate" value="@toDate" />
+                    <button type="button" id="btnDateFilter" class="btn btn-sm btn-primary"
+                        style="border-radius:20px; padding:4px 16px; font-weight:700;">
+                        <i class="fas fa-filter me-1"></i> Filter
+                    </button>
                 </div>
-             
 
-
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="AppointmentTable" class="table table-bordered table-hover">
+                <!-- Table -->
+                <div class="card-body table-container">
+                    <table id="apptTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Sl</th>
+                                <th style="width:55px">Sl No</th>
                                 <th>Date</th>
                                 <th>Time</th>
-                                <th>Siral Number</th>
+                                <th>Serial</th>
                                 <th>Patient Name</th>
                                 <th>Phone</th>
                                 <th>Department</th>
                                 <th>Doctor</th>
                                 <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th style="width:100px; text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @{
-                                int count =1;
-                            }
-                            @foreach (var appointment in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@(appointment.AppoinmentDate.ToString("dd-MM-yyyy"))</td>
-                                    <td>@(appointment.AppoinmentDate.ToString("HH:mm:ss"))</td>
-                                    <td>@appointment.SerialNumber</td>
-                                    <td>@appointment.Patient.FirstName @appointment.Patient.LastName</td>
-                                    <td>@appointment.PatientPhoneNumber</td>
-                                    <td>@appointment.Department?.DepartmentName</td>
-                                   
-                                    <td>@appointment.Doctor?.FirstName</td>
-
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="statusDropdown_@appointment.AppointmentId" data-bs-toggle="dropdown" data-bs-boundary="viewport"
-                                                aria-expanded="false">
-                                                @(appointment.Status == AppointmentStatus.Active ? "Active" :
-                                                    appointment.Status == AppointmentStatus.InProgress ? "In Progress" :
-                                                    appointment.Status == AppointmentStatus.Deleted ? "Deleted" : "Unknown")
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="statusDropdown_@appointment.AppointmentId">
-                                                <li>
-                                                    <a class="dropdown-item" 
-                                                    asp-controller="Appointment" 
-                                                    asp-action="ChangeStatus" 
-                                                    asp-route-id="@appointment.AppointmentId"
-                                                    asp-route-status="2" 
-                                                    asp-route-returnAction="Index">
-                                                        In Progress
-                                                    </a>
-                                                </li>
-                                                
-                                                <li>
-                                                    <a class="dropdown-item" 
-                                                    asp-controller="Appointment" 
-                                                    asp-action="ChangeStatus" 
-                                                    asp-route-id="@appointment.AppointmentId" 
-                                                    asp-route-status="9"
-                                                    asp-route-returnAction="Index">
-                                                        Delete
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" asp-route-id="@appointment.AppointmentId" asp-controller="Appointment" asp-action="Edit">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-
-                                            <a class="btn btn-danger ms-2" 
-                                            asp-route-id="@appointment.AppointmentId" 
-                                            asp-controller="Appointment" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                count++;
-                            }
-
-                        </tbody>
+                        <tbody id="apptTableBody"></tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    @* @await Html.PartialAsync("_Pagination", Model) *@
+
+                <!-- Pagination Footer -->
+                <div class="card-footer" style="background-color:#ffffff; border-top:1px solid #f1f2f6; padding:1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size:0.85rem;">
+                                Showing page <span id="aCPage" class="fw-bold text-dark">0</span> of
+                                <span id="aTPage" class="fw-bold text-dark">0</span>
+                                (<span id="aTEntries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap:5px;">
+                                    <li class="page-item disabled" id="aPrevLi">
+                                        <a id="aBtnPrev" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                            ⬅️ Previous
+                                        </a>
+                                    </li>
+                                    <li class="page-item disabled" id="aNextLi">
+                                        <a id="aBtnNext" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                            Next ➡️
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-            <!-- /.card -->
         </div>
     </div>
 </div>
 
+<!-- Add Appointment Modal -->
+<div class="modal fade" id="addAppointmentModal" tabindex="-1" aria-labelledby="addAppointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAppointmentModalLabel">
+                    <i class="fas fa-calendar-plus me-2"></i> Appointment Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Appointment" asp-action="Save" method="post" id="addAppointmentForm">
+                <input type="hidden" name="PatientID" id="modalPatientId" />
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="PatientPhoneNumber" id="modalPhone" class="form-control" placeholder="Search Phone Number" required />
+                            <small id="modalPhoneStatus" class="form-text"></small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Patient Name</label>
+                            <input type="text" name="PatientName" id="modalPatientName" class="form-control" placeholder="Patient Name" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <select name="DepartmentId" id="modalApptDepartmentId" class="form-select" required>
+                                <option value="">-- Select Department --</option>
+                                @foreach (var dept in departments)
+                                {
+                                    <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Doctor</label>
+                            <select name="DoctorId" id="modalApptDoctorId" class="form-select" required>
+                                <option value="">-- Select Doctor --</option>
+                                @foreach (var doc in doctors)
+                                {
+                                    <option value="@doc.Id">@doc.FirstName @doc.LastName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Appointment Date & Time</label>
+                            <input type="datetime-local" name="AppoinmentDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Serial Number</label>
+                            <input type="number" name="SerialNumber" class="form-control" value="@ViewBag.NextSerial" readonly />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Problem</label>
+                            <textarea name="Problem" class="form-control" rows="2" placeholder="Patient problem details..."></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label d-block">Status</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Status" value="1" id="appActive" checked />
+                                <label class="form-check-label" for="appActive">Active</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Status" value="2" id="appInactive" />
+                                <label class="form-check-label" for="appInactive">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-1"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
-    $(document).ready(function () {
-        var table = $('#AppointmentTable').DataTable({
-            "pageLength": 10,
-            "lengthMenu": [5, 10, 20, 50],
-            "ordering": true,
-            "paging": true,
-            "info": true,
-            "language": {
-                "search": "",
-                "searchPlaceholder": "Search",
-                "lengthMenu": "_MENU_ rows",
-                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                "paginate": {
-                    "previous": "⬅️ Previous",
-                    "next": "Next ➡️"
+    var aCurrentPage = 1;
+    var aTotalPages = 1;
+
+    var statusLabels = { 1: 'Active', 2: 'In Progress', 3: 'Complete', 9: 'Deleted' };
+    var statusStyles = {
+        1: 'background:#c6f6d5; color:#22543d;',
+        2: 'background:#bee3f8; color:#1a365d;',
+        3: 'background:#e9d8fd; color:#44337a;',
+        9: 'background:#fed7d7; color:#742a2a;'
+    };
+
+    function createApptRow(index, item) {
+        var statusText = statusLabels[item.status] || 'Unknown';
+        var btnBgClass = 'btn-primary';
+        if (item.status === 1) btnBgClass = 'btn-success';
+        else if (item.status === 2) btnBgClass = 'btn-info text-white';
+        else if (item.status === 3) btnBgClass = 'btn-secondary';
+        else if (item.status === 9) btnBgClass = 'btn-danger';
+
+        var dropdownMenu = `
+            <div class="dropdown">
+                <button class="btn ${btnBgClass} btn-sm dropdown-toggle" type="button" id="statusDropdown_${item.appointmentId}" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius:20px; font-weight:700; font-size:0.78rem; padding:4px 12px;">
+                    ${statusText}
+                </button>
+                <ul class="dropdown-menu shadow" aria-labelledby="statusDropdown_${item.appointmentId}">
+                    <li>
+                        <a class="dropdown-item" href="/Appointment/ChangeStatus?id=${item.appointmentId}&status=2&returnAction=Index">
+                            <i class="fas fa-spinner text-info me-2"></i> In Progress
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/Appointment/ChangeStatus?id=${item.appointmentId}&status=3&returnAction=Index">
+                            <i class="fas fa-check-double text-success me-2"></i> Completed
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="/Appointment/ChangeStatus?id=${item.appointmentId}&status=9&returnAction=Index" onclick="return confirm('Change status to delete?')">
+                            <i class="fas fa-trash-alt text-danger me-2"></i> Delete
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        `;
+
+        return `<tr>
+            <td>${index}</td>
+            <td>${item.date || ''}</td>
+            <td style="font-family:monospace;">${item.time || ''}</td>
+            <td><strong>${item.serialNumber || ''}</strong></td>
+            <td style="font-weight:700; color:#2d3748;">${item.patientName || 'N/A'}</td>
+            <td>${item.phone || ''}</td>
+            <td>${item.department || 'N/A'}</td>
+            <td>${item.doctor || 'N/A'}</td>
+            <td>${dropdownMenu}</td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-edit" href="/Appointment/Edit/${item.appointmentId}" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="action-btn action-delete" href="/Appointment/Delete/${item.appointmentId}"
+                       onclick="return confirm('Are you sure you want to delete this appointment?')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    function loadAppointments(page) {
+        aCurrentPage = page || 1;
+        var search   = $('#apptSearchBox').val() || '';
+        var fromDate = $('#apptFromDate').val() || '';
+        var toDate   = $('#apptToDate').val() || '';
+
+        $('#apptTableBody').html(`
+            <tr><td colspan="10" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                <p class="mt-2 text-muted mb-0">Loading appointments...</p>
+            </td></tr>`);
+
+        $.ajax({
+            url: '@Url.Action("GetAppointments", "Appointment")',
+            type: 'GET',
+            data: { search: search, fromDate: fromDate, toDate: toDate, page: aCurrentPage, pageSize: 10 },
+            dataType: 'json',
+            cache: false,
+            success: function (res) {
+                if (res.issuccess === true) {
+                    $('#apptTableBody').empty();
+                    aTotalPages = res.totalPages || 1;
+                    $('#aCPage').text(aCurrentPage);
+                    $('#aTPage').text(aTotalPages);
+                    $('#aTEntries').text(res.totalItem || 0);
+                    $('#aPrevLi').toggleClass('disabled', aCurrentPage <= 1);
+                    $('#aNextLi').toggleClass('disabled', aCurrentPage >= aTotalPages);
+
+                    if (res.data && res.data.length > 0) {
+                        $.each(res.data, function (i, v) {
+                            var idx = ((aCurrentPage - 1) * 10) + (i + 1);
+                            $('#apptTableBody').append(createApptRow(idx, v));
+                        });
+                    } else {
+                        $('#apptTableBody').html(`
+                            <tr><td colspan="10" class="text-center py-4 text-muted">
+                                <i class="fas fa-info-circle fs-4"></i>
+                                <p class="mt-2 mb-0">No appointments found.</p>
+                            </td></tr>`);
+                    }
                 }
             },
-            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+            error: function () {
+                $('#apptTableBody').html(`<tr><td colspan="10" class="text-center py-4 text-danger">Failed to load data.</td></tr>`);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadAppointments(1);
+
+        $('#aBtnPrev').on('click', function (e) { e.preventDefault(); if (aCurrentPage > 1) loadAppointments(aCurrentPage - 1); });
+        $('#aBtnNext').on('click', function (e) { e.preventDefault(); if (aCurrentPage < aTotalPages) loadAppointments(aCurrentPage + 1); });
+        $('#btnApptSearch').on('click', function () { loadAppointments(1); });
+        $('#btnDateFilter').on('click', function () { loadAppointments(1); });
+        $('#apptSearchBox').on('keypress', function (e) { if (e.which === 13) { e.preventDefault(); loadAppointments(1); } });
+
+        // Patient Phone Number Search in Modal
+        $('#modalPhone').on('input keyup change', function () {
+            var phone = $(this).val();
+            if (phone.length >= 3) {
+                $.ajax({
+                    url: '@Url.Action("GetPatientNameByPhone", "Appointment")',
+                    type: 'GET',
+                    data: { phoneNumber: phone },
+                    success: function (res) {
+                        if (res.success) {
+                            $('#modalPatientName').val(res.name);
+                            $('#modalPatientId').val(res.id);
+                            $('#modalPhoneStatus').html('<span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Patient Found: ' + res.name + '</span>');
+                        } else if (res.alreadyAdded) {
+                            $('#modalPatientName').val(res.name || '');
+                            $('#modalPatientId').val(res.id || '');
+                            $('#modalPhoneStatus').html('<span class="text-danger fw-bold"><i class="fas fa-exclamation-triangle me-1"></i> Appointment already added for this patient!</span>');
+                        } else {
+                            $('#modalPatientName').val('');
+                            $('#modalPatientId').val('');
+                            $('#modalPhoneStatus').html('<span class="text-warning fw-bold"><i class="fas fa-info-circle me-1"></i> Patient not found</span>');
+                        }
+                    }
+                });
+            } else {
+                $('#modalPatientName').val('');
+                $('#modalPatientId').val('');
+                $('#modalPhoneStatus').empty();
+            }
         });
 
+        // Load doctors based on selected department in Appointment Modal
+        $('#modalApptDepartmentId').on('change', function () {
+            var deptId = $(this).val();
+            var $docSelect = $('#modalApptDoctorId');
+            $docSelect.empty().append('<option value="">-- Select Doctor --</option>');
 
-        $('#customSearchBox').on('keyup', function () {
-            table.search(this.value).draw();
+            if (deptId) {
+                $.ajax({
+                    url: '@Url.Action("GetDoctorsByDepartment", "Schedule")',
+                    type: 'GET',
+                    data: { departmentId: deptId },
+                    success: function (doctors) {
+                        if (doctors && doctors.length > 0) {
+                            $.each(doctors, function (i, d) {
+                                $docSelect.append('<option value="' + d.id + '">' + d.name + '</option>');
+                            });
+                        }
+                    }
+                });
+            }
         });
     });
 </script>

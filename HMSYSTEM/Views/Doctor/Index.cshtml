@@ -1,191 +1,1041 @@
-﻿@using HMSYSTEM.ViewModels
 @{
-    ViewData["Title"] = "Doctor";
+    ViewData["Title"] = "Doctor Management";
+
+    // Designation & Department lists for modals
+    var designationList = ViewBag.Designation as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+    var departmentList = ViewBag.Department as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
 }
 
+<!-- Premium Styles -->
+<style>
+    .doctor-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
 
-<div class="container-fluid mt-3">
+    .doctor-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .doctor-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .doctor-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .search-wrapper {
+        position: relative;
+        min-width: 260px;
+    }
+
+    .search-wrapper .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 0.95rem;
+        pointer-events: none;
+        z-index: 5;
+    }
+
+    .search-wrapper input.search-control {
+        padding-left: 50px !important;
+        padding-right: 15px !important;
+        border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        background-color: #f7fafc !important;
+    }
+
+    .search-wrapper input.search-control:focus {
+        border-color: #38a169 !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.15) !important;
+    }
+
+    /* Create Button Custom Design */
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.5rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-gradient-create:active {
+        transform: translateY(0);
+    }
+
+    .table-container {
+        padding: 1rem 1.5rem !important;
+    }
+
+    #doctorTable {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        border: none !important;
+    }
+
+    #doctorTable th {
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 16px 20px !important;
+        border-bottom: 2px solid #edf2f7 !important;
+        border-top: none !important;
+    }
+
+    #doctorTable td {
+        padding: 16px 20px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important;
+        color: #2d3748 !important;
+        font-size: 0.9rem !important;
+    }
+
+    #doctorTable tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    #doctorTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    .action-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+        border: 1px solid transparent;
+    }
+
+    .action-edit {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border-color: #bee3f8;
+    }
+
+    .action-edit:hover {
+        background-color: #3182ce;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
+    }
+
+    .action-delete {
+        background-color: #fff5f5;
+        color: #e53e3e;
+        border-color: #fed7d7;
+    }
+
+    .action-delete:hover {
+        background-color: #e53e3e;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2);
+    }
+
+    .badge-status {
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-active {
+        background-color: #c6f6d5;
+        color: #22543d;
+    }
+
+    .status-inactive {
+        background-color: #fed7d7;
+        color: #742a2a;
+    }
+
+    /* Doctor thumbnail */
+    .doctor-thumb {
+        cursor: zoom-in;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .doctor-thumb:hover {
+        transform: scale(1.12);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+    }
+
+    /* Lightbox */
+    #imgDoctorPreviewModal .modal-content {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    #imgDoctorPreviewModal .modal-body {
+        padding: 0 !important;
+        background: transparent !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #imgDoctorPreviewModal .modal-dialog {
+        max-width: 480px;
+    }
+
+    #imgDoctorPreviewFull {
+        width: 100%;
+        max-width: 460px;
+        max-height: 460px;
+        object-fit: contain;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        animation: zoomIn 0.25s ease;
+    }
+
+    #imgDoctorPreviewName {
+        text-align: center;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-top: 14px;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    @@keyframes zoomIn {
+        from { transform: scale(0.7); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .pagination .page-link { box-shadow: none !important; }
+
+    .pagination .page-item:not(.disabled) .page-link:hover {
+        background-color: #3182ce !important;
+        color: #ffffff !important;
+        border-color: #3182ce !important;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #a0aec0 !important;
+        background-color: #f7fafc !important;
+        border-color: #edf2f7 !important;
+        pointer-events: none;
+    }
+
+    #toast-container > .toast-success {
+        background-color: #276749 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(39,103,73,0.3) !important;
+    }
+
+    #toast-container > .toast-error {
+        background-color: #c53030 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+    }
+
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 50px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Doctor List</h3></div>
-                    <div>
-                        <input type="text" name="name" id="CustomSearch" class="form-control" placeholder="Search Name" />
+            <div class="card doctor-card mb-4">
+
+                <!-- Card Header -->
+                <div class="card-header doctor-card-header">
+                    <div class="header-container">
+                        <div class="header-title-block">
+                            <div class="header-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div>
+                                <h3 class="doctor-card-title">Existing Doctor List</h3>
+                                <p class="doctor-card-subtitle">Manage doctor profiles, departments, and login credentials.</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="search-wrapper">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="form-control search-control" placeholder="Search Doctor..." id="doctorSearchBox" />
+                                </div>
+                        <button type="button" id="btnDoctorSearch" class="btn btn-primary"
+                                style="border-radius: 30px; height: 42px; padding: 0 1.5rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                            </div>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addDoctorModal">
+                                <i class="fas fa-plus me-2"></i> Create
+                            </button>
+                        </div>
                     </div>
-                    <div> <a class="btn btn-info" asp-controller="Doctor" asp-action="Save">Create</a></div>
                 </div>
 
-
-
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="doctorTable" class="table table-bordered table-hover">
+                <!-- Table -->
+                <div class="card-body table-container">
+                    <table id="doctorTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Id</th>
-                                <th>Picture</th>
+                                <th style="width:60px">Sl No</th>
+                                <th style="width:80px">Picture</th>
                                 <th>Name</th>
                                 <th>Department</th>
+                                <th>Designation</th>
                                 <th>Email</th>
                                 <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th style="width:120px; text-align:center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="boadyBox">
-                            @{
-                                int count =  1;
-                            }
-                            @foreach (Doctor doctor in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td style="text-align:center">
-                                        <img src="~/Doctor/@doctor.Picture" alt="Image not found" width="65" height="65" />
-                                    </td>
-                                    <td>@doctor.FirstName @doctor.LastName</td>
-                                    <td>@doctor.Department?.DepartmentName</td>
-                                    <td>@doctor.EmailAddress</td>
-                                    <td>@(doctor.Status==true?"Active": "Invactive")</td>
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-primary ms-2" asp-route-id="@doctor.Id" asp-controller="Doctor" asp-action="Edit">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@doctor.Id" asp-controller="Doctor" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-
-                                            <a class="btn btn-success ms-2" asp-route-id="@doctor.Id" asp-controller="Doctor" asp-action="Details">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-
-
-
-                                            
-                                        </div>
-                                    </td>
-                                </tr>
-                                count++;
-                            }
-
+                        <tbody id="doctorTableBody">
                         </tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                @* <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
-                        </li>
 
-                        <!-- Page Numbers -->
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
-                            </li>
-                        }
+                <!-- Pagination Footer -->
+                <div class="card-footer" style="background-color:#ffffff; border-top:1px solid #f1f2f6; padding:1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size:0.85rem;">
+                                Showing page <span id="dCPage" class="fw-bold text-dark">0</span> of
+                                <span id="dTPage" class="fw-bold text-dark">0</span>
+                                (<span id="dTEntries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap:5px;">
+                                    <li class="page-item disabled" id="dPrevLi">
+                                        <a id="dBtnPrev" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                            ⬅️ Previous
+                                        </a>
+                                    </li>
+                                    <li class="page-item disabled" id="dNextLi">
+                                        <a id="dBtnNext" class="page-link" href="javascript:void(0);"
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                            Next ➡️
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- Next Button -->
-                        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
-                        </li>
-                    </ul>
-                </div> *@
-
-               
             </div>
-            <!-- /.card -->
         </div>
     </div>
 </div>
 
+<!-- Image Lightbox Modal -->
+<div class="modal fade" id="imgDoctorPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-end mb-2">
+                    <button type="button" class="btn btn-sm" data-bs-dismiss="modal"
+                        style="background:rgba(255,255,255,0.15); color:#fff; border-radius:50%; width:36px; height:36px; font-size:1.1rem; line-height:1;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <img id="imgDoctorPreviewFull" src="" alt="Doctor Photo" />
+                <p id="imgDoctorPreviewName"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Doctor Modal -->
+<div class="modal fade" id="addDoctorModal" tabindex="-1" aria-labelledby="addDoctorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDoctorModalLabel">
+                    <i class="fas fa-user-md me-2"></i> Doctor Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Doctor" asp-action="Save" method="post" id="addDoctorForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">First Name</label>
+                            <input name="FirstName" id="addDoctorFirstName" class="form-control" placeholder="Enter first name" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Last Name</label>
+                            <input name="LastName" id="addDoctorLastName" class="form-control" placeholder="Enter last name" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Email Address</label>
+                            <input type="email" name="EmailAddress" id="addDoctorEmail" class="form-control" placeholder="doctor@hospital.com" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Password</label>
+                            <input type="password" name="Password" id="addDoctorPassword" class="form-control" placeholder="Password" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Department</label>
+                            <select name="DepartmentId" id="addDoctorDept" class="form-select">
+                                <option value="">-- Select Department --</option>
+                                @foreach (var d in departmentList)
+                                {
+                                    <option value="@d.DepartmentId">@d.DepartmentName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Designation</label>
+                            <select name="DesignationId" id="addDoctorDesig" class="form-select">
+                                <option value="">-- Select Designation --</option>
+                                @foreach (var d in designationList)
+                                {
+                                    <option value="@d.DesignationId">@d.DesignationName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Phone No</label>
+                            <input name="PhoneNo" id="addDoctorPhone" class="form-control" placeholder="Mobile Number" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Specialist</label>
+                            <input name="Specialist" id="addDoctorSpecialist" class="form-control" placeholder="Specialist area" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Sex</label>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Male" id="addDoctorSexMale" checked />
+                                <label class="form-check-label" for="addDoctorSexMale">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Female" id="addDoctorSexFemale" />
+                                <label class="form-check-label" for="addDoctorSexFemale">Female</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Date of Birth</label>
+                            <input type="date" name="DateofBirth" id="addDoctorDOB" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Address</label>
+                            <input name="Address" id="addDoctorAddress" class="form-control" placeholder="Address" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Short Biography</label>
+                            <textarea name="ShortBiography" id="addDoctorBio" class="form-control" rows="2" placeholder="Short bio..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Picture</label>
+                            <input type="file" name="ImageFile" id="addDoctorPic" class="form-control" accept="image/*" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Status</label>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Status" value="true" id="addDoctorStatusActive" checked />
+                                <label class="form-check-label" for="addDoctorStatusActive">Active</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Status" value="false" id="addDoctorStatusInactive" />
+                                <label class="form-check-label" for="addDoctorStatusInactive">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Doctor Modal -->
+<div class="modal fade" id="editDoctorModal" tabindex="-1" aria-labelledby="editDoctorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="editDoctorModalLabel">
+                    <i class="fas fa-edit me-2"></i> Edit Doctor Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="Doctor" asp-action="Edit" method="post" id="editDoctorForm" enctype="multipart/form-data">
+                <input type="hidden" name="Id" id="editDoctorId" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">First Name</label>
+                            <input name="FirstName" id="editDoctorFirstName" class="form-control" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Last Name</label>
+                            <input name="LastName" id="editDoctorLastName" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Email Address</label>
+                            <input type="email" name="EmailAddress" id="editDoctorEmail" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Password</label>
+                            <input type="password" name="Password" id="editDoctorPassword" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Department</label>
+                            <select name="DepartmentId" id="editDoctorDept" class="form-select">
+                                <option value="">-- Select Department --</option>
+                                @foreach (var d in departmentList)
+                                {
+                                    <option value="@d.DepartmentId">@d.DepartmentName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Designation</label>
+                            <select name="DesignationId" id="editDoctorDesig" class="form-select">
+                                <option value="">-- Select Designation --</option>
+                                @foreach (var d in designationList)
+                                {
+                                    <option value="@d.DesignationId">@d.DesignationName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Phone No</label>
+                            <input name="PhoneNo" id="editDoctorPhone" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Specialist</label>
+                            <input name="Specialist" id="editDoctorSpecialist" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Sex</label>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Male" id="editDoctorSexMale" />
+                                <label class="form-check-label" for="editDoctorSexMale">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Sex" value="Female" id="editDoctorSexFemale" />
+                                <label class="form-check-label" for="editDoctorSexFemale">Female</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Date of Birth</label>
+                            <input type="date" name="DateofBirth" id="editDoctorDOB" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Address</label>
+                            <input name="Address" id="editDoctorAddress" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Short Biography</label>
+                            <textarea name="ShortBiography" id="editDoctorBio" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold" style="color:#4a5568;">Change Picture</label>
+                            <input type="file" name="ImageFile" id="editDoctorPic" class="form-control" accept="image/*" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Status</label>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Status" value="true" id="editDoctorStatusActive" />
+                                <label class="form-check-label" for="editDoctorStatusActive">Active</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="Status" value="false" id="editDoctorStatusInactive" />
+                                <label class="form-check-label" for="editDoctorStatusInactive">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i> Update
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
-    $(document).ready(function () {
-        var table = $('#doctorTable').DataTable({
-            "pageLength": 10,
-            "lengthMenu": [5, 10, 20, 50],
-            "ordering": true,
-            "paging": true,
-            "info": true,
-            "language": {
-                "search": "",
-                "searchPlaceholder": "Search",
-                "lengthMenu": "_MENU_ rows",
-                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                "paginate": {
-                    "previous": "⬅️ Previous",
-                    "next": "Next ➡️"
-                }
-            },
-            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
-        });
+    var dCurrentPage = 1;
+    var dTotalPages  = 1;
 
+    function showSuccess(msg) {
+        if (typeof toastr !== 'undefined') toastr.success(msg); else alert(msg);
+    }
 
-        $('#CustomSearch').on('keyup', function () {
-            table.search(this.value).draw();
-        });
-    });
-</script>
-@* <script>
-    $(document).ready(function () {
-    $('#searchBox').on('keyup', function () {
-        var name = $(this).val().trim();
+    function showError(msg) {
+        if (typeof toastr !== 'undefined') toastr.error(msg); else alert(msg);
+    }
 
+    function createDoctorRow(index, item) {
+        var statusBadge = item.status === true
+            ? `<span class="badge-status status-active"><i class="fas fa-check-circle me-2"></i>Active</span>`
+            : `<span class="badge-status status-inactive"><i class="fas fa-times-circle me-2"></i>Inactive</span>`;
 
-                   if (name.length === 0) {
-                        location.reload();
-                    return;
-                   }
+        var picSrc = (item.picture && item.picture.trim() !== '')
+            ? `/Doctor/${item.picture}`
+            : `/images/default.png`;
+
+        var fullName = `${item.firstName || ''} ${item.lastName || ''}`.trim();
+
+        return `<tr>
+            <td>${index}</td>
+            <td style="text-align:center;">
+                <img src="${picSrc}" alt="Doctor" width="50" height="50"
+                     class="doctor-thumb"
+                     data-fullsrc="${picSrc}"
+                     data-name="${fullName}"
+                     style="border-radius:50%; object-fit:cover; border:2px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.08);" />
+            </td>
+            <td style="font-weight:700; color:#2d3748;">${fullName}</td>
+            <td>${item.department || 'N/A'}</td>
+            <td>${item.designation || 'N/A'}</td>
+            <td>${item.emailAddress || ''}</td>
+            <td>${statusBadge}</td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-edit edit-doctor-btn" href="javascript:void(0);" data-id="${item.id}" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="action-btn action-delete delete-doctor-btn" href="javascript:void(0);" data-id="${item.id}" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    function loadDoctors(page) {
+        dCurrentPage = page || 1;
+
+        $('#doctorTableBody').html(`
+            <tr>
+                <td colspan="8" class="text-center py-4">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted mb-0">Loading doctors...</p>
+                </td>
+            </tr>
+        `);
+
+        var search = $('#doctorSearchBox').val() || '';
 
         $.ajax({
-            url: '/Doctor/GetName',
-            data: { name: name }, 
+            url: '@Url.Action("GetDoctors", "Doctor")',
+            type: 'GET',
+            data: { search: search, page: dCurrentPage, pageSize: 10 },
+            dataType: 'json',
+            cache: false,
+            success: function (res) {
+                if (res.issuccess === true) {
+                    $('#doctorTableBody').empty();
 
-            success: function (data) {
-                let rows = '';
+                    dTotalPages = res.totalPages || 1;
 
-                data.forEach((item,index)=> {
-                    let status = item.status ? "Active" : "Inactive";
-                        let imagePath = `/Doctor/${item.picture}`; 
+                    $('#dCPage').text(dCurrentPage);
+                    $('#dTPage').text(dTotalPages);
+                    $('#dTEntries').text(res.totalItem || 0);
 
-                    rows += `<tr>
-                            <td>${index + 1}</td>
-                        <td><img src="${imagePath}" alt="Doctor Image" width="65" height="65" /></td>
-                        <td>${item.name}</td>
-                        <td>${item.department}</td>
-                        <td>${item.emailAddress}</td>
-                        <td>${status}</td>
-                        <td>
-                              <div class="d-flex justify-content-center btn-group-sm ">
+                    $('#dPrevLi').toggleClass('disabled', dCurrentPage <= 1);
+                    $('#dNextLi').toggleClass('disabled', dCurrentPage >= dTotalPages);
 
-                                 <a class="btn btn-primary ms-2" href="/Doctor/Edit/${item.id}">
-                               <i class="fa fa-edit"></i>
-                             </a>
+                    if (res.data && res.data.length > 0) {
+                        $.each(res.data, function (i, v) {
+                            var idx = ((dCurrentPage - 1) * 10) + (i + 1);
+                            $('#doctorTableBody').append(createDoctorRow(idx, v));
+                        });
+                    } else {
+                        $('#doctorTableBody').html(`
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle fs-4"></i>
+                                    <p class="mt-2 mb-0">No doctors found.</p>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                }
+            },
+            error: function (xhr, status, err) {
+                $('#doctorTableBody').html(`
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-triangle fs-4"></i>
+                            <p class="mt-2 mb-0">Failed to load data.</p>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
 
-                             <a class="btn btn-danger ms-2" href="/Doctor/Delete/${item.id}">
-                              <i class="fa fa-trash"></i>
-                             </a>
+    $(document).ready(function () {
+        loadDoctors(1);
 
-                             <a class="btn btn-success ms-2" href="/Doctor/Details/${item.id}">
-                                  <i class="fa fa-eye"></i>
-                             </a>
+        // Pagination
+        $('#dBtnPrev').on('click', function (e) {
+            e.preventDefault();
+            if (dCurrentPage > 1) loadDoctors(dCurrentPage - 1);
+        });
 
+        $('#dBtnNext').on('click', function (e) {
+            e.preventDefault();
+            if (dCurrentPage < dTotalPages) loadDoctors(dCurrentPage + 1);
+        });
 
+        // Search
+        $('#btnDoctorSearch').on('click', function () { loadDoctors(1); });
+        $('#doctorSearchBox').on('keypress', function (e) {
+            if (e.which === 13) { e.preventDefault(); loadDoctors(1); }
+        });
 
+        // Image Lightbox
+        $(document).on('click', '.doctor-thumb', function () {
+            $('#imgDoctorPreviewFull').attr('src', $(this).data('fullsrc'));
+            $('#imgDoctorPreviewName').text($(this).data('name'));
+            $('#imgDoctorPreviewModal').modal('show');
+        });
 
-                       </td>
-                    </tr>`;
+        $('#imgDoctorPreviewModal').on('click', function (e) {
+            if ($(e.target).is('#imgDoctorPreviewModal')) $(this).modal('hide');
+        });
+
+        // Add Doctor AJAX submit
+        $('#addDoctorForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: new FormData(this),
+                contentType: false,
+                processData: false,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (res) {
+                    if (res.success) {
+                        showSuccess(res.message);
+                        $('#addDoctorModal').modal('hide');
+                        $('#addDoctorForm')[0].reset();
+                        loadDoctors(1);
+                    } else {
+                        showError(res.message);
+                    }
+                },
+                error: function (xhr, s, err) { showError("An error occurred: " + err); }
+            });
+        });
+
+        // Edit button — fetch data and populate modal
+        $(document).on('click', '.edit-doctor-btn', function () {
+            var id = $(this).data('id');
+            $.getJSON('@Url.Action("GetDoctorById", "Doctor")', { id: id }, function (d) {
+                $('#editDoctorId').val(d.id);
+                $('#editDoctorFirstName').val(d.firstName);
+                $('#editDoctorLastName').val(d.lastName);
+                $('#editDoctorEmail').val(d.emailAddress);
+                $('#editDoctorPassword').val(d.password);
+                $('#editDoctorDept').val(d.departmentId || '');
+                $('#editDoctorDesig').val(d.designationId || '');
+                $('#editDoctorPhone').val(d.phoneNo);
+                $('#editDoctorSpecialist').val(d.specialist);
+                $('#editDoctorDOB').val(d.dateofBirth);
+                $('#editDoctorAddress').val(d.address);
+                $('#editDoctorBio').val(d.shortBiography);
+
+                if (d.sex === 'Female') {
+                    $('#editDoctorSexFemale').prop('checked', true);
+                } else {
+                    $('#editDoctorSexMale').prop('checked', true);
+                }
+
+                if (d.status === true) {
+                    $('#editDoctorStatusActive').prop('checked', true);
+                } else {
+                    $('#editDoctorStatusInactive').prop('checked', true);
+                }
+
+                $('#editDoctorModal').modal('show');
+            }).fail(function () { showError("Error loading doctor data."); });
+        });
+
+        // Edit Doctor AJAX submit
+        $('#editDoctorForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: new FormData(this),
+                contentType: false,
+                processData: false,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (res) {
+                    if (res.success) {
+                        showSuccess(res.message);
+                        $('#editDoctorModal').modal('hide');
+                        loadDoctors(dCurrentPage);
+                    } else {
+                        showError(res.message);
+                    }
+                },
+                error: function (xhr, s, err) { showError("An error occurred: " + err); }
+            });
+        });
+
+        // Delete
+        $(document).on('click', '.delete-doctor-btn', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            if (confirm("Are you sure you want to delete this doctor and the associated user account?")) {
+                var btn = $(this);
+                btn.css('pointer-events', 'none');
+                $.ajax({
+                    url: '/Doctor/Delete/' + id,
+                    type: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (res) {
+                        if (res.success) {
+                            showSuccess(res.message);
+                            loadDoctors(dCurrentPage);
+                        } else {
+                            showError(res.message);
+                            btn.css('pointer-events', 'auto');
+                        }
+                    },
+                    error: function (xhr, s, err) {
+                        showError("An error occurred: " + err);
+                        btn.css('pointer-events', 'auto');
+                    }
                 });
-
-                $('#boadyBox').html(rows);
             }
         });
     });
-});
-
-</script> *@
+</script>

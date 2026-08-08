@@ -1,118 +1,226 @@
-﻿@using System.Text.RegularExpressions
-<style type="text/css">
-    @@media print {
-    @@page {
-        size: A4 portrait;
-        margin: 15mm;
-    }
+@model HMSYSTEM.ViewModels.PrescriptionViewModel
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Prescription - @Model.PatientName</title>
+    <style type="text/css">
+        @@media print {
+            @@page {
+                size: A4 portrait;
+                margin: 5mm;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                background: #ffffff;
+                color: #000000;
+            }
+        }
 
-    body {
-        margin: 0;
-        padding: 0;
-        -webkit-print-color-adjust: exact;
-    }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #1a202c;
+            background: #ffffff;
+            margin: 0;
+            padding: 5px;
+        }
 
-    #PrescriptionPrintArea {
-        width: 100%;
-        max-width: 210mm; /* A4 width */
-        margin: auto;
-        margin-top:40px;
-    }
+        .print-pad {
+            border: 1.5px solid #2b6cb0;
+            padding: 15px 20px;
+            box-sizing: border-box;
+            width: 100%;
+            background: #ffffff;
+        }
 
-    .full-page-border {
-        min-height: 277mm; /* 297mm - 2x10mm margin */
-        border: 1px solid black !important;
-        padding: 15px !important;
-        box-sizing: border-box;
-    }
+        .header-section {
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
 
-    .shadow {
-        box-shadow: none !important;
-    }
+        .doc-info {
+            width: 50%;
+        }
 
-    .m-4, .p-4, .m-3, .p-3 {
-        margin: 0 !important;
-        padding: 5px !important;
-    }
+        .doc-name {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #2b6cb0;
+            margin: 0 0 2px 0;
+        }
 
-    h3, h4, h6, p, td, th {
-        font-size: 12pt !important;
-    }
+        .doc-deg {
+            font-size: 9pt;
+            color: #4a5568;
+            margin: 0 0 2px 0;
+        }
 
-    .table {
-        page-break-inside: auto;
-        width: 100% !important;
-    }
+        .hosp-info {
+            width: 48%;
+            text-align: right;
+        }
 
-    .table thead {
-        display: table-header-group; /* repeat header on each page */
-    }
+        .hosp-name {
+            font-size: 13pt;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 0 0 2px 0;
+        }
 
-    .row, .col-md-4, .col-md-6 {
-        page-break-inside: avoid;
-    }
+        .hosp-sub {
+            font-size: 8.5pt;
+            color: #718096;
+            margin: 0 0 1px 0;
+        }
 
-    button {
-        display: none !important;
-    }
-}
+        .patient-box {
+            border: 1px solid #cbd5e0;
+            background-color: #f7fafc;
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-size: 9pt;
+            display: flex;
+            justify-content: space-between;
+        }
 
-</style>
+        .patient-box-col {
+            width: 48%;
+        }
 
+        .patient-box-col div {
+            margin-bottom: 2px;
+        }
 
-<div id="PrescriptionPrintArea" class="full-page-border">
-    <div class="d-flex justify-content-around align-items-start flex-wrap border border-black border-opacity-25 p-4" style="margin-bottom:15px;">
-        <div class="flex-fill p-4">
-            <h4>@Model.DoctorName</h4>
-            <h6>@Model.DesignationName</h6>
-            <h6>Contact No: @Model.DoctorMobile</h6>
+        .rx-title {
+            font-size: 18pt;
+            font-weight: bold;
+            font-family: Georgia, serif;
+            color: #2b6cb0;
+            margin-bottom: 6px;
+            margin-top: 4px;
+        }
+
+        .rx-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+
+        .rx-table th {
+            background-color: #ebf8ff !important;
+            color: #2b6cb0 !important;
+            font-size: 8.5pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #bee3f8;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .rx-table td {
+            border: 1px solid #e2e8f0;
+            padding: 6px 8px;
+            font-size: 9pt;
+            vertical-align: middle;
+        }
+
+        .advice-box {
+            border: 1px solid #feebc8;
+            background-color: #fffaf0 !important;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 9pt;
+        }
+
+        .advice-header {
+            font-weight: bold;
+            color: #c05621;
+            margin-bottom: 4px;
+        }
+
+        .footer-sig {
+            margin-top: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .sig-box {
+            border-top: 1px dashed #718096;
+            width: 160px;
+            text-align: center;
+            padding-top: 4px;
+            font-size: 8.5pt;
+            font-weight: bold;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-pad">
+
+        <!-- Header -->
+        <div class="header-section">
+            <div class="doc-info">
+                <div class="doc-name">Dr. @Model.DoctorName</div>
+                <div class="doc-deg">@Model.DesignationName</div>
+                <div class="doc-deg">Contact: @Model.DoctorMobile</div>
+            </div>
+            <div class="hosp-info">
+                <div class="hosp-name">Hospital Management</div>
+                <div class="hosp-sub">Charghat, Rajshahi</div>
+                <div class="hosp-sub">Helpline: 01791177192</div>
+            </div>
         </div>
 
-        <div class="text-center flex-fill p-4">
-            <h3>Prescription Details</h3>
+        <!-- Patient Info -->
+        <div class="patient-box">
+            <div class="patient-box-col">
+                <div><strong>Patient Name:</strong> @Model.PatientName</div>
+                <div><strong>Phone:</strong> @Model.PatientMobileNo</div>
+                <div><strong>Address:</strong> @Model.PatientAddress</div>
+            </div>
+            <div class="patient-box-col" style="text-align: right;">
+                <div><strong>Date:</strong> @(Model.Date?.ToString("dd MMM yyyy") ?? "N/A")</div>
+                <div><strong>Department:</strong> @Model.DepartmentName</div>
+                <div><strong>Next Follow Up:</strong> @(Model.NextFlowUp?.ToString("dd MMM yyyy") ?? "As Needed")</div>
+            </div>
         </div>
 
-        <div class="text-end flex-fill p-4 ">
-            <h4>Hospital Management</h4>
-            <h6>Charghat, Rajshahi</h6>
-            <h6>Mobile: 01791177192</h6>
-        </div>
-    </div>
-  
-    <div class="d-flex justify-content-between flex-wrap border border-opacity-25 border-black" style="padding: 10px 15px; margin-bottom: 15px; margin-top:10px;">
-        <div style="min-width: 200px;">
-          
-            <strong>Patient:</strong> @Model.PatientName <br />
-            Phone No :  @Model.PatientMobileNo <br />
-            Address: @Model.PatientAddress </br>
-        </div>
+        <!-- Rx Symbol -->
+        <div class="rx-title">R<sub>x</sub></div>
 
-        <div style="min-width: 200px;">
-              <strong>Date:</strong> @Model.Date?.ToString("dd MMM yyyy") <br />
-            Department: @Model.DepartmentName <br />
-            Next Flow Up: @Model.NextFlowUp?.ToString("dd MMM yyyy")
-        </div>
-    </div>
-
-    <div style="margin-bottom: 15px;">
-        <div class="text-center mb-3"><u><h4>Prescribed Medicines</h4></u></div>
-        <table class="table table-bordered border-opacity-25 border-black">
+        <!-- Medicine Table -->
+        <table class="rx-table">
             <thead>
                 <tr>
-                    <th>Medicine Name</th>
-                    <th>Dose</th>
-                    <th>Duration</th>
-                    <th>Instructions</th>
+                    <th style="width: 5%">#</th>
+                    <th style="width: 40%">Medicine</th>
+                    <th style="width: 20%">Dose</th>
+                    <th style="width: 15%">Duration</th>
+                    <th style="width: 20%">Instructions</th>
                 </tr>
             </thead>
             <tbody>
+                @{ int idx = 1; }
                 @foreach (var detail in Model.PrescriptionDetails)
                 {
                     <tr>
+                        <td>@(idx++)</td>
                         <td>
-                            
-                            @detail.MedicineName
-                            <small class="text-muted">(@detail.Strength , @detail.Form)</small>
+                            <strong>@detail.MedicineName</strong>
+                            <span style="font-size: 8pt; color: #718096;">(@detail.Strength, @detail.Form)</span>
                         </td>
                         <td>@detail.Dose</td>
                         <td>@detail.Duration</td>
@@ -121,25 +229,35 @@
                 }
             </tbody>
         </table>
-    </div>
 
-    @{
-        var noteLines = (Model.Note ?? "").Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-        int counter = 1;
-    }
-
-    <div class="row">
-        <div class="col-md-6 ps-4 ms-4">
-            <strong>Advice Given:</strong><br />
-            
+        <!-- Doctor Advice -->
+        @if (!string.IsNullOrWhiteSpace(Model.Note))
+        {
+            var noteLines = Model.Note.Split(new[] { '.', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            int advIdx = 1;
+            <div class="advice-box">
+                <div class="advice-header">Doctor's Advice:</div>
                 @foreach (var line in noteLines)
                 {
-                <div>  @(counter++). @line.Trim()</div>
-            }
-        
+                    if (!string.IsNullOrWhiteSpace(line.Trim()))
+                    {
+                        <div><strong>@(advIdx++).</strong> @line.Trim()</div>
+                    }
+                }
+            </div>
+        }
+
+        <!-- Footer / Signature -->
+        <div class="footer-sig">
+            <div style="font-size: 8pt; color: #718096;">
+                Generated by HMS | Wish you a healthy life!
+            </div>
+            <div class="sig-box">
+                Doctor's Signature
+            </div>
         </div>
-        <div class="col-md-6">
-          
-        </div>
+
     </div>
-</div>
+
+</body>
+</html>

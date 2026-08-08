@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -109,7 +109,7 @@ namespace HMSYSTEM.Repository
             if (data != null)
             {
                 data.Status = ! data.Status ;
-                Update(data);
+                _db.SaveChanges();
             }
 
         }
