@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Models;
+using HMSYSTEM.Models;
 
 namespace HMSYSTEM.Repository
 {
@@ -11,9 +11,6 @@ namespace HMSYSTEM.Repository
         public Task<bool> IsBedinUsed(int id);
 
         public int TotalWard();
-
-
-
-      
+        public void Update(Ward ward);
     }
 }

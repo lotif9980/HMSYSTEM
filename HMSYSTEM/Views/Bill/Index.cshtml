@@ -1,102 +1,863 @@
-﻿@using HMSYSTEM.ViewModels
-@* @model HMSYSTEM.ViewModels.PagedResult<Bill> *@
+@using HMSYSTEM.ViewModels
+@using HMSYSTEM.Models
 @{
-    ViewData["Title"] = "Bill";
+    ViewData["Title"] = "Bill Management";
+    var patientList = ViewBag.Patient as IEnumerable<Patient> ?? new List<Patient>();
+    var serviceList = ViewBag.ServiceItem as IEnumerable<ServiceItem> ?? new List<ServiceItem>();
+    var nextBillNo = ViewBag.NextSerial as string ?? "R0001";
 }
 
+<!-- Premium Modern Styles for Bill Index -->
+<style>
+    .bill-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
 
-<div class="container-fluid mt-3">
+    .bill-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .bill-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .bill-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    /* Search Input Custom Design */
+    .search-wrapper {
+        position: relative;
+        min-width: 240px;
+    }
+
+    .search-wrapper .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 0.95rem;
+        pointer-events: none;
+    }
+
+    .search-wrapper input.search-control {
+        padding-left: 50px !important;
+        padding-right: 15px !important;
+        border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        background-color: #f7fafc !important;
+    }
+
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
+
+    /* Action Buttons */
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.25rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-complete-list {
+        background-color: #ed8936 !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.25rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(237, 137, 54, 0.3) !important;
+        transition: all 0.3s ease !important;
+        text-decoration: none !important;
+    }
+
+    .btn-complete-list:hover {
+        background-color: #dd6b20 !important;
+        transform: translateY(-1.5px);
+        color: #ffffff !important;
+    }
+
+    /* Custom Table Design */
+    .table-container {
+        padding: 1rem 1.5rem !important;
+    }
+
+    #billTable {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        border: none !important;
+    }
+
+    #billTable th {
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 16px 20px !important;
+        border-bottom: 2px solid #edf2f7 !important;
+        border-top: none !important;
+    }
+
+    #billTable td {
+        padding: 16px 20px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important;
+        color: #2d3748 !important;
+        font-size: 0.9rem !important;
+    }
+
+    #billTable tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    #billTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    /* Action Buttons Group */
+    .action-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+        border: 1px solid transparent;
+    }
+
+    .action-view {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border-color: #bee3f8;
+    }
+
+    .action-view:hover {
+        background-color: #3182ce;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
+    }
+
+    .action-delete {
+        background-color: #fff5f5;
+        color: #c53030;
+        border-color: #fed7d7;
+    }
+
+    .action-delete:hover {
+        background-color: #e53e3e;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+
+    /* Toastr Custom Design Overrides */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 50px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Bill List</h3></div>
-                    <div><input placeholder="Search Patient Name" id="customSearchBox" class="form-control" /></div>
-                    <div> <a class="btn btn-info" asp-controller="Bill" asp-action="Save">Create</a></div>
-                    <div> <a class="btn btn-primary" asp-controller="Bill" asp-action="CompleteList">Complete List</a></div>
+            <div class="card bill-card mb-4">
+
+                <!-- Card Header -->
+                <div class="card-header bill-card-header">
+                    <div class="header-container">
+                        <div class="header-title-block">
+                            <div class="header-icon">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <div>
+                                <h3 class="bill-card-title">Existing Bill List</h3>
+                                <p class="bill-card-subtitle">Manage hospital active patient bills, invoices, and due balances.</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="search-wrapper">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="form-control search-control" placeholder="Search Bill..." id="searchBox" />
+                                </div>
+                                <button type="button" class="btn btn-primary" id="btnSearch" style="border-radius: 30px; height: 42px; padding: 0 1.25rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addBillModal">
+                                <i class="fas fa-plus me-1"></i> Create Bill
+                            </button>
+                            <a asp-controller="Bill" asp-action="CompleteList" class="btn btn-complete-list">
+                                <i class="fas fa-check-circle me-1"></i> Paid Bills
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="billTable" class="table table-bordered table-hover">
+
+                <!-- Table Body -->
+                <div class="card-body table-container">
+                    <table id="billTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Sl</th>
+                                <th style="width: 60px">Sl No</th>
                                 <th>Date</th>
                                 <th>Bill No</th>
                                 <th>Patient Name</th>
-                                <th>P. Number</th>
+                                <th>Phone Number</th>
                                 <th>Total Amount</th>
-                                <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th>Paid Amount</th>
+                                <th>Due Amount</th>
+                                <th style="text-align: center">Status</th>
+                                <th style="width: 100px; text-align: center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="dataShow">
-                            @{
-                                int count =1;
-                            }
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@(item.BillDate.ToString("dd-MM-yyyy"))</td>
-                                    <td>@item.BillNo</td>
-                                    <td>@item.Patient.FirstName @item.Patient.LastName</td>
-                                    <td>@item.Patient.Phone</td>
-                                    <td>@item.TotalAmount</td>
-                                    <td>@(item.Status == 1 ? "Unpaid" : "Paid")</td>
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="Bill" asp-action="Details">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                count++;
-                            }
-
+                        <tbody id="billBody">
+                            <!-- Dynamic Content Via AJAX -->
                         </tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    @* @await Html.PartialAsync("_Pagination", Model) *@
+
+                <!-- Pagination Footer -->
+                <div class="card-footer" style="background-color: #ffffff; border-top: 1px solid #f1f2f6; padding: 1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size: 0.85rem;">
+                                Showing page <span id="cpage" class="fw-bold text-dark">0</span> of <span id="tpage" class="fw-bold text-dark">0</span> (<span id="tentries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap: 5px;">
+                                    <li class="page-item" id="prevLi">
+                                        <a id="btnPrevious" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">⬅️ Previous</a>
+                                    </li>
+                                    <li class="page-item" id="nextLi">
+                                        <a id="btnNext" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">Next ➡️</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-            <!-- /.card -->
         </div>
     </div>
 </div>
 
+<!-- Create Bill Modal -->
+<div class="modal fade" id="addBillModal" tabindex="-1" aria-labelledby="addBillModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBillModalLabel">
+                    <i class="fas fa-file-invoice-dollar me-2"></i> Create Patient Bill
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Bill" asp-action="Save" method="post" id="addBillForm">
+                <div class="modal-body" style="background-color: #f8fafc;">
+
+                    <!-- Master Bill Info -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="addBillDate" class="form-label">Bill Date</label>
+                                <input type="date" name="BillDate" id="addBillDate" class="form-control" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="addBillNo" class="form-label">Bill No</label>
+                                <input name="BillNo" id="addBillNo" class="form-control" value="@nextBillNo" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="addPatientId" class="form-label">Select Patient</label>
+                                <select name="PatientId" id="addPatientId" class="form-select" required>
+                                    <option value="">-- Select Patient --</option>
+                                    @foreach (var p in patientList)
+                                    {
+                                        <option value="@p.PatientID">@p.FirstName @p.LastName (@p.Phone)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bill Details Table -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fas fa-list me-2"></i> Service Charges & Item Details</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle mb-2" id="addBillDetailsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="min-width: 200px;">Service Item</th>
+                                        <th style="width: 100px;">Qty</th>
+                                        <th style="width: 120px;">Amount</th>
+                                        <th style="width: 130px;">Total</th>
+                                        <th style="width: 150px;">Charge Date</th>
+                                        <th style="width: 60px; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="addBillDetailsBody">
+                                    <!-- Dynamic rows added via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="button" id="addBillRowBtn" class="btn btn-sm btn-primary" style="border-radius: 20px; padding: 4px 16px; font-weight: 700;">
+                                <i class="fas fa-plus me-1"></i> Add Service Item
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Totals Summary -->
+                    <div class="card p-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="addBillGrandTotalAmt" class="form-label">Total Amount</label>
+                                <input name="TotalAmount" id="addBillGrandTotalAmt" class="form-control fw-bold text-dark" readonly value="0.00" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="addBillDiscount" class="form-label">Discount</label>
+                                <input type="number" step="0.01" min="0" name="Discount" id="addBillDiscount" class="form-control" value="0" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="addBillNetTotal" class="form-label">Net Amount</label>
+                                <input name="NetAmount" id="addBillNetTotal" class="form-control fw-bold text-primary" readonly value="0.00" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="addBillPaymentAmt" class="form-label">Payment</label>
+                                <input type="number" step="0.01" min="0" name="PaymentAmt" id="addBillPaymentAmt" class="form-control fw-bold text-success" value="0" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="addBillDueAmt" class="form-label">Due Amount</label>
+                                <input name="DueAmount" id="addBillDueAmt" class="form-control fw-bold text-danger" readonly value="0.00" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save" style="background-color: #dd6b20 !important; box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;">
+                        <i class="fas fa-save me-2"></i> Save Bill
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
-    $(document).ready(function () {
-        var table = $('#billTable').DataTable({
-            "pageLength": 10,
-            "lengthMenu": [5, 10, 20, 50],
-            "ordering": true,
-            "paging": true,
-            "info": true,
-            "language": {
-                "search": "",
-                "searchPlaceholder": "Search",
-                "lengthMenu": "_MENU_ rows",
-                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                "paginate": {
-                    "previous": "⬅️ Previous",
-                    "next": "Next ➡️"
+    var currentPage = 1;
+    var totalPages = 1;
+
+    // Helper notification wrappers
+    function showSuccess(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.success(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    function showError(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    // Helper function to create row HTML for a bill
+    function createrow(index, item) {
+        var statusBadge = (item.status === 2)
+            ? `<span class="badge bg-success" style="padding: 6px 12px; border-radius: 20px;"><i class="fas fa-check-circle me-1"></i> Paid</span>`
+            : `<span class="badge bg-warning text-dark" style="padding: 6px 12px; border-radius: 20px;"><i class="fas fa-clock me-1"></i> Unpaid</span>`;
+
+        var totalFormatted = item.totalAmount ? parseFloat(item.totalAmount).toFixed(2) : '0.00';
+        var paidFormatted = item.paymentAmt ? parseFloat(item.paymentAmt).toFixed(2) : '0.00';
+        var dueFormatted = item.dueAmount ? parseFloat(item.dueAmount).toFixed(2) : '0.00';
+
+        var detailsUrl = `@Url.Action("Details", "Bill")/${item.id}`;
+
+        return `<tr>
+            <td>${index}</td>
+            <td style="font-family: monospace;">${item.billDate || 'N/A'}</td>
+            <td><span class="badge bg-secondary">#${item.billNo || ''}</span></td>
+            <td style="font-weight: 700; color: #2d3748;">${item.patientName || 'N/A'}</td>
+            <td style="font-family: monospace; color: #4a5568;">${item.patientPhone || 'N/A'}</td>
+            <td style="font-family: monospace; font-weight: 700; color: #2d3748;">৳ ${totalFormatted}</td>
+            <td style="font-family: monospace; font-weight: 700; color: #2f855a;">৳ ${paidFormatted}</td>
+            <td style="font-family: monospace; font-weight: 700; color: #c53030;">৳ ${dueFormatted}</td>
+            <td style="text-align: center;">${statusBadge}</td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-view" href="${detailsUrl}" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a class="action-btn action-delete delete-bill-btn" href="javascript:void(0);" data-id="${item.id}" title="Delete Bill">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    // Function to load bills via AJAX
+    function loadBills(page) {
+        currentPage = page || 1;
+
+        $("#billBody").html(`
+            <tr>
+                <td colspan="10" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted mb-0">Loading bill records...</p>
+                </td>
+            </tr>
+        `);
+
+        var searchQuery = $('#searchBox').val() || '';
+
+        $.ajax({
+            url: "@Url.Action("GetBill", "Bill")",
+            type: "GET",
+            data: { search: searchQuery, page: currentPage, pageSize: 10 },
+            success: function (response) {
+                if (response.issuccess === true) {
+                    $("#billBody").empty();
+
+                    totalPages = response.totalPages || 1;
+                    var totalItem = response.totalItem || 0;
+
+                    // Update UI indicators
+                    $("#cpage").text(currentPage);
+                    $("#tpage").text(totalPages);
+                    $("#tentries").text(totalItem);
+
+                    // Update pagination buttons state
+                    if (currentPage <= 1) {
+                        $("#prevLi").addClass("disabled");
+                    } else {
+                        $("#prevLi").removeClass("disabled");
+                    }
+
+                    if (currentPage >= totalPages) {
+                        $("#nextLi").addClass("disabled");
+                    } else {
+                        $("#nextLi").removeClass("disabled");
+                    }
+
+                    if (response.data && response.data.length > 0) {
+                        $.each(response.data, function (i, v) {
+                            var rowIdx = ((currentPage - 1) * 10) + (i + 1);
+                            var row = createrow(rowIdx, v);
+                            $("#billBody").append(row);
+                        });
+                    } else {
+                        $("#billBody").html(`
+                            <tr>
+                                <td colspan="10" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle fs-4"></i>
+                                    <p class="mt-2 mb-0">No active bill records found.</p>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                } else {
+                    $("#billBody").html(`
+                        <tr>
+                            <td colspan="10" class="text-center py-4 text-danger">
+                                <i class="fas fa-exclamation-triangle fs-4"></i>
+                                <p class="mt-2 mb-0">Failed to load bill data.</p>
+                            </td>
+                        </tr>
+                    `);
                 }
             },
-            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+            error: function (xhr, textStatus, error) {
+                $("#billBody").html(`
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-triangle fs-4"></i>
+                            <p class="mt-2 mb-0">Failed to load data: ${error || xhr.statusText}</p>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
+
+    function changePage(direction) {
+        var targetPage = currentPage + direction;
+        if (targetPage >= 1 && targetPage <= totalPages) {
+            loadBills(targetPage);
+        }
+    }
+
+    // Modal Calculation Helpers for Add Bill Modal
+    function calculateAddBillRowTotal(row) {
+        let qty = parseFloat(row.find(".add-bill-qty").val()) || 0;
+        let amount = parseFloat(row.find(".add-bill-amount").val()) || 0;
+        row.find(".add-bill-total").val((qty * amount).toFixed(2));
+    }
+
+    function calculateAddBillGrandTotal() {
+        let grand = 0;
+        $(".add-bill-total").each(function () {
+            grand += parseFloat($(this).val()) || 0;
+        });
+        $("#addBillGrandTotalAmt").val(grand.toFixed(2));
+
+        let discount = parseFloat($("#addBillDiscount").val()) || 0;
+        let net = grand - discount;
+        $("#addBillNetTotal").val(net.toFixed(2));
+
+        let payment = parseFloat($("#addBillPaymentAmt").val()) || 0;
+        let due = net - payment;
+        $("#addBillDueAmt").val(due < 0 ? 0 : due.toFixed(2));
+    }
+
+    function buildAddBillServiceOptions() {
+        let html = '<option value="">--Select Service--</option>';
+        @foreach (var s in serviceList)
+        {
+            @:html += `<option value="@s.Id" data-amount="@(s.Amount ?? 0)">@s.ItemName</option>`;
+        }
+        return html;
+    }
+
+    $(document).ready(function () {
+        // Load bills on init
+        loadBills(1);
+
+        // Set today's date on add bill modal open
+        var today = new Date().toISOString().split('T')[0];
+        $('#addBillDate').val(today);
+
+        // Add 1 default row in Add Bill Modal on init if empty
+        if ($('#addBillDetailsBody tr').length === 0) {
+            addNewBillRow();
+        }
+
+        function addNewBillRow() {
+            var rowIndex = $('#addBillDetailsBody tr').length;
+            var optionsHtml = buildAddBillServiceOptions();
+
+            var newRow = `<tr>
+                <td>
+                    <select name="BillDetail[${rowIndex}].ServiceItemId" class="form-select add-bill-service-select" required>
+                        ${optionsHtml}
+                    </select>
+                </td>
+                <td><input type="number" name="BillDetail[${rowIndex}].Qty" class="form-control add-bill-qty" value="1" required /></td>
+                <td><input type="number" step="0.01" name="BillDetail[${rowIndex}].Amount" class="form-control add-bill-amount" value="0" required /></td>
+                <td><input type="number" step="0.01" name="BillDetail[${rowIndex}].TotalAmount" class="form-control add-bill-total" value="0.00" readonly /></td>
+                <td><input type="date" name="BillDetail[${rowIndex}].ChargeDate" class="form-control" value="${today}" required /></td>
+                <td style="text-align: center;"><button type="button" class="btn btn-sm btn-danger remove-add-bill-row-btn"><i class="fas fa-trash"></i></button></td>
+            </tr>`;
+            $('#addBillDetailsBody').append(newRow);
+            calculateAddBillGrandTotal();
+        }
+
+        $('#addBillRowBtn').on('click', function () {
+            addNewBillRow();
         });
 
+        // Service Select Change -> Auto populate price in Add Bill Modal
+        $('#addBillDetailsTable').on('change', '.add-bill-service-select', function () {
+            var selectedOption = $(this).find('option:selected');
+            var defaultAmount = parseFloat(selectedOption.data('amount')) || 0;
+            var $tr = $(this).closest('tr');
+            $tr.find('.add-bill-amount').val(defaultAmount);
+            calculateAddBillRowTotal($tr);
+            calculateAddBillGrandTotal();
+        });
 
-        $('#customSearchBox').on('keyup', function () {
-            table.search(this.value).draw();
+        // Input recalculations inside Add Bill Modal
+        $('#addBillDetailsTable').on('input', '.add-bill-qty, .add-bill-amount', function () {
+            calculateAddBillRowTotal($(this).closest('tr'));
+            calculateAddBillGrandTotal();
+        });
+
+        $('#addBillDiscount, #addBillPaymentAmt').on('input', calculateAddBillGrandTotal);
+
+        // Remove row in Add Bill Modal
+        $('#addBillDetailsTable').on('click', '.remove-add-bill-row-btn', function () {
+            $(this).closest('tr').remove();
+            calculateAddBillGrandTotal();
+        });
+
+        // Handle Add Bill Form Submission via AJAX
+        $('#addBillForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#addBillModal').modal('hide');
+                        form[0].reset();
+                        $('#addBillDate').val(today);
+                        $('#addBillDetailsBody').empty();
+                        addNewBillRow();
+                        loadBills(1);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Pagination handlers
+        $('#btnPrevious').on('click', function (e) {
+            e.preventDefault();
+            changePage(-1);
+        });
+
+        $('#btnNext').on('click', function (e) {
+            e.preventDefault();
+            changePage(1);
+        });
+
+        // Search button click handler
+        $('#btnSearch').on('click', function () {
+            loadBills(1);
+        });
+
+        // Search input Enter keypress
+        $('#searchBox').on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                loadBills(1);
+            }
+        });
+
+        // Handle Delete Bill Click via AJAX
+        $(document).on('click', '.delete-bill-btn', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            if (confirm("Are you sure you want to delete this bill record?")) {
+                var clickedBtn = $(this);
+                clickedBtn.css('pointer-events', 'none');
+                $.ajax({
+                    url: '@Url.Action("Delete", "Bill")',
+                    type: 'POST',
+                    data: { id: id },
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (response) {
+                        if (response.success) {
+                            showSuccess(response.message);
+                            loadBills(currentPage);
+                        } else {
+                            showError(response.message);
+                            clickedBtn.css('pointer-events', 'auto');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        showError("An error occurred: " + error);
+                        clickedBtn.css('pointer-events', 'auto');
+                    }
+                });
+            }
         });
     });
 </script>

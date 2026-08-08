@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Models;
+using HMSYSTEM.Models;
 
 namespace HMSYSTEM.Repository
 {
@@ -22,6 +22,7 @@ namespace HMSYSTEM.Repository
 
         //public List<Bed> GetAvailAble(int id);
         List<Bed> GetAvailableBedsByWardId(int wardId);
-
+        public Bed Find(int id);
+        public void Update(Bed bed);
     }
 }

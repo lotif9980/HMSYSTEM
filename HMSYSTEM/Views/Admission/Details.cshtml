@@ -1,207 +1,463 @@
-﻿@model HMSYSTEM.Models.Admission
-@{
-    ViewData["Title"] = "Admission Detail";
-}
+@model HMSYSTEM.Models.Admission
 @{
     ViewData["Title"] = "Admission Details";
-    var labelStyle = "font-weight: bold; width: 140px;";
+    var patientName = Model.Patient != null ? $"{Model.Patient.FirstName} {Model.Patient.LastName}".Trim() : "N/A";
+    var doctorName = Model.Doctor != null ? $"Dr. {Model.Doctor.FirstName} {Model.Doctor.LastName}".Trim() : "N/A";
 }
 
-<div class="container mt-5">
-    <div class="card shadow ps-5 pe-4 pt-3 pb-4 bg-light" style="max-width: 900px; height:1000px; margin: auto;">
+<!-- Premium Modern Styles for Admission Details -->
+<style>
+    .details-container {
+        max-width: 1050px;
+        margin: 2rem auto;
+    }
 
-        <!-- Top Action Buttons -->
-        <div class="d-flex justify-content-end mb-3">
-            <div class="btn-group">
-                <a class="btn btn-success" asp-controller="Admission" asp-action="Save">
-                    <i class="fa fa-plus"></i> Add
-                </a>
-                <a class="btn btn-primary" asp-controller="Admission" asp-action="Index">
-                    <i class="fa fa-list"></i> List
-                </a>
-                <button class="btn btn-danger" onclick="loadAndPrint(@Model.Id)">
-                    <i class="fa fa-print"></i> Print
-                </button>
+    .details-card {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
+
+    .details-header {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important;
+        padding: 2rem 2.5rem !important;
+        border: none !important;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-icon-box {
+        width: 52px;
+        height: 52px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        backdrop-filter: blur(5px);
+    }
+
+    .header-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: 0.5px;
+    }
+
+    .header-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin: 3px 0 0 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action-light {
+        background: rgba(255, 255, 255, 0.2) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 30px !important;
+        padding: 8px 20px !important;
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+        transition: all 0.25s ease !important;
+        backdrop-filter: blur(5px);
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-action-light:hover {
+        background: #ffffff !important;
+        color: #2b6cb0 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .btn-print {
+        background: #ed8936 !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 8px 20px !important;
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+        box-shadow: 0 4px 12px rgba(237, 137, 54, 0.3) !important;
+        transition: all 0.25s ease !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-print:hover {
+        background: #dd6b20 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(237, 137, 54, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    /* Highlight Summary Banner */
+    .summary-banner {
+        background: #f7fafc;
+        border-bottom: 1px solid #edf2f7;
+        padding: 1.25rem 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .summary-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .summary-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #718096;
+        font-weight: 700;
+    }
+
+    .summary-value {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #2d3748;
+    }
+
+    /* Section Cards Grid */
+    .details-body {
+        padding: 2.5rem !important;
+    }
+
+    .info-block-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1.5rem;
+        height: 100%;
+        transition: all 0.25s ease;
+    }
+
+    .info-block-card:hover {
+        border-color: #cbd5e0;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.03);
+    }
+
+    .info-block-title {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #2b6cb0;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid #ebf8ff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dashed #edf2f7;
+        font-size: 0.9rem;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: #718096;
+        font-weight: 600;
+    }
+
+    .detail-val {
+        color: #2d3748;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    /* Policy & Signature Block */
+    .policy-box {
+        background-color: #ebf8ff;
+        border-left: 4px solid #3182ce;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        color: #2b6cb0;
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .signature-area {
+        margin-top: 4rem;
+        padding-top: 1.5rem;
+    }
+
+    .sig-line {
+        border-top: 1.5px solid #cbd5e0;
+        text-align: center;
+        padding-top: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #4a5568;
+    }
+</style>
+
+<div class="container-fluid details-container">
+    <div class="card details-card">
+
+        <!-- Header -->
+        <div class="card-header details-header">
+            <div class="header-top">
+                <div class="header-title-block">
+                    <div class="header-icon-box">
+                        <i class="fas fa-procedures"></i>
+                    </div>
+                    <div>
+                        <h2 class="header-title">Hospital Admission Record</h2>
+                        <p class="header-subtitle">Invoice #@Model.InvoiceNo • Created on @(Model.AdmitDate?.ToString("dd MMMM yyyy") ?? "N/A")</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a class="btn-action-light" asp-controller="Admission" asp-action="Index">
+                        <i class="fas fa-arrow-left"></i> Admission List
+                    </a>
+                    <button type="button" class="btn-print" onclick="loadAndPrint(@Model.Id)">
+                        <i class="fas fa-print"></i> Print Voucher
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Title -->
-        <div class="text-center mb-4">
-            <h3>Hospital Admission Form</h3>
-            
-            <hr />
-        </div>
-
-        <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Admission Information</h5>
-     
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Invoice No:</div>
-                    <div>@Model.InvoiceNo</div>
-                </div>
-
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Admit Date:</div>
-                    <div>@Model.AdmitDate</div>
+        <!-- Summary Banner -->
+        <div class="summary-banner">
+            <div class="summary-item">
+                <i class="fas fa-user-injured text-primary fs-5 me-1"></i>
+                <div>
+                    <div class="summary-label">Patient Name</div>
+                    <div class="summary-value">@patientName</div>
                 </div>
             </div>
-
-            <div class="col-md-6">
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Ward:</div>
-                    <div>@Model.Bed.Ward.Name</div>
-                </div>
-
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Bed Number:</div>
-                    <div>@Model.Bed.BedNumber</div>
+            <div class="summary-item">
+                <i class="fas fa-hospital-alt text-info fs-5 me-1"></i>
+                <div>
+                    <div class="summary-label">Ward</div>
+                    <div class="summary-value">@(Model.Bed?.Ward?.Name ?? "N/A")</div>
                 </div>
             </div>
-        </div>
-        <!-- Patient Information Section Title -->
-        <h5 class="mb-3 text-primary border-bottom pb-1">Patient Information</h5>
-
-        <!-- Info Rows -->
-        <div class="row">
-            <!-- Left Side -->
-            <div class="col-md-6">
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Patient Name:</div>
-                    <div>
-                        <div>@Model.Patient.FirstName @Model.Patient.LastName</div>
-                     
+            <div class="summary-item">
+                <i class="fas fa-bed text-warning fs-5 me-1"></i>
+                <div>
+                    <div class="summary-label">Bed Number</div>
+                    <div class="summary-value">🛏️ @(Model.Bed?.BedNumber ?? "N/A")</div>
+                </div>
+            </div>
+            <div class="summary-item">
+                <i class="fas fa-toggle-on text-success fs-5 me-1"></i>
+                <div>
+                    <div class="summary-label">Status</div>
+                    <div class="summary-value">
+                        @if (Model.Status == 1)
+                        {
+                            <span class="badge bg-success" style="padding: 6px 14px; border-radius: 20px;">Active Admission</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary" style="padding: 6px 14px; border-radius: 20px;">Discharged / Inactive</span>
+                        }
                     </div>
                 </div>
-
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Phone:</div>
-                    <div>@Model.Patient.Phone</div>
-                </div>
-
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Email:</div>
-                    <div>@Model.Patient.Email</div>
-                </div>
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Address:</div>
-                    <div>@Model.Patient.Address</div>
-                </div>
-            </div>
-
-            <!-- Right Side -->
-            <div class="col-md-6">
-
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Emr. Phone:</div>
-                    <div>@Model.Patient.EmergencyContact</div>
-                </div>
-
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Father Name:</div>
-                    <div>@Model.Patient.FatherName</div>
-                </div>
-
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">DOB:</div>
-                    <div>@Model.Patient.DateOfBirth</div>
-                </div>
-
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Blood Group:</div>
-                    <div>@Model.Patient.BloodGroup</div>
-                </div>
-
             </div>
         </div>
 
-        <!-- Doctor Information Section Title -->
-        <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Doctor Information</h5>
+        <!-- Card Body -->
+        <div class="card-body details-body">
+            <div class="row g-4">
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Admit Doctor:</div>
-                    <div>
-                        <div>@Model.Doctor.FirstName @Model.Doctor.LastName</div>
+                <!-- Admission Info Block -->
+                <div class="col-md-6">
+                    <div class="info-block-card">
+                        <div class="info-block-title">
+                            <i class="fas fa-calendar-check me-1"></i> Admission Details
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Invoice Serial No</span>
+                            <span class="detail-val"><span class="badge bg-secondary">#@Model.InvoiceNo</span></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Admit Date & Time</span>
+                            <span class="detail-val">@(Model.AdmitDate?.ToString("dd-MM-yyyy hh:mm tt") ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Floor Number</span>
+                            <span class="detail-val">@(Model.Bed?.Ward?.FloorNo ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Allocated Ward</span>
+                            <span class="detail-val">@(Model.Bed?.Ward?.Name ?? "N/A")</span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Bed Number</span>
+                            <span class="detail-val">🛏️ @(Model.Bed?.BedNumber ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Bed Daily Rate</span>
+                            <span class="detail-val text-primary">৳ @(Model.Bed?.RatePerDay?.ToString("0.00") ?? "0.00")</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Doctor Phone:</div>
-                    <div>@Model.Doctor.PhoneNo</div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Specialist  :</div>
-                    <div>
-                        <div>@Model.Doctor.Specialist</div>
+                <!-- Patient Info Block -->
+                <div class="col-md-6">
+                    <div class="info-block-card">
+                        <div class="info-block-title">
+                            <i class="fas fa-user-injured me-1"></i> Patient Profile
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Full Name</span>
+                            <span class="detail-val">@patientName</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Phone Number</span>
+                            <span class="detail-val" style="font-family: monospace;">@(Model.Patient?.Phone ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Father's Name</span>
+                            <span class="detail-val">@(Model.Patient?.FatherName ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Blood Group</span>
+                            <span class="detail-val"><span class="badge bg-danger">@(Model.Patient?.BloodGroup ?? "N/A")</span></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Emergency Contact</span>
+                            <span class="detail-val" style="font-family: monospace;">@(Model.Patient?.EmergencyContact ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Residential Address</span>
+                            <span class="detail-val">@(Model.Patient?.Address ?? "N/A")</span>
+                        </div>
                     </div>
                 </div>
-                
-            </div>
-        </div
 
-
-        <!-- Attendent Information Section Title -->
-        <h5 class="mt-4 mb-3 text-primary border-bottom pb-1">Attendant Information</h5>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Attendant Name:</div>
-                    <div>
-                        <div>@Model.AttendentName</div>
+                <!-- Doctor Info Block -->
+                <div class="col-md-6">
+                    <div class="info-block-card">
+                        <div class="info-block-title">
+                            <i class="fas fa-user-md me-1"></i> Assigned Physician
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Attending Doctor</span>
+                            <span class="detail-val">@doctorName</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Specialist Department</span>
+                            <span class="detail-val"><span class="badge bg-info text-dark">@(Model.Doctor?.Specialist ?? "General Physician")</span></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Doctor Contact No</span>
+                            <span class="detail-val" style="font-family: monospace;">@(Model.Doctor?.PhoneNo ?? "N/A")</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Relation:</div>
-                    <div>@Model.AttendentRelation</div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                
-                <div class="mb-1 d-flex">
-                    <div style="@labelStyle">Phone Number  :</div>
-                    <div>
-                        <div>@Model.AttendentPhone</div>
+                <!-- Attendant Info Block -->
+                <div class="col-md-6">
+                    <div class="info-block-card">
+                        <div class="info-block-title">
+                            <i class="fas fa-user-shield me-1"></i> Attendant & Reason
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Attendant Name</span>
+                            <span class="detail-val">@(Model.AttendentName ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Relationship</span>
+                            <span class="detail-val">@(Model.AttendentRelation ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Attendant Phone</span>
+                            <span class="detail-val" style="font-family: monospace;">@(Model.AttendentPhone ?? "N/A")</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Admission Reason / Notes</span>
+                            <span class="detail-val text-dark">@(Model.ForReason ?? "General Treatment")</span>
+                        </div>
                     </div>
                 </div>
-                
-            </div>
-        </div>
 
-        <hr />
-        <div class="row">
-            <div> ✅I hereby declare that the information provided is true and I agree to hospital policies.</div>
-            <div class="d-flex justify-content-around" style="margin-top:100px;">
-                <div class="">
-                    <u> Patient Signature</u>
+            </div>
+
+            <!-- Policy Declaration -->
+            <div class="policy-box">
+                <i class="fas fa-check-circle fs-4 me-1 text-primary"></i>
+                <span>I hereby declare that the information provided is true and accurate, and I agree to strictly abide by all hospital policies, admission rules, and regulation guidelines.</span>
+            </div>
+
+            <!-- Signatures Section -->
+            <div class="row signature-area">
+                <div class="col-4">
+                    <div class="sig-line">
+                        Patient Signature
+                    </div>
                 </div>
-                <div class="">
-                    <u>Attendant/Guardian Signature</u>
+                <div class="col-4">
+                    <div class="sig-line">
+                        Attendant / Guardian Signature
+                    </div>
                 </div>
-                <div class="">
-                    <u>Hospital Authority</u>
+                <div class="col-4">
+                    <div class="sig-line">
+                        Hospital Authorized Officer
+                    </div>
                 </div>
             </div>
+
         </div>
 
     </div>
 </div>
 
-
+<!-- Print Container Helper -->
 <div id="printContainer" style="display:none;"></div>
-
 
 <script>
     function loadAndPrint(id) {
         $.ajax({
-            url: '/Admission/GetPrintPartial/' + id,
+            url: '@Url.Action("GetPrintPartial", "Admission")/' + id,
             type: 'GET',
             success: function (data) {
                 $('#printContainer').html(data);
@@ -214,7 +470,7 @@
                 location.reload();
             },
             error: function () {
-                alert("Failed to load print view.");
+                alert("Failed to load print voucher.");
             }
         });
     }

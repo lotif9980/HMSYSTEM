@@ -1,4 +1,4 @@
-﻿namespace HMSYSTEM.Models
+namespace HMSYSTEM.Models
 {
     public class BillDetail
     {
@@ -9,5 +9,6 @@
         public decimal? Amount { get; set; }
         public decimal? TotalAmount { get; set; }
         public DateTime? ChargeDate { get; set; }
+        public ServiceItem? ServiceItem { get; set; }
     }
 }

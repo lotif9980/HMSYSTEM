@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -82,6 +82,25 @@ namespace HMSYSTEM.Repository
             return _db.Beds
                 .Where(b => b.WardId == wardId && b.IsOccupied == true)
                 .ToList();
+        }
+
+        public Bed Find(int id)
+        {
+            return _db.Beds.Include(b => b.Ward).FirstOrDefault(b => b.Id == id);
+        }
+
+        public void Update(Bed bed)
+        {
+            var existing = _db.Beds.Find(bed.Id);
+            if (existing != null)
+            {
+                existing.BedNumber = bed.BedNumber;
+                existing.WardId = bed.WardId;
+                existing.BedType = bed.BedType;
+                existing.RatePerDay = bed.RatePerDay;
+                existing.IsOccupied = bed.IsOccupied;
+                _db.SaveChanges();
+            }
         }
     }
 }

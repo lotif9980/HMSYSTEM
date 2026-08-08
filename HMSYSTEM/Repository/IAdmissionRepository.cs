@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Models;
+using HMSYSTEM.Models;
 
 namespace HMSYSTEM.Repository
 {
@@ -15,6 +15,6 @@ namespace HMSYSTEM.Repository
         public Task<bool> PatientStatusCheck(int patientId);
 
         public bool UpdateAdmissionStatus(int id);
-      
+        public void Update(Admission admission);
     }
 }

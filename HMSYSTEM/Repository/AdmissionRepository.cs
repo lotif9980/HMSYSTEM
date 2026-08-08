@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -60,11 +60,31 @@ namespace HMSYSTEM.Repository
 
         public bool UpdateAdmissionStatus(int id)
         {
-           var data= _db.Admissions.FirstOrDefault(d=>d.Id==id);
-            data.Status = data.Status == 1 ? 0 : 1;
-            _db.SaveChanges();
-
+            var data = _db.Admissions.FirstOrDefault(d => d.Id == id);
+            if (data != null)
+            {
+                data.Status = data.Status == 1 ? 0 : 1;
+                _db.SaveChanges();
+            }
             return true;
+        }
+
+        public void Update(Admission admission)
+        {
+            var existing = _db.Admissions.Find(admission.Id);
+            if (existing != null)
+            {
+                existing.DoctorId = admission.DoctorId;
+                existing.BedId = admission.BedId;
+                existing.AdmitDate = admission.AdmitDate;
+                existing.AttendentName = admission.AttendentName;
+                existing.AttendentRelation = admission.AttendentRelation;
+                existing.AttendentPhone = admission.AttendentPhone;
+                existing.ForReason = admission.ForReason;
+                existing.Declaration = admission.Declaration;
+                existing.Status = admission.Status;
+                _db.SaveChanges();
+            }
         }
     }
 }

@@ -1,0 +1,253 @@
+@model HMSYSTEM.ViewModels.BillViewModel
+@using HMSYSTEM.Helpers
+
+<style type="text/css">
+    @@media print {
+        @@page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 10pt;
+            color: #000000;
+            background: #ffffff !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        #PrescriptionPrintArea {
+            width: 100% !important;
+            max-width: 210mm !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        button, .btn, .no-print {
+            display: none !important;
+        }
+    }
+
+    #PrescriptionPrintArea {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #2d3748;
+        background: #ffffff;
+        padding: 1.5rem;
+        max-width: 210mm;
+        margin: 0 auto;
+    }
+
+    .report-print-header {
+        border-bottom: 2px solid #2b6cb0;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .hospital-info-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #2b6cb0;
+        margin: 0;
+    }
+
+    .hospital-info-sub {
+        font-size: 0.85rem;
+        color: #4a5568;
+        margin: 2px 0 0 0;
+    }
+
+    .report-title-badge {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border: 1px solid #bee3f8;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .generated-date {
+        font-size: 0.75rem;
+        color: #718096;
+        text-align: right;
+        margin-top: 4px;
+    }
+
+    .print-info-grid {
+        display: flex;
+        justify-content: space-between;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.88rem;
+    }
+
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .print-table th {
+        background-color: #f7fafc !important;
+        color: #2d3748 !important;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e0;
+    }
+
+    .print-table td {
+        padding: 10px 12px;
+        font-size: 0.88rem;
+        border: 1px solid #e2e8f0;
+        color: #2d3748;
+    }
+
+    .print-table tfoot td {
+        background-color: #f7fafc !important;
+        font-weight: 800;
+        border-top: 2px solid #cbd5e0;
+    }
+
+    .words-box {
+        background-color: #ebf8ff;
+        border-left: 4px solid #3182ce;
+        border-radius: 8px;
+        padding: 0.8rem 1rem;
+        color: #2b6cb0;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-top: 1.5rem;
+    }
+
+    .disclaimer-note {
+        text-align: center;
+        color: #c53030;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-top: 2rem;
+    }
+</style>
+
+<div id="PrescriptionPrintArea">
+
+    <!-- Standardized Hospital Header -->
+    <div class="report-print-header">
+        <div>
+            <h2 class="hospital-info-title">HMS Hospital Management</h2>
+            <p class="hospital-info-sub">Charghat, Rajshahi • Mobile: 01791177192</p>
+        </div>
+        <div>
+            <div class="report-title-badge">
+                Patient Bill Invoice
+            </div>
+            <div class="generated-date">
+                Generated: @DateTime.Now.ToString("dd-MM-yyyy hh:mm tt")
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient & Invoice Summary Box -->
+    <div class="print-info-grid">
+        <div>
+            <div><strong>Patient Name:</strong> @(Model.PatientName ?? "N/A")</div>
+            <div><strong>Phone Number:</strong> @(Model.PatientPhoneNumber ?? "N/A")</div>
+            <div><strong>Address:</strong> @(Model.Address ?? "N/A")</div>
+        </div>
+        <div style="text-align: right;">
+            <div><strong>Invoice No:</strong> <span style="font-weight: 800; color: #2b6cb0;">#@(Model.BillNo ?? "N/A")</span></div>
+            <div><strong>Bill Date:</strong> @Model.BillDate.ToString("dd-MM-yyyy")</div>
+            <div>
+                <strong>Payment Status:</strong>
+                @if (Model.Status == 2)
+                {
+                    <span style="color: #2f855a; font-weight: 800;">Paid</span>
+                }
+                else
+                {
+                    <span style="color: #c53030; font-weight: 800;">Unpaid / Active</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Itemized Service Charges Table -->
+    <table class="print-table">
+        <thead>
+            <tr>
+                <th style="width: 40px;">Sl</th>
+                <th>Service Item Name</th>
+                <th style="width: 120px;">Charge Date</th>
+                <th style="width: 100px;">Unit Price</th>
+                <th style="width: 60px;">Qty</th>
+                <th style="width: 120px; text-align: right;">Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.BillDetail != null && Model.BillDetail.Any())
+            {
+                int count = 1;
+                foreach (var detail in Model.BillDetail)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td style="font-weight: 700;">@(detail.ItemName ?? "N/A")</td>
+                        <td style="font-family: monospace;">@(detail.ChargeDate?.ToString("dd-MM-yyyy") ?? "N/A")</td>
+                        <td style="font-family: monospace;">৳ @((detail.Amount ?? 0).ToString("N2"))</td>
+                        <td>@(detail.Qty ?? 1)</td>
+                        <td style="font-family: monospace; font-weight: 700; text-align: right;">৳ @((detail.TotalAmount ?? 0).ToString("N2"))</td>
+                    </tr>
+                    count++;
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" style="text-align: right;">Total Amount:</td>
+                <td style="text-align: right; font-family: monospace;">৳ @((Model.TotalAmount ?? 0).ToString("N2"))</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right;">Discount:</td>
+                <td style="text-align: right; font-family: monospace; color: #718096;">৳ @((Model.Discount ?? 0).ToString("N2"))</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right;">Net Total:</td>
+                <td style="text-align: right; font-family: monospace; color: #2b6cb0;">৳ @((Model.NetAmount ?? 0).ToString("N2"))</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right;">Payment Amount:</td>
+                <td style="text-align: right; font-family: monospace; color: #2f855a;">৳ @((Model.PaymentAmt ?? 0).ToString("N2"))</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right; color: #c53030;">Due Amount:</td>
+                <td style="text-align: right; font-family: monospace; color: #c53030;">৳ @((Model.DueAmount ?? 0).ToString("N2"))</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Amount in Words -->
+    <div class="words-box">
+        In Words: @QueryableExtensions.TakaInWords(Model.PaymentAmt ?? 0)
+    </div>
+
+    <!-- System Disclaimer -->
+    <div class="disclaimer-note">
+        [ Note: This is a system-generated invoice and does not require any signature or seal ]
+    </div>
+
+</div>

@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,6 +44,20 @@ namespace HMSYSTEM.Repository
         public Ward Find(int id)
         {
             return _db.Wards.Include(d=>d.Department).FirstOrDefault(d=>d.Id==id);
+        }
+
+        public void Update(Ward ward)
+        {
+            var existing = _db.Wards.Find(ward.Id);
+            if (existing != null)
+            {
+                existing.Name = ward.Name;
+                existing.DepartmentId = ward.DepartmentId;
+                existing.FloorNo = ward.FloorNo;
+                existing.TotalBeds = ward.TotalBeds;
+                existing.Type = ward.Type;
+                _db.SaveChanges();
+            }
         }
 
         public int TotalWard()

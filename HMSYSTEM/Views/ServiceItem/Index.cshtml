@@ -1,101 +1,751 @@
-﻿@model IEnumerable<ServiceItem>
-@using HMSYSTEM.ViewModels
+@using HMSYSTEM.Models
 @{
-    ViewData["Title"] = "Servoce Item";
+    ViewData["Title"] = "Service Item Management";
 }
 
+<!-- Premium Modern Styles for Service Item Index -->
+<style>
+    .service-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
 
+    .service-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
 
-<div class="container-fluid mt-3">
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .service-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .service-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    /* Search Input Custom Design */
+    .search-wrapper {
+        position: relative;
+        min-width: 260px;
+    }
+
+    .search-wrapper .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 0.95rem;
+        pointer-events: none;
+    }
+
+    .search-wrapper input.search-control {
+        padding-left: 50px !important;
+        padding-right: 15px !important;
+        border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        background-color: #f7fafc !important;
+    }
+
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
+
+    /* Create Button Custom Design */
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.5rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    /* Custom Table Design */
+    .table-container {
+        padding: 1rem 1.5rem !important;
+    }
+
+    #serviceTable {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        border: none !important;
+    }
+
+    #serviceTable th {
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 16px 20px !important;
+        border-bottom: 2px solid #edf2f7 !important;
+        border-top: none !important;
+    }
+
+    #serviceTable td {
+        padding: 16px 20px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important;
+        color: #2d3748 !important;
+        font-size: 0.9rem !important;
+    }
+
+    #serviceTable tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    #serviceTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    /* Action Buttons Group */
+    .action-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+        border: 1px solid transparent;
+    }
+
+    .action-edit {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border-color: #bee3f8;
+    }
+
+    .action-edit:hover {
+        background-color: #3182ce;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
+    }
+
+    .action-delete {
+        background-color: #fff5f5;
+        color: #c53030;
+        border-color: #fed7d7;
+    }
+
+    .action-delete:hover {
+        background-color: #e53e3e;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+
+    /* Toastr Custom Design Overrides */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 50px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-evenly">
-                    <div> <h3 class="card-title">Existing Service List</h3></div>
-                   
-                    <div>
-                        <input type="text" class="form-control" id="searchBox" placeholder="Search Service Item" />
-                    </div>
+            <div class="card service-card mb-4">
 
-                    <div> <a class="btn btn-info" asp-controller="ServiceItem" asp-action="Save">Create</a></div>
+                <!-- Card Header -->
+                <div class="card-header service-card-header">
+                    <div class="header-container">
+                        <div class="header-title-block">
+                            <div class="header-icon">
+                                <i class="fas fa-concierge-bell"></i>
+                            </div>
+                            <div>
+                                <h3 class="service-card-title">Existing Service List</h3>
+                                <p class="service-card-subtitle">Manage and monitor hospital service items, costs, and availability.</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="search-wrapper">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="form-control search-control" placeholder="Search Service Item..." id="searchBox" />
+                                </div>
+                                <button type="button" class="btn btn-primary" id="btnSearch" style="border-radius: 30px; height: 42px; padding: 0 1.5rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addServiceItemModal">
+                                <i class="fas fa-plus me-2"></i> Create
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="serviceTable" class="table table-bordered table-hover">
+
+                <!-- Table Body -->
+                <div class="card-body table-container">
+                    <table id="serviceTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">sl</th>
-                                <th>Service Item</th>
+                                <th style="width: 70px">Sl No</th>
+                                <th>Service Item Name</th>
                                 <th>Amount</th>
                                 <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th style="width: 120px; text-align: center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="dataShow">
-                            @{
-                                int count =  1;
-                            }
-                            @foreach (ServiceItem item in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@item.ItemName</td>
-                                    <td>@item.Amount</td>
-                                    
-                                    <td>
-                                        <div class="d-flex justify-content-center">
-                                            @(item.IsActive ? "Active" : "Inactive")
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="ServiceItem" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                      count++;
-                            }
-
+                        <tbody id="serviceBody">
+                            <!-- Dynamic Content Via AJAX -->
                         </tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                
+
+                <!-- Pagination Footer -->
+                <div class="card-footer" style="background-color: #ffffff; border-top: 1px solid #f1f2f6; padding: 1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size: 0.85rem;">
+                                Showing page <span id="cpage" class="fw-bold text-dark">0</span> of <span id="tpage" class="fw-bold text-dark">0</span> (<span id="tentries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap: 5px;">
+                                    <li class="page-item" id="prevLi">
+                                        <a id="btnPrevious" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">⬅️ Previous</a>
+                                    </li>
+                                    <li class="page-item" id="nextLi">
+                                        <a id="btnNext" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">Next ➡️</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <!-- /.card -->
         </div>
     </div>
 </div>
 
+<!-- Add Service Item Modal -->
+<div class="modal fade" id="addServiceItemModal" tabindex="-1" aria-labelledby="addServiceItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addServiceItemModalLabel">
+                    <i class="fas fa-concierge-bell me-2"></i> Service Item Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="ServiceItem" asp-action="Save" method="post" id="addServiceItemForm">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="ItemName" class="form-label">Service Item Name</label>
+                            <input name="ItemName" id="ItemName" class="form-control" placeholder="e.g. ECG Test" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Amount" class="form-label">Amount</label>
+                            <input name="Amount" id="Amount" class="form-control" type="number" step="0.01" min="0" placeholder="e.g. 500" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Service Item Modal -->
+<div class="modal fade" id="editServiceItemModal" tabindex="-1" aria-labelledby="editServiceItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="editServiceItemModalLabel">
+                    <i class="fas fa-edit me-2"></i> Edit Service Item Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="ServiceItem" asp-action="Update" method="post" id="editServiceItemForm">
+                <input type="hidden" name="Id" id="editServiceItemId" />
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editItemName" class="form-label">Service Item Name</label>
+                            <input name="ItemName" id="editItemName" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editAmount" class="form-label">Amount</label>
+                            <input name="Amount" id="editAmount" class="form-control" type="number" step="0.01" min="0" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label d-block">Status</label>
+                            <div class="form-check form-check-inline mt-2">
+                                <input class="form-check-input" type="radio" name="IsActive" id="editIsActiveTrue" value="true">
+                                <label class="form-check-label text-success fw-bold" for="editIsActiveTrue">Active</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-2">
+                                <input class="form-check-input" type="radio" name="IsActive" id="editIsActiveFalse" value="false">
+                                <label class="form-check-label text-secondary fw-bold" for="editIsActiveFalse">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save" style="background-color: #3182ce !important; box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3) !important;">
+                        <i class="fas fa-save me-2"></i> Update
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
+    var currentPage = 1;
+    var totalPages = 1;
+
+    // Helper notification wrappers
+    function showSuccess(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.success(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    function showError(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    // Helper function to create row HTML for a service item
+    function createrow(index, item) {
+        var statusBadge = item.isActive
+            ? `<span class="badge bg-success">Active</span>`
+            : `<span class="badge bg-secondary">Inactive</span>`;
+
+        var amountFormatted = item.amount ? parseFloat(item.amount).toFixed(2) : '0.00';
+
+        return `<tr>
+            <td>${index}</td>
+            <td style="font-weight: 700; color: #2d3748;">${item.itemName || ''}</td>
+            <td style="font-family: monospace; font-weight: 700; color: #2b6cb0;">৳ ${amountFormatted}</td>
+            <td>${statusBadge}</td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-edit edit-service-btn" href="javascript:void(0);" data-id="${item.id}" title="Edit Service Item">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="action-btn action-delete delete-service-btn" href="javascript:void(0);" data-id="${item.id}" title="Delete Service Item">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    // Function to load service items via AJAX
+    function loadServices(page) {
+        currentPage = page || 1;
+
+        $("#serviceBody").html(`
+            <tr>
+                <td colspan="5" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted mb-0">Loading service items...</p>
+                </td>
+            </tr>
+        `);
+
+        var searchQuery = $('#searchBox').val() || '';
+
+        $.ajax({
+            url: "@Url.Action("GetServiceItem", "ServiceItem")",
+            type: "GET",
+            data: { search: searchQuery, page: currentPage, pageSize: 10 },
+            success: function (response) {
+                if (response.issuccess === true) {
+                    $("#serviceBody").empty();
+
+                    totalPages = response.totalPages || 1;
+                    var totalItem = response.totalItem || 0;
+
+                    // Update UI indicators
+                    $("#cpage").text(currentPage);
+                    $("#tpage").text(totalPages);
+                    $("#tentries").text(totalItem);
+
+                    // Update pagination buttons state
+                    if (currentPage <= 1) {
+                        $("#prevLi").addClass("disabled");
+                    } else {
+                        $("#prevLi").removeClass("disabled");
+                    }
+
+                    if (currentPage >= totalPages) {
+                        $("#nextLi").addClass("disabled");
+                    } else {
+                        $("#nextLi").removeClass("disabled");
+                    }
+
+                    if (response.data && response.data.length > 0) {
+                        $.each(response.data, function (i, v) {
+                            var rowIdx = ((currentPage - 1) * 10) + (i + 1);
+                            var row = createrow(rowIdx, v);
+                            $("#serviceBody").append(row);
+                        });
+                    } else {
+                        $("#serviceBody").html(`
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle fs-4"></i>
+                                    <p class="mt-2 mb-0">No service items found.</p>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                } else {
+                    $("#serviceBody").html(`
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-danger">
+                                <i class="fas fa-exclamation-triangle fs-4"></i>
+                                <p class="mt-2 mb-0">Failed to load service item data.</p>
+                            </td>
+                        </tr>
+                    `);
+                }
+            },
+            error: function (xhr, textStatus, error) {
+                $("#serviceBody").html(`
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-triangle fs-4"></i>
+                            <p class="mt-2 mb-0">Failed to load data: ${error || xhr.statusText}</p>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
+
+    function changePage(direction) {
+        var targetPage = currentPage + direction;
+        if (targetPage >= 1 && targetPage <= totalPages) {
+            loadServices(targetPage);
+        }
+    }
+
     $(document).ready(function () {
-           var table = $('#serviceTable').DataTable({
-               "pageLength": 10,
-               "lengthMenu": [5, 10, 20, 50],
-               "ordering": true,
-               "paging": true,
-               "info": true,
-               "language": {
-                   "search": "",
-                   "searchPlaceholder": "Search",
-                   "lengthMenu": "_MENU_ rows",
-                   "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                   "paginate": {
-                       "previous": "⬅️ Previous",
-                       "next": "Next ➡️"
-                   }
-               },
-               "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
-           });
+        // Load services on init
+        loadServices(1);
 
+        // Pagination handlers
+        $('#btnPrevious').on('click', function (e) {
+            e.preventDefault();
+            changePage(-1);
+        });
 
-           $('#searchBox').on('keyup', function () {
-               table.search(this.value).draw();
-           });
-     });
+        $('#btnNext').on('click', function (e) {
+            e.preventDefault();
+            changePage(1);
+        });
+
+        // Search button click handler
+        $('#btnSearch').on('click', function () {
+            loadServices(1);
+        });
+
+        // Search input Enter keypress
+        $('#searchBox').on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                loadServices(1);
+            }
+        });
+
+        // Handle Add Service Item Form Submission via AJAX
+        $('#addServiceItemForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#addServiceItemModal').modal('hide');
+                        form[0].reset();
+                        loadServices(1);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Edit Service Item Click: Fetch details via AJAX and open modal
+        $(document).on('click', '.edit-service-btn', function () {
+            var serviceId = $(this).data('id');
+            $.getJSON('@Url.Action("GetServiceItemById", "ServiceItem")', { id: serviceId }, function (data) {
+                $('#editServiceItemId').val(data.id);
+                $('#editItemName').val(data.itemName);
+                $('#editAmount').val(data.amount);
+                if (data.isActive) {
+                    $('#editIsActiveTrue').prop('checked', true);
+                } else {
+                    $('#editIsActiveFalse').prop('checked', true);
+                }
+                $('#editServiceItemModal').modal('show');
+            }).fail(function () {
+                showError("Failed to fetch service item details.");
+            });
+        });
+
+        // Handle Edit Service Item Form Submission via AJAX
+        $('#editServiceItemForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#editServiceItemModal').modal('hide');
+                        loadServices(currentPage);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Delete Service Item Click via AJAX
+        $(document).on('click', '.delete-service-btn', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            if (confirm("Are you sure you want to delete this service item?")) {
+                var clickedBtn = $(this);
+                clickedBtn.css('pointer-events', 'none');
+                $.ajax({
+                    url: '@Url.Action("Delete", "ServiceItem")',
+                    type: 'POST',
+                    data: { id: id },
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (response) {
+                        if (response.success) {
+                            showSuccess(response.message);
+                            loadServices(currentPage);
+                        } else {
+                            showError(response.message);
+                            clickedBtn.css('pointer-events', 'auto');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        showError("An error occurred: " + error);
+                        clickedBtn.css('pointer-events', 'auto');
+                    }
+                });
+            }
+        });
+    });
 </script>

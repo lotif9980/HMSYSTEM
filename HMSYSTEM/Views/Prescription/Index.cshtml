@@ -1,86 +1,290 @@
+@using HMSYSTEM.Models
 @{
     ViewData["Title"] = "Prescription Management";
+    var medicineList = ViewBag.Medicine as List<Medicine> ?? new List<Medicine>();
+    var patientList = ViewBag.Patient as List<Patient> ?? new List<Patient>();
+    var doctorList = ViewBag.Doctor as List<Doctor> ?? new List<Doctor>();
+    var departmentList = ViewBag.Department as List<Department> ?? new List<Department>();
 }
 
+<!-- Premium Modern Styles for Prescription Index -->
 <style>
     .rx-card {
-        border: none !important; border-radius: 16px !important;
+        border: none !important;
+        border-radius: 16px !important;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
-        background: #ffffff; overflow: hidden;
+        background: #ffffff;
+        overflow: hidden;
     }
+
     .rx-card-header {
-        background: #ffffff !important; border-bottom: 1px solid #f1f2f6 !important;
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
         padding: 1.5rem 2rem !important;
     }
-    .header-icon {
-        width: 44px; height: 44px;
-        background: rgba(49, 130, 206, 0.1); color: #3182ce;
-        border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
-    }
-    .rx-card-title { font-size: 1.3rem; font-weight: 800; color: #2d3748; margin: 0; }
-    .rx-card-subtitle { font-size: 0.82rem; color: #718096; margin: 2px 0 0 0; }
 
-    .search-wrapper { position: relative; min-width: 260px; }
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .rx-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .rx-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .search-wrapper {
+        position: relative;
+        min-width: 240px;
+    }
+
     .search-wrapper .search-icon {
-        position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
-        color: #a0aec0; font-size: 0.95rem; pointer-events: none;
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 0.95rem;
+        pointer-events: none;
     }
+
     .search-wrapper input.search-control {
-        padding-left: 50px !important; padding-right: 15px !important;
-        border-radius: 30px !important; border: 1.5px solid #e2e8f0 !important;
-        font-size: 0.9rem !important; height: 42px !important;
-        transition: all 0.3s ease !important; box-shadow: none !important; background-color: #f7fafc !important;
+        padding-left: 50px !important;
+        padding-right: 15px !important;
+        border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        background-color: #f7fafc !important;
     }
+
     .search-wrapper input.search-control:focus {
-        border-color: #3182ce !important; background-color: #ffffff !important;
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
         box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
     }
 
     .btn-gradient-create {
         background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
-        color: #ffffff !important; border: none !important; border-radius: 30px !important;
-        padding: 0 1.5rem !important; font-weight: 700 !important; font-size: 0.9rem !important;
-        height: 42px !important; display: inline-flex !important; align-items: center !important;
-        gap: 8px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
-        transition: all 0.3s ease !important; cursor: pointer; text-decoration: none !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.25rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer;
+        text-decoration: none !important;
     }
-    .btn-gradient-create:hover { transform: translateY(-1.5px); box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important; color: #ffffff !important; }
-    .btn-gradient-create:active { transform: translateY(0); }
 
-    .table-container { padding: 1rem 1.5rem !important; }
-    #rxTable { border-collapse: separate !important; border-spacing: 0 !important; width: 100% !important; border: none !important; }
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .table-container {
+        padding: 1rem 1.5rem !important;
+    }
+
+    #rxTable {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        border: none !important;
+    }
+
     #rxTable th {
-        background-color: #f7fafc !important; color: #4a5568 !important; font-weight: 700 !important;
-        text-transform: uppercase !important; font-size: 0.75rem !important; letter-spacing: 0.8px !important;
-        padding: 16px 20px !important; border-bottom: 2px solid #edf2f7 !important; border-top: none !important;
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 16px 20px !important;
+        border-bottom: 2px solid #edf2f7 !important;
+        border-top: none !important;
     }
+
     #rxTable td {
-        padding: 15px 20px !important; vertical-align: middle !important;
-        border-bottom: 1px solid #edf2f7 !important; color: #2d3748 !important; font-size: 0.9rem !important;
+        padding: 15px 20px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important;
+        color: #2d3748 !important;
+        font-size: 0.9rem !important;
     }
-    #rxTable tbody tr:hover { background-color: #f7fafc !important; }
 
-    .action-btn-group { display: flex; justify-content: center; gap: 8px; }
+    #rxTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    .action-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
     .action-btn {
-        width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;
-        border-radius: 50%; text-decoration: none !important;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 0.9rem; border: 1px solid transparent;
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+        border: 1px solid transparent;
     }
-    .action-edit { background-color: #ebf8ff; color: #2b6cb0; border-color: #bee3f8; }
-    .action-edit:hover { background-color: #3182ce; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2); }
-    .action-delete { background-color: #fff5f5; color: #c53030; border-color: #fed7d7; }
-    .action-delete:hover { background-color: #e53e3e; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2); }
-    .action-view { background-color: #f0fff4; color: #276749; border-color: #c6f6d5; }
-    .action-view:hover { background-color: #38a169; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(56, 161, 105, 0.2); }
 
-    .pagination .page-link { box-shadow: none !important; }
-    .pagination .page-item:not(.disabled) .page-link:hover { background-color: #3182ce !important; color: #ffffff !important; border-color: #3182ce !important; }
-    .pagination .page-item.disabled .page-link { color: #a0aec0 !important; background-color: #f7fafc !important; border-color: #edf2f7 !important; pointer-events: none; }
+    .action-delete {
+        background-color: #fff5f5;
+        color: #c53030;
+        border-color: #fed7d7;
+    }
 
-    #toast-container > .toast-success { background-color: #2f855a !important; color: #ffffff !important; opacity: 1 !important; }
-    #toast-container > .toast-error { background-color: #c53030 !important; color: #ffffff !important; opacity: 1 !important; }
-    #toast-container > .toast { background-image: none !important; padding: 15px 20px 15px 50px !important; border-radius: 10px !important; border: none !important; }
-    #toast-container .toast-message, #toast-container .toast-title { color: #ffffff !important; font-weight: 600 !important; }
+    .action-delete:hover {
+        background-color: #e53e3e;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2);
+    }
+
+    .action-view {
+        background-color: #f0fff4;
+        color: #276749;
+        border-color: #c6f6d5;
+    }
+
+    .action-view:hover {
+        background-color: #38a169;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(56, 161, 105, 0.2);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+
+    /* Toastr Custom Design Overrides */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 50px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
 </style>
 
 <div class="container-fluid mt-4">
@@ -103,8 +307,11 @@
                                 <input type="text" class="form-control search-control" placeholder="Search Patient / Doctor..." id="rxSearchBox" />
                             </div>
                             <button type="button" id="btnRxSearch" class="btn btn-primary"
-                                style="border-radius: 30px; height: 42px; padding: 0 1.5rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                    style="border-radius: 30px; height: 42px; padding: 0 1.25rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
                                 <i class="fas fa-search"></i> Search
+                            </button>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#savePrescriptionModal">
+                                <i class="fas fa-plus me-1"></i> Create Prescription
                             </button>
                         </div>
                     </div>
@@ -119,7 +326,7 @@
                                 <th>Patient Name</th>
                                 <th>Doctor Name</th>
                                 <th>Department</th>
-                                <th style="width:130px; text-align:center">Action</th>
+                                <th style="width:100px; text-align:center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="rxTableBody"></tbody>
@@ -140,13 +347,13 @@
                                 <ul class="pagination pagination-sm m-0" style="gap:5px;">
                                     <li class="page-item disabled" id="rxPrevLi">
                                         <a id="rxBtnPrev" class="page-link" href="javascript:void(0);"
-                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                           style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
                                             ⬅️ Previous
                                         </a>
                                     </li>
                                     <li class="page-item disabled" id="rxNextLi">
                                         <a id="rxBtnNext" class="page-link" href="javascript:void(0);"
-                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
+                                           style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">
                                             Next ➡️
                                         </a>
                                     </li>
@@ -161,28 +368,149 @@
     </div>
 </div>
 
+<!-- Save Prescription Modal -->
+<div class="modal fade" id="savePrescriptionModal" tabindex="-1" aria-labelledby="savePrescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="savePrescriptionModalLabel">
+                    <i class="fas fa-prescription me-2"></i> Create Patient Prescription
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Prescription" asp-action="Save" method="post" id="savePrescriptionForm">
+                <input type="hidden" name="AppointmentId" id="modalAppointmentId" value="0" />
+                <div class="modal-body" style="background-color: #f8fafc;">
+
+                    <!-- Master Metadata -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="modalRxDate" class="form-label">Prescription Date</label>
+                                <input type="date" name="Date" id="modalRxDate" class="form-control" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modalPatientId" class="form-label">Select Patient</label>
+                                <select name="PatientId" id="modalPatientId" class="form-select" required>
+                                    <option value="">-- Select Patient --</option>
+                                    @foreach (var p in patientList)
+                                    {
+                                        <option value="@p.PatientID">@p.FirstName @p.LastName (@p.Phone)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modalDoctorId" class="form-label">Select Doctor</label>
+                                <select name="DoctorId" id="modalDoctorId" class="form-select" required>
+                                    <option value="">-- Select Doctor --</option>
+                                    @foreach (var d in doctorList)
+                                    {
+                                        <option value="@d.Id">Dr. @d.FirstName @d.LastName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modalDepartmentId" class="form-label">Department</label>
+                                <select name="DepartmentId" id="modalDepartmentId" class="form-select">
+                                    <option value="">-- Select Department --</option>
+                                    @foreach (var dept in departmentList)
+                                    {
+                                        <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Medicine Dosage Table -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fas fa-pills me-2 text-primary"></i> Prescribed Medicines & Dosage Instructions</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle mb-2" id="modalRxDetailsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="min-width: 220px;">Medicine</th>
+                                        <th style="width: 130px;">Dose (e.g. 1+0+1)</th>
+                                        <th style="width: 130px;">Duration (e.g. 7 Days)</th>
+                                        <th style="width: 140px; text-align: center;">After Meal?</th>
+                                        <th style="width: 60px; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalRxDetailsBody">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="button" id="modalRxAddRowBtn" class="btn btn-sm btn-primary" style="border-radius: 20px; padding: 4px 16px; font-weight: 700;">
+                                <i class="fas fa-plus me-1"></i> Add Medicine
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Advice & Follow-Up Card -->
+                    <div class="card p-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="modalRxNote" class="form-label">Medical Advice / Note</label>
+                                <input type="text" name="Note" id="modalRxNote" class="form-control" placeholder="e.g. Drink plenty of water. Take rest. (Use '.' for bullet breaks)" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="modalNextFlowUp" class="form-label">Follow-Up Date</label>
+                                <input type="date" name="NextFlowUp" id="modalNextFlowUp" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save" style="background-color: #dd6b20 !important; box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;">
+                        <i class="fas fa-save me-2"></i> Issue Prescription
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     var rxCurrentPage = 1;
     var rxTotalPages = 1;
 
+    function showSuccess(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.success(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    function showError(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        } else {
+            alert(message);
+        }
+    }
+
     function createRxRow(index, item) {
         return `<tr>
             <td>${index}</td>
-            <td>${item.date || 'N/A'}</td>
+            <td style="font-family: monospace;">${item.date || 'N/A'}</td>
             <td style="font-weight:700; color:#2d3748;">${item.patientName || 'N/A'}</td>
             <td>${item.doctorName || 'N/A'}</td>
             <td>${item.departmentName || 'N/A'}</td>
             <td>
                 <div class="action-btn-group">
-                    <a class="action-btn action-edit" href="/Prescription/Save?id=${item.id}" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a class="action-btn action-delete" href="/Prescription/Delete/${item.id}"
-                       onclick="return confirm('Are you sure you want to delete this prescription?')" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </a>
                     <a class="action-btn action-view" href="/Prescription/Details/${item.id}" title="View Details">
                         <i class="fas fa-eye"></i>
+                    </a>
+                    <a class="action-btn action-delete delete-rx-btn" href="javascript:void(0);" data-id="${item.id}" title="Delete Prescription">
+                        <i class="fas fa-trash"></i>
                     </a>
                 </div>
             </td>
@@ -235,8 +563,107 @@
         });
     }
 
+    function buildMedicineSelectOptions() {
+        let html = '<option value="">-- Select Medicine --</option>';
+        @foreach (var m in medicineList)
+        {
+            @:html += `<option value="@m.Id">@m.Name</option>`;
+        }
+        return html;
+    }
+
+    function addRxModalRow() {
+        var rowIndex = $('#modalRxDetailsBody tr').length;
+        var medOptions = buildMedicineSelectOptions();
+
+        var newRow = `<tr>
+            <td>
+                <select name="PrescriptionDetails[${rowIndex}].MedicineId" class="form-select modal-rx-medicine" required>
+                    ${medOptions}
+                </select>
+            </td>
+            <td><input type="text" name="PrescriptionDetails[${rowIndex}].Dose" class="form-control" placeholder="1+0+1" required /></td>
+            <td><input type="text" name="PrescriptionDetails[${rowIndex}].Duration" class="form-control" placeholder="7 Days" required /></td>
+            <td style="text-align: center;">
+                <input type="checkbox" name="PrescriptionDetails[${rowIndex}].Instructions" value="true" class="form-check-input mt-2" style="width: 20px; height: 20px;" />
+            </td>
+            <td style="text-align: center;">
+                <button type="button" class="btn btn-sm btn-danger remove-modal-rx-row-btn"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>`;
+        $('#modalRxDetailsBody').append(newRow);
+    }
+
     $(document).ready(function () {
         loadPrescriptions(1);
+
+        var today = new Date().toISOString().split('T')[0];
+        $('#modalRxDate').val(today);
+
+        var followUp = new Date();
+        followUp.setDate(followUp.getDate() + 7);
+        $('#modalNextFlowUp').val(followUp.toISOString().split('T')[0]);
+
+        if ($('#modalRxDetailsBody tr').length === 0) {
+            addRxModalRow();
+        }
+
+        $('#modalRxAddRowBtn').on('click', function () {
+            addRxModalRow();
+        });
+
+        $('#modalRxDetailsTable').on('click', '.remove-modal-rx-row-btn', function () {
+            $(this).closest('tr').remove();
+        });
+
+        // AJAX Form Submission
+        $('#savePrescriptionForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#savePrescriptionModal').modal('hide');
+                        form[0].reset();
+                        $('#modalRxDate').val(today);
+                        $('#modalNextFlowUp').val(followUp.toISOString().split('T')[0]);
+                        $('#modalRxDetailsBody').empty();
+                        addRxModalRow();
+                        loadPrescriptions(1);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Delete Prescription AJAX
+        $(document).on('click', '.delete-rx-btn', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            if (confirm("Are you sure you want to delete this prescription record?")) {
+                $.ajax({
+                    url: '/Prescription/Delete/' + id,
+                    type: 'GET',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function () {
+                        showSuccess("✅ Prescription Successfully Deleted!");
+                        loadPrescriptions(rxCurrentPage);
+                    },
+                    error: function () {
+                        showError("Failed to delete prescription.");
+                    }
+                });
+            }
+        });
 
         $('#rxBtnPrev').on('click', function (e) { e.preventDefault(); if (rxCurrentPage > 1) loadPrescriptions(rxCurrentPage - 1); });
         $('#rxBtnNext').on('click', function (e) { e.preventDefault(); if (rxCurrentPage < rxTotalPages) loadPrescriptions(rxCurrentPage + 1); });

@@ -1,229 +1,208 @@
-﻿@using HMSYSTEM.ViewModels
+@using HMSYSTEM.ViewModels
 @model List<AdmissionViewModel>
 @{
-    ViewData["Title"] = "Admission Report";
+    ViewData["Title"] = "Admission Analytics Report";
+    int totalCount = Model != null ? Model.Count : 0;
 }
 
+<!-- Custom Styles for Admission Report -->
 <style>
-
-    .print-hide {
-        display: none !important;
+    .report-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
     }
 
-    @@media print {
-        /* Hide everything initially */
-        * {
-            visibility: hidden;
-        }
-        /* Make only page container visible */
-        .page-container,
-        .page-container * {
-            visibility: visible;
-        }
+    .report-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
 
-        .page-container {
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
-            width: 100% !important;
-            height: auto !important;
-            overflow: visible !important;
-            min-height: 0 !important;
-            max-height: none !important;
-            page-break-before: avoid !important;
-            page-break-after: avoid !important;
-            page-break-inside: avoid !important;
-        }
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
 
-        @@page {
-            size: A4;
-            margin: 5mm;
-        }
-        /* Text and layout adjustments */
-        * {
-            -webkit-print-color-adjust: exact !important;
-            color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            box-shadow: none !important;
-            text-shadow: none !important;
-            background: none !important; /* REMOVE all background colors */
-        }
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-        body {
-            font-size: 13pt !important;
-            line-height: 1.2 !important;
-            background: white !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            height: auto !important;
-        }
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(56, 161, 105, 0.1);
+        color: #38a169;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
 
-        .row,
-        .form-inline,
-        .date-range,
-        .form-group {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8pt !important;
-            margin-bottom: 6pt !important;
-        }
+    .report-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
 
-
-
-        button,
-        .btn {
-            display: none !important;
-        }
-        /* Table formatting */
-        table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-        }
-
-            table th,
-            table td {
-                border: 1px solid #000 !important;
-                background: none !important; /* Ensure no background */
-                color: #000 !important;
-                font-size: 13pt !important;
-                padding: 4pt !important;
-            }
-
-        .print-hide {
-            display: block !important;
-        }
+    .report-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
     }
 </style>
 
+<div class="container-fluid mt-4 print-container">
+    <div class="card report-card mb-4">
 
-<form id="billFilterForm" asp-action="AdmissionReport" method="post">
-    <div class="container">
-        <div class="row d-flex justify-content-center align-items-end">
-            <div class="col-md-5">
-                <label class="form-label">From</label>
-                <div class="input-group">
-                    <input type="text" id="fromDate" name="fromDate" class="form-control" />
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        <!-- Card Header -->
+        <div class="card-header report-card-header no-print">
+            <div class="header-container">
+                <div class="header-title-block">
+                    <div class="header-icon">
+                        <i class="fas fa-procedures"></i>
+                    </div>
+                    <div>
+                        <h3 class="report-card-title">Admission Analytics Report</h3>
+                        <p class="report-card-subtitle">Filter and analyze patient admission records over a selected date period.</p>
+                    </div>
+                </div>
+                <div>
+                    <a asp-controller="Report" asp-action="Index" class="btn btn-outline-secondary" style="border-radius: 30px; font-weight: 700;">
+                        <i class="fas fa-arrow-left me-1"></i> Reports Hub
+                    </a>
                 </div>
             </div>
-            <div class="col-md-5">
-                <label class="form-label">To</label>
-                <div class="input-group">
-                    <input type="text" id="toDate" name="toDate" class="form-control" />
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                </div>
-            </div>
-            <div class="col-md-2 d-flex gap-2">
-
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-eye"></i>
-                </button>
-
-                <a class="btn btn-danger" asp-controller="Report" asp-action="AdmissionReport">
-                    <i class="fa fa-refresh"></i>
-                </a>
-
-                <button type="button" class="btn btn-info" onclick="window.print()">
-                    <i class="fa fa-print"></i>
-                </button>
-               
-            </div>
-            
         </div>
-    </div>
-</form>
 
-
-<div class="page-container">
-    <div class="container">
-         <div class="m-3">
-            <div class="row  print-hide">
-                <div class="d-flex justify-content-center">
-                   <h1>Admission Reports</h1>
+        <!-- Date Range Filter Form -->
+        <div class="card-body bg-light border-bottom p-4 no-print">
+            <form id="billFilterForm" asp-action="AdmissionReport" method="post">
+                <div class="row align-items-end g-3 justify-content-center">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-dark">From Date</label>
+                        <div class="input-group">
+                            <input type="text" id="fromDate" name="fromDate" class="form-control" placeholder="Select Start Date" style="border-radius: 8px 0 0 8px;" required />
+                            <span class="input-group-text bg-white" id="fromDateIcon"><i class="fa fa-calendar text-primary"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-dark">To Date</label>
+                        <div class="input-group">
+                            <input type="text" id="toDate" name="toDate" class="form-control" placeholder="Select End Date" style="border-radius: 8px 0 0 8px;" required />
+                            <span class="input-group-text bg-white" id="toDateIcon"><i class="fa fa-calendar text-primary"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-success flex-grow-1" style="border-radius: 30px; height: 42px; font-weight: 700; background-color: #38a169; border: none;">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </button>
+                        <a class="btn btn-outline-secondary" asp-controller="Report" asp-action="AdmissionReport" title="Reset Filters" style="border-radius: 30px; height: 42px; width: 42px; display: inline-flex; align-items: center; justify-content: center;">
+                            <i class="fa fa-sync-alt"></i>
+                        </a>
+                        <button type="button" class="btn btn-warning text-white" onclick="loadAndPrint()" title="Print Report" style="border-radius: 30px; height: 42px; background-color: #ed8936; border: none; font-weight: 700; padding: 0 1.25rem;">
+                            <i class="fa fa-print me-1"></i> Print
+                        </button>
+                    </div>
                 </div>
-             </div>
-             @if (Model != null && Model.Any())
-            {
-            <table class="table table-bordered mt-3 table-hover">
-                <thead>
-                    <tr>
-                        <th>Sl</th>
-                        <th>Patient</th>
-                        <th>P.Phone</th>
-                        <th>Doctor</th>
-                        <th>Bed</th>
-                        <th>Admission Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int count = 1;
-                    }
+            </form>
+        </div>
 
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@count</td>
-                            <td>@item.PatientName</td>
-                            <td>@item.PatientPhoneNumber</td>
-                            <td>@item.DoctorName</td>
-                            <td>@item.BedName</td>
-                            <td>@(item.AdmitDate?.ToString("dd-MM-yyyy"))</td>
-                        </tr>
-                        count++;
-                    }
-
-                </tbody>
-            </table>
+        <!-- Summary KPI Card -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="card-body border-bottom p-4">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border d-flex align-items-center gap-3">
+                            <div class="p-3 bg-success text-white rounded-3 fs-4">
+                                <i class="fas fa-procedures"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted small fw-bold uppercase">Total Patient Admissions</div>
+                                <div class="fs-4 fw-bold text-dark">@totalCount</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
 
-         </div>
-    </div>
+        <!-- Report Table -->
+        <div class="card-body p-4">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 60px;">Sl No</th>
+                                <th>Admission Date</th>
+                                <th>Patient Name</th>
+                                <th>Phone Number</th>
+                                <th>Assigned Doctor</th>
+                                <th>Ward & Bed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int count = 1; }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td style="font-family: monospace;">@(item.AdmitDate?.ToString("dd-MM-yyyy") ?? "N/A")</td>
+                                    <td style="font-weight: 700; color: #2d3748;">@item.PatientName</td>
+                                    <td style="font-family: monospace; color: #4a5568;">@item.PatientPhoneNumber</td>
+                                    <td>Dr. @item.DoctorName</td>
+                                    <td><span class="badge bg-info text-dark">🛏️ @item.BedName</span></td>
+                                </tr>
+                                count++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-search fs-1 text-secondary mb-3 d-block"></i>
+                    <h5>No Admission Records Found</h5>
+                    <p class="mb-0">Select a date range above and click <strong>Filter</strong> to view admission history.</p>
+                </div>
+            }
+        </div>
 
+    </div>
 </div>
 
-
+<div id="printContainer" style="display:none;"></div>
 
 <script>
     $(function () {
-        $("#fromDate").datepicker({
-            dateFormat: "dd-mm-yy",
-            changeMonth: true,
-            changeYear: true,
-            defaultDate: new Date()  
-        }).datepicker("setDate", new Date()); 
-
-        $(".input-group-text").click(function () {
-            $("#fromDate").focus();
-        });
-    });
-
-
-    $(function () {
         var today = new Date();
-
-
         var firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
         var lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-
         $("#fromDate").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
-            changeYear: true,
-            defaultDate: firstDateOfMonth
+            changeYear: true
         }).datepicker("setDate", firstDateOfMonth);
-
 
         $("#toDate").datepicker({
             dateFormat: "dd-mm-yy",
             changeMonth: true,
-            changeYear: true,
-            defaultDate: lastDateOfMonth
+            changeYear: true
         }).datepicker("setDate", lastDateOfMonth);
-
 
         $("#fromDateIcon").click(function () {
             $("#fromDate").focus();
@@ -234,5 +213,32 @@
         });
     });
 
+    function loadAndPrint() {
+        var fromDate = $('#fromDate').val();
+        var toDate = $('#toDate').val();
 
+        if(!fromDate || !toDate){
+            alert("Please select From and To date");
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("GetAdmissionPrint", "Report")',
+            type: 'GET',
+            data: { fromDate: fromDate, toDate: toDate },
+            success: function (data) {
+                $('#printContainer').html(data);
+                var printContents = document.getElementById('printContainer').innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+                window.print();
+                document.body.innerHTML = originalContents;
+                location.reload();
+            },
+            error: function () {
+                alert("Failed to load print view.");
+            }
+        });
+    }
 </script>

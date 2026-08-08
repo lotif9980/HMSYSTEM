@@ -1,166 +1,1258 @@
-﻿ @model IEnumerable<Admission> 
-@using HMSYSTEM.ViewModels
 @using HMSYSTEM.Enum
+@using HMSYSTEM.Models
 @{
-    ViewData["Title"] = "Admission";
+    ViewData["Title"] = "Admission Management";
+    var doctors = ViewBag.Doctor as IEnumerable<Doctor> ?? new List<Doctor>();
+    var wards = ViewBag.Ward as IEnumerable<Ward> ?? new List<Ward>();
+    int nextSerial = ViewBag.NextSerial != null ? (int)ViewBag.NextSerial : 1;
 }
 
-<div class="container-fluid mt-3">
+<!-- Premium Modern Styles for Admission Index -->
+<style>
+    .admission-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
+
+    .admission-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(49, 130, 206, 0.1);
+        color: #3182ce;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .admission-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .admission-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    /* Search Input Custom Design */
+    .search-wrapper {
+        position: relative;
+        min-width: 260px;
+    }
+
+    .search-wrapper .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 0.95rem;
+        pointer-events: none;
+    }
+
+    .search-wrapper input.search-control {
+        padding-left: 50px !important;
+        padding-right: 15px !important;
+        border-radius: 30px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        background-color: #f7fafc !important;
+    }
+
+    .search-wrapper input.search-control:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+    }
+
+    /* Create Button Custom Design */
+    .btn-gradient-create {
+        background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 30px !important;
+        padding: 0 1.5rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+        transition: all 0.3s ease !important;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+
+    .btn-gradient-create:hover {
+        transform: translateY(-1.5px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    /* Custom Table Design */
+    .table-container {
+        padding: 1rem 1.5rem !important;
+    }
+
+    #admissionTable {
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        width: 100% !important;
+        border: none !important;
+    }
+
+    #admissionTable th {
+        background-color: #f7fafc !important;
+        color: #4a5568 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 16px 20px !important;
+        border-bottom: 2px solid #edf2f7 !important;
+        border-top: none !important;
+    }
+
+    #admissionTable td {
+        padding: 16px 20px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #edf2f7 !important;
+        color: #2d3748 !important;
+        font-size: 0.9rem !important;
+    }
+
+    #admissionTable tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    #admissionTable tbody tr:hover {
+        background-color: #f7fafc !important;
+    }
+
+    /* Action Buttons Group */
+    .action-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .action-btn {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.85rem;
+        border: 1px solid transparent;
+    }
+
+    .action-edit {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border-color: #bee3f8;
+    }
+    .action-edit:hover {
+        background-color: #3182ce;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .action-view {
+        background-color: #e6fffa;
+        color: #234e52;
+        border-color: #b2f5ea;
+    }
+    .action-view:hover {
+        background-color: #319795;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .action-bill {
+        background-color: #fefcbf;
+        color: #744210;
+        border-color: #faf089;
+    }
+    .action-bill:hover {
+        background-color: #d69e2e;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .action-delete {
+        background-color: #fff5f5;
+        color: #c53030;
+        border-color: #fed7d7;
+    }
+    .action-delete:hover {
+        background-color: #e53e3e;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .status-active {
+        background-color: #c6f6d5;
+        color: #22543d;
+    }
+    .status-active:hover {
+        background-color: #9ae6b4;
+    }
+
+    .status-inactive {
+        background-color: #e2e8f0;
+        color: #4a5568;
+    }
+    .status-inactive:hover {
+        background-color: #cbd5e0;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        padding: 1.5rem !important;
+    }
+
+    .modal-title {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 2rem !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #edf2f7 !important;
+        padding: 1.25rem 2rem !important;
+        background-color: #f7fafc;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.25s ease !important;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #3182ce !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.12) !important;
+    }
+
+    .btn-save {
+        background-color: #dd6b20 !important;
+        border: none !important;
+        border-radius: 30px !important;
+        color: #ffffff !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .btn-save:hover {
+        background-color: #c05621 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(221, 107, 32, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    .btn-close-modal {
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 700 !important;
+        transition: all 0.25s ease !important;
+    }
+
+    /* Toastr Custom Design Overrides */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 50px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+</style>
+
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-around">
-                    <div> <h3 class="card-title">Existing Admission List</h3></div>
-                    <div><input placeholder="Search Patient Name" id="customSearchBox" class="form-control" /></div>
-                    <div> <a class="btn btn-info" asp-controller="Admission" asp-action="Save">Create</a></div>
+            <div class="card admission-card mb-4">
+
+                <!-- Card Header -->
+                <div class="card-header admission-card-header">
+                    <div class="header-container">
+                        <div class="header-title-block">
+                            <div class="header-icon">
+                                <i class="fas fa-procedures"></i>
+                            </div>
+                            <div>
+                                <h3 class="admission-card-title">Existing Admission List</h3>
+                                <p class="admission-card-subtitle">Manage patient hospital admissions, bed allocations, and billing records.</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="search-wrapper">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="form-control search-control" placeholder="Search Admission..." id="searchBox" />
+                                </div>
+                                <button type="button" class="btn btn-primary" id="btnSearch" style="border-radius: 30px; height: 42px; padding: 0 1.5rem; font-weight: 700; background-color: #3182ce; border-color: #3182ce; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25);">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-gradient-create" data-bs-toggle="modal" data-bs-target="#addAdmissionModal">
+                                <i class="fas fa-plus me-2"></i> Create
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="admissionTable" class="table table-bordered table-hover">
+
+                <!-- Table Body -->
+                <div class="card-body table-container">
+                    <table id="admissionTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 10px">Id</th>
-                                <th>Date</th>
+                                <th style="width: 60px">Sl No</th>
+                                <th>Admit Date</th>
                                 <th>Invoice No</th>
                                 <th>Patient Name</th>
-                                <th>P. Number</th>
-                                <th>Ward Name</th>
-                                <th>Bed Number</th>
-                                <th>Status</th>
-                                <th style="width:20px;text-align:center">Action</th>
+                                <th>Phone Number</th>
+                                <th>Ward</th>
+                                <th>Bed No</th>
+                                <th>Assigned Doctor</th>
+                                <th style="text-align: center">Status</th>
+                                <th style="width: 150px; text-align: center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="dataShow">
-                            @{
-                                int count =1;
-                            }
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@(item.AdmitDate?.ToString("dd-MM-yyyy"))</td>
-                                    <td>@item.InvoiceNo</td>
-                                    <td>@item.Patient.FirstName @item.Patient.LastName</td>
-                                    <td>@item.Patient.Phone</td>
-                                    <td>@item.Bed?.Ward.Name</td>
-                                    <td>@item.Bed.BedNumber</td>
-                                    <td>@(item.Status == 1 ? "Active" : "Inactive")</td>
-                                    <td>
-                                        <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-danger ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Delete">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                            <a class="btn btn-success ms-2" asp-route-id="@item.Id" asp-controller="Admission" asp-action="Details">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-
-                                            <a class="btn btn-info ms-2"
-                                               asp-controller="Bill"
-                                               asp-action="SaveFromAdmission"
-                                               asp-route-patientId="@item.PatientId"
-                                               asp-route-bedId="@item.BedId"
-                                               asp-route-admissionId="@item.Id">
-                                                <i class="fa fa-file-invoice"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                  count++;
-                            }
-
+                        <tbody id="admissionBody">
+                            <!-- Dynamic Content Via AJAX -->
                         </tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    @* @await Html.PartialAsync("_Pagination", Model) *@
+
+                <!-- Pagination Footer -->
+                <div class="card-footer" style="background-color: #ffffff; border-top: 1px solid #f1f2f6; padding: 1.25rem 2rem;">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 text-center text-sm-start mb-3 mb-sm-0">
+                            <div class="text-muted" style="font-size: 0.85rem;">
+                                Showing page <span id="cpage" class="fw-bold text-dark">0</span> of <span id="tpage" class="fw-bold text-dark">0</span> (<span id="tentries" class="fw-bold text-dark">0</span> total entries)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center justify-content-sm-end">
+                                <ul class="pagination pagination-sm m-0" style="gap: 5px;">
+                                    <li class="page-item" id="prevLi">
+                                        <a id="btnPrevious" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">⬅️ Previous</a>
+                                    </li>
+                                    <li class="page-item" id="nextLi">
+                                        <a id="btnNext" class="page-link" href="javascript:void(0);" style="border-radius: 30px !important; padding: 6px 18px; font-weight: 700; color: #4a5568; border-color: #e2e8f0; transition: all 0.2s ease;">Next ➡️</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-            <!-- /.card -->
+        </div>
+    </div>
+</div>
+
+<!-- Add Admission Modal -->
+<div class="modal fade" id="addAdmissionModal" tabindex="-1" aria-labelledby="addAdmissionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAdmissionModalLabel">
+                    <i class="fas fa-procedures me-2"></i> Admission Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Admission" asp-action="Save" method="post" id="addAdmissionForm">
+                <div class="modal-body">
+
+                    <!-- Admit Date & Invoice No -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="AdmitDate" class="form-label">Admit Date</label>
+                            <input type="date" id="AdmitDate" name="AdmitDate" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="InvoiceNo" class="form-label">Invoice No</label>
+                            <input name="InvoiceNo" id="InvoiceNo" class="form-control" value="@nextSerial" readonly />
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="patientId" name="PatientId" />
+
+                    <!-- Patient Lookup -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="patientPhoneNumber" class="form-label">Patient Phone Number</label>
+                            <input class="form-control" id="patientPhoneNumber" placeholder="Enter patient phone & press Tab" required />
+                            <small id="patientLookupStatus" class="text-muted"></small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="patientName" class="form-label">Patient Name</label>
+                            <input class="form-control" id="patientName" placeholder="Auto-populated from phone lookup" readonly required />
+                        </div>
+                    </div>
+
+                    <!-- Doctor Selection -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="DoctorId" class="form-label">Assigned Doctor</label>
+                            <select name="DoctorId" id="DoctorId" class="form-select" required>
+                                <option value="">-- Select Doctor --</option>
+                                @foreach (var doc in doctors)
+                                {
+                                    <option value="@doc.Id">Dr. @doc.FirstName @doc.LastName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Ward & Bed Selection -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="wardDropdown" class="form-label">Select Ward</label>
+                            <select id="wardDropdown" name="WardId" class="form-select" required>
+                                <option value="">-- Select Ward --</option>
+                                @foreach (var ward in wards)
+                                {
+                                    <option value="@ward.Id">@ward.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="bedDropdown" class="form-label">Select Bed</label>
+                            <select id="bedDropdown" name="BedId" class="form-select" required>
+                                <option value="">-- Select Ward First --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Attendant Information -->
+                    <h6 class="fw-bold text-dark mt-4 mb-2"><i class="fas fa-user-shield me-1"></i> Attendant Information</h6>
+                    <hr class="mt-0 mb-3" />
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="AttendentName" class="form-label">Attendant Name</label>
+                            <input name="AttendentName" id="AttendentName" class="form-control" placeholder="Full Name" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="AttendentRelation" class="form-label">Attendant Relation</label>
+                            <input name="AttendentRelation" id="AttendentRelation" class="form-control" placeholder="e.g. Brother, Spouse" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="AttendentPhone" class="form-label">Attendant Phone</label>
+                            <input name="AttendentPhone" id="AttendentPhone" class="form-control" placeholder="Phone Number" required />
+                        </div>
+                    </div>
+
+                    <!-- Reason & Declaration -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="ForReason" class="form-label">Admission Reason / Notes</label>
+                            <input name="ForReason" id="ForReason" class="form-control" placeholder="Reason for admission" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input name="Declaration" class="form-check-input" type="checkbox" id="Declaration" value="true" checked />
+                                <label class="form-check-label" for="Declaration">
+                                    I hereby declare that the information provided is true and agree to hospital policies.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Admission Modal -->
+<div class="modal fade" id="editAdmissionModal" tabindex="-1" aria-labelledby="editAdmissionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="editAdmissionModalLabel">
+                    <i class="fas fa-edit me-2"></i> Edit Admission Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="Admission" asp-action="Update" method="post" id="editAdmissionForm">
+                <input type="hidden" name="Id" id="editAdmissionId" />
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editPatientName" class="form-label">Patient Name</label>
+                            <input id="editPatientName" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editDoctorId" class="form-label">Assigned Doctor</label>
+                            <select name="DoctorId" id="editDoctorId" class="form-select" required>
+                                <option value="">-- Select Doctor --</option>
+                                @foreach (var doc in doctors)
+                                {
+                                    <option value="@doc.Id">Dr. @doc.FirstName @doc.LastName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="editAttendentName" class="form-label">Attendant Name</label>
+                            <input name="AttendentName" id="editAttendentName" class="form-control" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editAttendentRelation" class="form-label">Attendant Relation</label>
+                            <input name="AttendentRelation" id="editAttendentRelation" class="form-control" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editAttendentPhone" class="form-label">Attendant Phone</label>
+                            <input name="AttendentPhone" id="editAttendentPhone" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="editForReason" class="form-label">Admission Reason / Notes</label>
+                            <input name="ForReason" id="editForReason" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save" style="background-color: #3182ce !important; box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3) !important;">
+                        <i class="fas fa-save me-2"></i> Update
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Generate Bill Modal -->
+<div class="modal fade" id="generateBillModal" tabindex="-1" aria-labelledby="generateBillModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="generateBillModalLabel">
+                    <i class="fas fa-file-invoice-dollar me-2"></i> Patient Admission Bill Generator
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="Bill" asp-action="UpdateSave" method="post" id="billModalForm">
+                <input type="hidden" name="Id" id="modalBillId" />
+                <input type="hidden" name="PatientId" id="modalPatientId" />
+                <input type="hidden" name="BedId" id="modalBedId" />
+                <input type="hidden" name="AdmissionId" id="modalAdmissionId" />
+
+                <div class="modal-body" style="background-color: #f8fafc;">
+
+                    <!-- Master Bill Info -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="modalBillDate" class="form-label">Bill Date</label>
+                                <input type="date" name="BillDate" id="modalBillDate" class="form-control" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="modalBillNo" class="form-label">Bill No</label>
+                                <input name="BillNo" id="modalBillNo" class="form-control" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="modalPatientNameDisplay" class="form-label">Patient Name</label>
+                                <input id="modalPatientNameDisplay" class="form-control fw-bold" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bill Details Table -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fas fa-list me-2"></i> Service Charges & Item Details</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle mb-2" id="modalDetailsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="min-width: 200px;">Service Item</th>
+                                        <th style="width: 100px;">Qty</th>
+                                        <th style="width: 120px;">Amount</th>
+                                        <th style="width: 130px;">Total</th>
+                                        <th style="width: 150px;">Charge Date</th>
+                                        <th style="width: 60px; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalDetailsBody">
+                                    <!-- Dynamic rows loaded via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="button" id="modalAddRowBtn" class="btn btn-sm btn-primary" style="border-radius: 20px; padding: 4px 16px; font-weight: 700;">
+                                <i class="fas fa-plus me-1"></i> Add Service Item
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Totals Summary -->
+                    <div class="card p-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="modalGrandTotalAmt" class="form-label">Total Amount</label>
+                                <input name="TotalAmount" id="modalGrandTotalAmt" class="form-control fw-bold text-dark" readonly />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="modalDiscount" class="form-label">Discount</label>
+                                <input type="number" step="0.01" min="0" name="Discount" id="modalDiscount" class="form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modalNetTotal" class="form-label">Net Amount</label>
+                                <input name="NetAmount" id="modalNetTotal" class="form-control fw-bold text-primary" readonly />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="modalPaymentAmt" class="form-label">Payment</label>
+                                <input type="number" step="0.01" min="0" name="PaymentAmt" id="modalPaymentAmt" class="form-control fw-bold text-success" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="modalDueAmt" class="form-label">Due Amount</label>
+                                <input name="DueAmount" id="modalDueAmt" class="form-control fw-bold text-danger" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-save" style="background-color: #dd6b20 !important; box-shadow: 0 4px 10px rgba(221, 107, 32, 0.3) !important;">
+                        <i class="fas fa-save me-2"></i> Save Bill
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
+    var currentPage = 1;
+    var totalPages = 1;
+    var cachedServices = [];
+
+    // Set today's date in admit date input default
     $(document).ready(function () {
-        var table = $('#admissionTable').DataTable({
-            "pageLength": 10,
-            "lengthMenu": [5, 10, 20, 50],
-            "ordering": true,
-            "paging": true,
-            "info": true,
-            "language": {
-                "search": "",
-                "searchPlaceholder": "Search",
-                "lengthMenu": "_MENU_ rows",
-                "info": "_TOTAL_ রেকর্ডের মধ্যে _START_ থেকে _END_ দেখানো হচ্ছে",
-                "paginate": {
-                    "previous": "⬅️ Previous",
-                    "next": "Next ➡️"
+        var today = new Date().toISOString().split('T')[0];
+        $('#AdmitDate').val(today);
+    });
+
+    // Helper notification wrappers
+    function showSuccess(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.success(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    function showError(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    // Helper function to create row HTML for an admission
+    function createrow(index, item) {
+        var statusBadge = (item.status === 1)
+            ? `<span class="status-badge status-active toggle-status-btn" data-id="${item.id}" title="Click to toggle status"><i class="fas fa-check-circle me-1"></i> Active</span>`
+            : `<span class="status-badge status-inactive toggle-status-btn" data-id="${item.id}" title="Click to toggle status"><i class="fas fa-times-circle me-1"></i> Inactive</span>`;
+
+        var detailsUrl = `@Url.Action("Details", "Admission")/${item.id}`;
+
+        return `<tr>
+            <td>${index}</td>
+            <td style="font-family: monospace;">${item.admitDate || 'N/A'}</td>
+            <td><span class="badge bg-secondary">#${item.invoiceNo}</span></td>
+            <td style="font-weight: 700; color: #2d3748;">${item.patientName || 'N/A'}</td>
+            <td style="font-family: monospace; color: #4a5568;">${item.patientPhone || 'N/A'}</td>
+            <td><span class="badge bg-info text-dark">${item.wardName || 'N/A'}</span></td>
+            <td style="font-weight: 600;">🛏️ ${item.bedNumber || 'N/A'}</td>
+            <td>${item.doctorName || 'N/A'}</td>
+            <td style="text-align: center;">${statusBadge}</td>
+            <td>
+                <div class="action-btn-group">
+                    <a class="action-btn action-edit edit-admission-btn" href="javascript:void(0);" data-id="${item.id}" title="Edit Admission">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="action-btn action-view" href="${detailsUrl}" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a class="action-btn action-bill generate-bill-modal-btn" href="javascript:void(0);" data-patient-id="${item.patientId}" data-bed-id="${item.bedId}" data-admission-id="${item.id}" title="Generate Bill (Modal)">
+                        <i class="fas fa-file-invoice"></i>
+                    </a>
+                    <a class="action-btn action-delete delete-admission-btn" href="javascript:void(0);" data-id="${item.id}" title="Delete Admission">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    // Function to load admissions via AJAX
+    function loadAdmissions(page) {
+        currentPage = page || 1;
+
+        $("#admissionBody").html(`
+            <tr>
+                <td colspan="10" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted mb-0">Loading admissions...</p>
+                </td>
+            </tr>
+        `);
+
+        var searchQuery = $('#searchBox').val() || '';
+
+        $.ajax({
+            url: "@Url.Action("GetAdmission", "Admission")",
+            type: "GET",
+            data: { search: searchQuery, page: currentPage, pageSize: 10 },
+            success: function (response) {
+                if (response.issuccess === true) {
+                    $("#admissionBody").empty();
+
+                    totalPages = response.totalPages || 1;
+                    var totalItem = response.totalItem || 0;
+
+                    // Update UI indicators
+                    $("#cpage").text(currentPage);
+                    $("#tpage").text(totalPages);
+                    $("#tentries").text(totalItem);
+
+                    // Update pagination buttons state
+                    if (currentPage <= 1) {
+                        $("#prevLi").addClass("disabled");
+                    } else {
+                        $("#prevLi").removeClass("disabled");
+                    }
+
+                    if (currentPage >= totalPages) {
+                        $("#nextLi").addClass("disabled");
+                    } else {
+                        $("#nextLi").removeClass("disabled");
+                    }
+
+                    if (response.data && response.data.length > 0) {
+                        $.each(response.data, function (i, v) {
+                            var rowIdx = ((currentPage - 1) * 10) + (i + 1);
+                            var row = createrow(rowIdx, v);
+                            $("#admissionBody").append(row);
+                        });
+                    } else {
+                        $("#admissionBody").html(`
+                            <tr>
+                                <td colspan="10" class="text-center py-4 text-muted">
+                                    <i class="fas fa-info-circle fs-4"></i>
+                                    <p class="mt-2 mb-0">No admissions found.</p>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                } else {
+                    $("#admissionBody").html(`
+                        <tr>
+                            <td colspan="10" class="text-center py-4 text-danger">
+                                <i class="fas fa-exclamation-triangle fs-4"></i>
+                                <p class="mt-2 mb-0">Failed to load admission data.</p>
+                            </td>
+                        </tr>
+                    `);
                 }
             },
-            "dom": 'rt<"d-flex justify-content-between align-items-center p-2"<"p-0"l><"p-0"p>>'
+            error: function (xhr, textStatus, error) {
+                $("#admissionBody").html(`
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-triangle fs-4"></i>
+                            <p class="mt-2 mb-0">Failed to load data: ${error || xhr.statusText}</p>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+    }
+
+    function changePage(direction) {
+        var targetPage = currentPage + direction;
+        if (targetPage >= 1 && targetPage <= totalPages) {
+            loadAdmissions(targetPage);
+        }
+    }
+
+    // Modal Bill Calculation Functions
+    function calculateModalRowTotal(row) {
+        let qty = parseFloat(row.find(".modal-qty").val()) || 0;
+        let amount = parseFloat(row.find(".modal-amount").val()) || 0;
+        row.find(".modal-total").val((qty * amount).toFixed(2));
+    }
+
+    function calculateModalGrandTotal() {
+        let grand = 0;
+        $(".modal-total").each(function () {
+            grand += parseFloat($(this).val()) || 0;
+        });
+        $("#modalGrandTotalAmt").val(grand.toFixed(2));
+
+        let discount = parseFloat($("#modalDiscount").val()) || 0;
+        let net = grand - discount;
+        $("#modalNetTotal").val(net.toFixed(2));
+
+        let payment = parseFloat($("#modalPaymentAmt").val()) || 0;
+        let due = net - payment;
+        $("#modalDueAmt").val(due < 0 ? 0 : due.toFixed(2));
+    }
+
+    function buildServiceOptions(selectedServiceId) {
+        let html = '<option value="">--Select Service--</option>';
+        $.each(cachedServices, function (i, s) {
+            let selected = (s.id == selectedServiceId) ? 'selected' : '';
+            html += `<option value="${s.id}" data-amount="${s.amount || 0}" ${selected}>${s.itemName}</option>`;
+        });
+        return html;
+    }
+
+    $(document).ready(function () {
+        // Load admissions on init
+        loadAdmissions(1);
+
+        // Pagination handlers
+        $('#btnPrevious').on('click', function (e) {
+            e.preventDefault();
+            changePage(-1);
         });
 
+        $('#btnNext').on('click', function (e) {
+            e.preventDefault();
+            changePage(1);
+        });
 
-        $('#customSearchBox').on('keyup', function () {
-            table.search(this.value).draw();
+        // Search button click handler
+        $('#btnSearch').on('click', function () {
+            loadAdmissions(1);
+        });
+
+        // Search input Enter keypress
+        $('#searchBox').on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                loadAdmissions(1);
+            }
+        });
+
+        // Patient Phone Lookup
+        $('#patientPhoneNumber').on('change blur', function () {
+            var phoneNumber = $(this).val().trim();
+            if (phoneNumber !== "") {
+                $('#patientLookupStatus').html('<span class="spinner-border spinner-border-sm"></span> Checking patient...');
+                $.getJSON('@Url.Action("GetPatientPhoneNumber", "Admission")', { phoneNumber: phoneNumber }, function (data) {
+                    if (data.success) {
+                        $('#patientName').val(data.name);
+                        $('#patientId').val(data.id);
+                        $('#patientLookupStatus').html('<span class="text-success">✅ Patient found</span>');
+                    } else if (data.alreadyAdded) {
+                        showError("⚠️ " + data.message);
+                        $('#patientName').val("");
+                        $('#patientId').val("");
+                        $('#patientLookupStatus').html('<span class="text-danger">⚠️ Patient already admitted</span>');
+                    } else {
+                        showError("❌ " + data.message);
+                        $('#patientName').val("");
+                        $('#patientId').val("");
+                        $('#patientLookupStatus').html('<span class="text-danger">❌ Patient not found</span>');
+                    }
+                }).fail(function () {
+                    $('#patientLookupStatus').html('<span class="text-danger">Error fetching patient</span>');
+                });
+            }
+        });
+
+        // Ward Change event -> fetch available beds
+        $('#wardDropdown').on('change', function () {
+            var wardId = $(this).val();
+            var $bedDropdown = $('#bedDropdown');
+            if (wardId) {
+                $bedDropdown.html('<option value="">Loading beds...</option>');
+                $.getJSON('@Url.Action("GetBedsByWardId", "Admission")', { wardId: wardId }, function (data) {
+                    $bedDropdown.empty().append('<option value="">-- Select Bed --</option>');
+                    $.each(data, function (index, bed) {
+                        $bedDropdown.append($('<option>', {
+                            value: bed.id,
+                            text: bed.bedNumber
+                        }));
+                    });
+                }).fail(function () {
+                    $bedDropdown.html('<option value="">Error loading beds</option>');
+                });
+            } else {
+                $bedDropdown.html('<option value="">-- Select Ward First --</option>');
+            }
+        });
+
+        // Handle Add Admission Form Submission via AJAX
+        $('#addAdmissionForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#addAdmissionModal').modal('hide');
+                        form[0].reset();
+                        var today = new Date().toISOString().split('T')[0];
+                        $('#AdmitDate').val(today);
+                        loadAdmissions(1);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Edit Admission Click
+        $(document).on('click', '.edit-admission-btn', function () {
+            var admissionId = $(this).data('id');
+            $.getJSON('@Url.Action("GetAdmissionById", "Admission")', { id: admissionId }, function (data) {
+                $('#editAdmissionId').val(data.id);
+                $('#editPatientName').val(data.patientName);
+                $('#editDoctorId').val(data.doctorId);
+                $('#editAttendentName').val(data.attendentName);
+                $('#editAttendentRelation').val(data.attendentRelation);
+                $('#editAttendentPhone').val(data.attendentPhone);
+                $('#editForReason').val(data.forReason);
+                $('#editAdmissionModal').modal('show');
+            }).fail(function () {
+                showError("Failed to fetch admission details.");
+            });
+        });
+
+        // Handle Edit Admission Form Submission via AJAX
+        $('#editAdmissionForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#editAdmissionModal').modal('hide');
+                        loadAdmissions(currentPage);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Open Generate Bill Modal via AJAX
+        $(document).on('click', '.generate-bill-modal-btn', function () {
+            var patientId = $(this).data('patient-id');
+            var bedId = $(this).data('bed-id');
+            var admissionId = $(this).data('admission-id');
+
+            $.getJSON('@Url.Action("GetBillModalData", "Bill")', { patientId: patientId, bedId: bedId, admissionId: admissionId }, function (data) {
+                if (data.success) {
+                    cachedServices = data.services || [];
+
+                    $('#modalBillId').val(data.billId);
+                    $('#modalPatientId').val(data.patientId);
+                    $('#modalBedId').val(data.bedId);
+                    $('#modalAdmissionId').val(data.admissionId);
+                    $('#modalBillDate').val(data.billDate);
+                    $('#modalBillNo').val(data.billNo);
+                    $('#modalPatientNameDisplay').val(data.patientName);
+
+                    $('#modalDiscount').val(data.discount || 0);
+                    $('#modalPaymentAmt').val(data.paymentAmt || 0);
+
+                    var $tbody = $('#modalDetailsBody');
+                    $tbody.empty();
+
+                    if (data.billDetails && data.billDetails.length > 0) {
+                        $.each(data.billDetails, function (i, detail) {
+                            var optionsHtml = buildServiceOptions(detail.serviceItemId);
+                            var rowHtml = `<tr>
+                                <td>
+                                    <select name="BillDetail[${i}].ServiceItemId" class="form-select modal-service-select">
+                                        ${optionsHtml}
+                                    </select>
+                                </td>
+                                <td><input type="number" name="BillDetail[${i}].Qty" class="form-control modal-qty" value="${detail.qty || 1}" /></td>
+                                <td><input type="number" step="0.01" name="BillDetail[${i}].Amount" class="form-control modal-amount" value="${detail.amount || 0}" /></td>
+                                <td><input type="number" step="0.01" name="BillDetail[${i}].TotalAmount" class="form-control modal-total" value="${detail.totalAmount || 0}" readonly /></td>
+                                <td><input type="date" name="BillDetail[${i}].ChargeDate" class="form-control" value="${detail.chargeDate}" /></td>
+                                <td style="text-align: center;"><button type="button" class="btn btn-sm btn-danger remove-modal-row-btn"><i class="fas fa-trash"></i></button></td>
+                            </tr>`;
+                            $tbody.append(rowHtml);
+                        });
+                    }
+
+                    calculateModalGrandTotal();
+                    $('#generateBillModal').modal('show');
+                } else {
+                    showError(data.message || "Failed to load bill information.");
+                }
+            }).fail(function () {
+                showError("Error fetching bill data.");
+            });
+        });
+
+        // Add Dynamic Row in Bill Modal
+        $('#modalAddRowBtn').on('click', function () {
+            var rowIndex = $('#modalDetailsBody tr').length;
+            var optionsHtml = buildServiceOptions(null);
+            var today = new Date().toISOString().split('T')[0];
+
+            var newRow = `<tr>
+                <td>
+                    <select name="BillDetail[${rowIndex}].ServiceItemId" class="form-select modal-service-select">
+                        ${optionsHtml}
+                    </select>
+                </td>
+                <td><input type="number" name="BillDetail[${rowIndex}].Qty" class="form-control modal-qty" value="1" /></td>
+                <td><input type="number" step="0.01" name="BillDetail[${rowIndex}].Amount" class="form-control modal-amount" value="0" /></td>
+                <td><input type="number" step="0.01" name="BillDetail[${rowIndex}].TotalAmount" class="form-control modal-total" value="0" readonly /></td>
+                <td><input type="date" name="BillDetail[${rowIndex}].ChargeDate" class="form-control" value="${today}" /></td>
+                <td style="text-align: center;"><button type="button" class="btn btn-sm btn-danger remove-modal-row-btn"><i class="fas fa-trash"></i></button></td>
+            </tr>`;
+            $('#modalDetailsBody').append(newRow);
+            calculateModalGrandTotal();
+        });
+
+        // Service Select Change -> Auto populate price
+        $('#modalDetailsTable').on('change', '.modal-service-select', function () {
+            var selectedOption = $(this).find('option:selected');
+            var defaultAmount = parseFloat(selectedOption.data('amount')) || 0;
+            var $tr = $(this).closest('tr');
+            $tr.find('.modal-amount').val(defaultAmount);
+            calculateModalRowTotal($tr);
+            calculateModalGrandTotal();
+        });
+
+        // Input recalculations inside Modal
+        $('#modalDetailsTable').on('input', '.modal-qty, .modal-amount', function () {
+            calculateModalRowTotal($(this).closest('tr'));
+            calculateModalGrandTotal();
+        });
+
+        $('#modalDiscount, #modalPaymentAmt').on('input', calculateModalGrandTotal);
+
+        // Remove row in Modal
+        $('#modalDetailsTable').on('click', '.remove-modal-row-btn', function () {
+            $(this).closest('tr').remove();
+            calculateModalGrandTotal();
+        });
+
+        // Handle Bill Modal Form Submission via AJAX
+        $('#billModalForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        $('#generateBillModal').modal('hide');
+                        loadAdmissions(currentPage);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Toggle Admission Status via AJAX
+        $(document).on('click', '.toggle-status-btn', function () {
+            var admissionId = $(this).data('id');
+            $.ajax({
+                url: '@Url.Action("UpdateStatus", "Admission")',
+                type: 'POST',
+                data: { id: admissionId },
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    if (response.success) {
+                        showSuccess(response.message);
+                        loadAdmissions(currentPage);
+                    } else {
+                        showError(response.message || "Failed to update status.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("An error occurred: " + error);
+                }
+            });
+        });
+
+        // Handle Delete Admission Click via AJAX
+        $(document).on('click', '.delete-admission-btn', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            if (confirm("Are you sure you want to delete this admission? This will free the allocated bed.")) {
+                var clickedBtn = $(this);
+                clickedBtn.css('pointer-events', 'none');
+                $.ajax({
+                    url: '@Url.Action("Delete", "Admission")',
+                    type: 'POST',
+                    data: { id: id },
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (response) {
+                        if (response.success) {
+                            showSuccess(response.message);
+                            loadAdmissions(currentPage);
+                        } else {
+                            showError(response.message);
+                            clickedBtn.css('pointer-events', 'auto');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        showError("An error occurred: " + error);
+                        clickedBtn.css('pointer-events', 'auto');
+                    }
+                });
+            }
         });
     });
 </script>
-
-@* <script>
-    $(document).ready(function(){
-
-        $("#SearchBox").on('keyup',function(){
-            var name=$(this).val();
-
-            $.ajax({
-                url:'/Admission/GetSearch',
-                data:{name:name},
-                success:function(data){
-                    let rows='';
-                    data.forEach((item,index)=>{
-
-                          let date = item.date
-                             ? new Date(item.date).toLocaleDateString('en-GB', {
-                                   day: 'numeric',
-                                   month: 'short',
-                                   year: 'numeric'
-                               })
-                             : "N/A";
-
-
-                        rows+=`<tr>
-                            <td>${index + 1}</td>
-                            <td>${date}</td>
-                            <td>${item.invoiceNo}</td>
-                            <td>${item.name}</td>
-                            <td>${item.number}</td>
-                            <td>${item.wardName}</td>
-                            <td>${item.bedName}</td>
-                            <td>${item.status==1? "Active":"Inactive"}</td>
-                            <td>
-                                 <div class="d-flex justify-content-center btn-group-sm ">
-
-                                            <a class="btn btn-danger ms-2" href="/Admission/Delete/${item.id}">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                            <a class="btn btn-success ms-2" href="/Admission/Details/${item.id}">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                 </div>
-                            </td>
-                        
-                        
-                        </tr>`
-                    });
-                    $("#dataShow").html(rows);
-                }
-            
-            });
-        
-        });
-    })
-</script> *@

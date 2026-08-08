@@ -1,12 +1,4 @@
-@model List<HMSYSTEM.ViewModels.BillViewModel>
-
-@{
-    decimal grandTotal = Model != null ? Model.Sum(m => m.TotalAmount ?? 0) : 0;
-    decimal grandDiscount = Model != null ? Model.Sum(m => m.Discount ?? 0) : 0;
-    decimal grandNet = Model != null ? Model.Sum(m => m.NetAmount ?? 0) : 0;
-    decimal grandPayment = Model != null ? Model.Sum(m => m.PaymentAmt ?? 0) : 0;
-    decimal grandDue = Model != null ? Model.Sum(m => m.DueAmount ?? 0) : 0;
-}
+@model List<HMSYSTEM.ViewModels.AdmissionViewModel>
 
 <style type="text/css">
     @@media print {
@@ -101,23 +93,17 @@
         color: #2d3748 !important;
         font-weight: 700;
         text-transform: uppercase;
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         letter-spacing: 0.5px;
-        padding: 8px 10px;
+        padding: 10px 12px;
         border: 1px solid #cbd5e0;
     }
 
     .print-table td {
-        padding: 8px 10px;
-        font-size: 0.85rem;
+        padding: 10px 12px;
+        font-size: 0.88rem;
         border: 1px solid #e2e8f0;
         color: #2d3748;
-    }
-
-    .print-table tfoot td {
-        background-color: #edf2f7 !important;
-        font-weight: 800;
-        border-top: 2px solid #cbd5e0;
     }
 </style>
 
@@ -131,7 +117,7 @@
         </div>
         <div>
             <div class="report-title-badge">
-                Billing & Financial Collection Report
+                Admission Analytics Report
             </div>
             <div class="generated-date">
                 Generated: @DateTime.Now.ToString("dd-MM-yyyy hh:mm tt")
@@ -143,33 +129,27 @@
     <table class="print-table">
         <thead>
             <tr>
-                <th style="width: 40px;">Sl</th>
-                <th style="width: 90px;">Date</th>
+                <th style="width: 50px;">Sl</th>
+                <th style="width: 110px;">Admission Date</th>
                 <th>Patient Name</th>
-                <th style="width: 110px;">Phone Number</th>
-                <th>Total Amount</th>
-                <th>Discount</th>
-                <th>Net Amount</th>
-                <th>Paid Amount</th>
-                <th>Due Amount</th>
+                <th style="width: 130px;">Phone Number</th>
+                <th>Assigned Doctor</th>
+                <th style="width: 140px;">Ward & Bed</th>
             </tr>
         </thead>
         <tbody>
             @if (Model != null && Model.Any())
             {
                 int count = 1;
-                foreach (var bill in Model)
+                foreach (var item in Model)
                 {
                     <tr>
                         <td>@count</td>
-                        <td style="font-family: monospace;">@bill.BillDate.ToString("dd-MM-yyyy")</td>
-                        <td style="font-weight: 700;">@bill.PatientName</td>
-                        <td style="font-family: monospace;">@bill.PatientPhoneNumber</td>
-                        <td style="font-family: monospace;">৳ @((bill.TotalAmount ?? 0).ToString("N2"))</td>
-                        <td style="font-family: monospace; color: #718096;">৳ @((bill.Discount ?? 0).ToString("N2"))</td>
-                        <td style="font-family: monospace; font-weight: 700;">৳ @((bill.NetAmount ?? 0).ToString("N2"))</td>
-                        <td style="font-family: monospace; font-weight: 700; color: #2f855a;">৳ @((bill.PaymentAmt ?? 0).ToString("N2"))</td>
-                        <td style="font-family: monospace; font-weight: 700; color: #c53030;">৳ @((bill.DueAmount ?? 0).ToString("N2"))</td>
+                        <td style="font-family: monospace;">@(item.AdmitDate?.ToString("dd-MM-yyyy") ?? "N/A")</td>
+                        <td style="font-weight: 700;">@item.PatientName</td>
+                        <td style="font-family: monospace;">@item.PatientPhoneNumber</td>
+                        <td>Dr. @item.DoctorName</td>
+                        <td>🛏️ @item.BedName</td>
                     </tr>
                     count++;
                 }
@@ -177,25 +157,12 @@
             else
             {
                 <tr>
-                    <td colspan="9" style="text-align: center; color: #718096; padding: 20px;">
-                        No billing records found for the selected period.
+                    <td colspan="6" style="text-align: center; color: #718096; padding: 20px;">
+                        No admission records found for the selected period.
                     </td>
                 </tr>
             }
         </tbody>
-        @if (Model != null && Model.Any())
-        {
-            <tfoot>
-                <tr>
-                    <td colspan="4" style="text-align: right;">Total Summary:</td>
-                    <td style="font-family: monospace;">৳ @grandTotal.ToString("N2")</td>
-                    <td style="font-family: monospace;">৳ @grandDiscount.ToString("N2")</td>
-                    <td style="font-family: monospace;">৳ @grandNet.ToString("N2")</td>
-                    <td style="font-family: monospace; color: #2f855a;">৳ @grandPayment.ToString("N2")</td>
-                    <td style="font-family: monospace; color: #c53030;">৳ @grandDue.ToString("N2")</td>
-                </tr>
-            </tfoot>
-        }
     </table>
 
 </div>

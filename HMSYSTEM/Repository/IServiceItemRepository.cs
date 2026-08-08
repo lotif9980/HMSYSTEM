@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Models;
+using HMSYSTEM.Models;
 
 namespace HMSYSTEM.Repository
 {
@@ -7,5 +7,8 @@ namespace HMSYSTEM.Repository
         public List<ServiceItem> GetAll();
 
         public ServiceItem Save(ServiceItem item);
+        public ServiceItem Find(int id);
+        public void Update(ServiceItem item);
+        public void Delete(int id);
     }
 }

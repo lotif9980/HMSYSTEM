@@ -1,102 +1,268 @@
-﻿@using HMSYSTEM.ViewModels
+@using HMSYSTEM.ViewModels
 @model List<BillViewModel>
 @{
-    ViewData["Title"] = "Bill Report";
+    ViewData["Title"] = "Billing & Collection Report";
+    int totalCount = Model != null ? Model.Count : 0;
+    decimal grandTotal = Model != null ? Model.Sum(m => m.TotalAmount ?? 0) : 0;
+    decimal grandDiscount = Model != null ? Model.Sum(m => m.Discount ?? 0) : 0;
+    decimal grandNet = Model != null ? Model.Sum(m => m.NetAmount ?? 0) : 0;
+    decimal grandPayment = Model != null ? Model.Sum(m => m.PaymentAmt ?? 0) : 0;
+    decimal grandDue = Model != null ? Model.Sum(m => m.DueAmount ?? 0) : 0;
 }
 
-<form id="billFilterForm" asp-action="BillReports" method="post">
-    <div class="container">
-        <div class="row d-flex justify-content-center align-items-end">
-            <!-- From Date -->
-            <div class="col-md-5">
-                <label class="form-label">From</label>
-                <div class="input-group">
-                    <input type="text" id="fromDate" name="fromDate" class="form-control" />
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+<!-- Custom Styles for Bill Report -->
+<style>
+    .report-card {
+        border: none !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        background: #ffffff;
+        overflow: hidden;
+    }
+
+    .report-card-header {
+        background: #ffffff !important;
+        border-bottom: 1px solid #f1f2f6 !important;
+        padding: 1.5rem 2rem !important;
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .header-title-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(214, 158, 46, 0.1);
+        color: #d69e2e;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .report-card-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .report-card-subtitle {
+        font-size: 0.82rem;
+        color: #718096;
+        margin: 2px 0 0 0;
+    }
+
+    .financial-kpi-card {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        height: 100%;
+    }
+
+    /* Print Styles */
+    @@media print {
+        .no-print, form, .btn, nav, header, footer {
+            display: none !important;
+        }
+
+        body {
+            background: white !important;
+            font-size: 10pt !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .print-container {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        table th, table td {
+            border: 1px solid #cbd5e0 !important;
+            padding: 6px 8px !important;
+        }
+    }
+</style>
+
+<div class="container-fluid mt-4 print-container">
+    <div class="card report-card mb-4">
+
+        <!-- Card Header -->
+        <div class="card-header report-card-header no-print">
+            <div class="header-container">
+                <div class="header-title-block">
+                    <div class="header-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div>
+                        <h3 class="report-card-title">Billing & Collections Financial Report</h3>
+                        <p class="report-card-subtitle">Comprehensive financial breakdown of patient billing, discounts, collections, and dues.</p>
+                    </div>
                 </div>
-            </div>
-
-            <!-- To Date -->
-            <div class="col-md-5">
-                <label class="form-label">To</label>
-                <div class="input-group">
-                    <input type="text" id="toDate" name="toDate" class="form-control" />
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                <div>
+                    <a asp-controller="Report" asp-action="Index" class="btn btn-outline-secondary" style="border-radius: 30px; font-weight: 700;">
+                        <i class="fas fa-arrow-left me-1"></i> Reports Hub
+                    </a>
                 </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="col-md-2 d-flex gap-2">
-                <!-- Search -->
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-eye"></i>
-                </button>
-
-                <!-- Refresh -->
-                <a class="btn btn-danger" asp-controller="Report" asp-action="BillReport">
-                    <i class="fa fa-refresh"></i>
-                </a>
-
-                <!-- Print -->
-                <button type="button" class="btn btn-info" onclick="loadAndPrint()">
-                    <i class="fa fa-print"></i>
-                </button>
             </div>
         </div>
-    </div>
-</form>
 
-<!-- Data Table -->
-<div class="m-3">
-    @if (Model != null && Model.Any())
-    {
-        <table class="table table-bordered mt-3 table-hover">
-            <thead>
-                <tr>
-                    <th>Sl</th>
-                    <th>Date</th>
-                    <th>Patient</th>
-                    <th>P.Phone</th>
-                    <th>TotalAmt</th>
-                    <th>Discount</th>
-                    <th>Net Total</th>
-                    <th>Payment</th>
-                    <th>Due Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int count = 1;
-                }
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@count</td>
-                        <td>@item.BillDate.ToString("dd-MM-yyyy")</td>
-                        <td>@item.PatientName</td>
-                        <td>@item.PatientPhoneNumber</td>
-                        <td>@item.TotalAmount</td>
-                        <td>@item.Discount</td>
-                        <td>@item.NetAmount</td>
-                        <td>@item.PaymentAmt</td>
-                        <td>@item.DueAmount</td>
-                    </tr>
-                    count++;
-                }
-            </tbody>
-        </table>
-    }
+        <!-- Date Range Filter Form -->
+        <div class="card-body bg-light border-bottom p-4 no-print">
+            <form id="billFilterForm" asp-action="BillReports" method="post">
+                <div class="row align-items-end g-3 justify-content-center">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-dark">From Date</label>
+                        <div class="input-group">
+                            <input type="text" id="fromDate" name="fromDate" class="form-control" placeholder="Select Start Date" style="border-radius: 8px 0 0 8px;" required />
+                            <span class="input-group-text bg-white" id="fromDateIcon"><i class="fa fa-calendar text-primary"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-dark">To Date</label>
+                        <div class="input-group">
+                            <input type="text" id="toDate" name="toDate" class="form-control" placeholder="Select End Date" style="border-radius: 8px 0 0 8px;" required />
+                            <span class="input-group-text bg-white" id="toDateIcon"><i class="fa fa-calendar text-primary"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-warning flex-grow-1 text-white" style="border-radius: 30px; height: 42px; font-weight: 700; background-color: #d69e2e; border: none;">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </button>
+                        <a class="btn btn-outline-secondary" asp-controller="Report" asp-action="BillReport" title="Reset Filters" style="border-radius: 30px; height: 42px; width: 42px; display: inline-flex; align-items: center; justify-content: center;">
+                            <i class="fa fa-sync-alt"></i>
+                        </a>
+                        <button type="button" class="btn btn-info text-white" onclick="loadAndPrint()" title="Print Report" style="border-radius: 30px; height: 42px; background-color: #3182ce; border: none; font-weight: 700; padding: 0 1.25rem;">
+                            <i class="fa fa-print me-1"></i> Print
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Financial KPI Summary Cards -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="card-body border-bottom p-4">
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        <div class="financial-kpi-card">
+                            <div class="text-muted small fw-bold uppercase">Total Invoices</div>
+                            <div class="fs-4 fw-bold text-dark mt-1">@totalCount</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="financial-kpi-card">
+                            <div class="text-muted small fw-bold uppercase">Total Amount</div>
+                            <div class="fs-5 fw-bold text-dark mt-1">৳ @grandTotal.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="financial-kpi-card">
+                            <div class="text-muted small fw-bold uppercase">Total Discount</div>
+                            <div class="fs-5 fw-bold text-secondary mt-1">৳ @grandDiscount.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="financial-kpi-card border-success bg-white">
+                            <div class="text-muted small fw-bold uppercase">Collected Payments</div>
+                            <div class="fs-5 fw-bold text-success mt-1">৳ @grandPayment.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="financial-kpi-card border-danger bg-white">
+                            <div class="text-muted small fw-bold uppercase">Outstanding Dues</div>
+                            <div class="fs-5 fw-bold text-danger mt-1">৳ @grandDue.ToString("N2")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Report Table -->
+        <div class="card-body p-4">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;">Sl</th>
+                                <th>Date</th>
+                                <th>Patient Name</th>
+                                <th>Phone Number</th>
+                                <th>Total Amount</th>
+                                <th>Discount</th>
+                                <th>Net Amount</th>
+                                <th>Paid Amount</th>
+                                <th>Due Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int count = 1; }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@count</td>
+                                    <td style="font-family: monospace;">@item.BillDate.ToString("dd-MM-yyyy")</td>
+                                    <td style="font-weight: 700; color: #2d3748;">@item.PatientName</td>
+                                    <td style="font-family: monospace; color: #4a5568;">@item.PatientPhoneNumber</td>
+                                    <td style="font-family: monospace; font-weight: 600;">৳ @((item.TotalAmount ?? 0).ToString("N2"))</td>
+                                    <td style="font-family: monospace; color: #718096;">৳ @((item.Discount ?? 0).ToString("N2"))</td>
+                                    <td style="font-family: monospace; font-weight: 700; color: #2b6cb0;">৳ @((item.NetAmount ?? 0).ToString("N2"))</td>
+                                    <td style="font-family: monospace; font-weight: 700; color: #2f855a;">৳ @((item.PaymentAmt ?? 0).ToString("N2"))</td>
+                                    <td style="font-family: monospace; font-weight: 700; color: #c53030;">৳ @((item.DueAmount ?? 0).ToString("N2"))</td>
+                                </tr>
+                                count++;
+                            }
+                        </tbody>
+                        <tfoot class="table-light fw-bold">
+                            <tr>
+                                <td colspan="4" class="text-end">Total Summary:</td>
+                                <td style="font-family: monospace;">৳ @grandTotal.ToString("N2")</td>
+                                <td style="font-family: monospace;">৳ @grandDiscount.ToString("N2")</td>
+                                <td style="font-family: monospace; color: #2b6cb0;">৳ @grandNet.ToString("N2")</td>
+                                <td style="font-family: monospace; color: #2f855a;">৳ @grandPayment.ToString("N2")</td>
+                                <td style="font-family: monospace; color: #c53030;">৳ @grandDue.ToString("N2")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-coins fs-1 text-secondary mb-3 d-block"></i>
+                    <h5>No Billing Records Found</h5>
+                    <p class="mb-0">Select a date range above and click <strong>Filter</strong> to view financial billing reports.</p>
+                </div>
+            }
+        </div>
+
+    </div>
 </div>
 
-<!-- Hidden Print Container -->
 <div id="printContainer" style="display:none;"></div>
 
-<!-- Scripts -->
 <script>
-    // Datepickers
     $(function () {
         var today = new Date();
-
         var firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         var lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
@@ -112,12 +278,15 @@
             changeYear: true
         }).datepicker("setDate", lastDateOfMonth);
 
-        $(".input-group-text").click(function () {
-            $(this).prev("input").focus();
+        $("#fromDateIcon").click(function () {
+            $("#fromDate").focus();
+        });
+
+        $("#toDateIcon").click(function () {
+            $("#toDate").focus();
         });
     });
 
-    // Print Function
     function loadAndPrint() {
         var fromDate = $('#fromDate').val();
         var toDate = $('#toDate').val();
@@ -128,20 +297,18 @@
         }
 
         $.ajax({
-            url: '/Report/PrintGetBills/',
+            url: '@Url.Action("PrintGetBills", "Report")',
             type: 'GET',
             data: { fromDate: fromDate, toDate: toDate },
             success: function (data) {
                 $('#printContainer').html(data);
-
                 var printContents = document.getElementById('printContainer').innerHTML;
                 var originalContents = document.body.innerHTML;
 
                 document.body.innerHTML = printContents;
                 window.print();
                 document.body.innerHTML = originalContents;
-
-                location.reload(); // Reload after print
+                location.reload();
             },
             error: function () {
                 alert("Failed to load print view.");

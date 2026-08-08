@@ -1,3 +1,267 @@
-﻿<h1>
-    Welcome Report Controller
-</h1>
+@{
+    ViewData["Title"] = "Reports Dashboard";
+}
+
+<!-- Premium Modern Styles for Reports Dashboard Hub -->
+<style>
+    .reports-hub-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+    }
+
+    .reports-banner {
+        background: linear-gradient(135deg, #2b6cb0 0%, #1a365d 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        color: #ffffff;
+        box-shadow: 0 15px 35px rgba(26, 54, 93, 0.15);
+        margin-bottom: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .banner-title-block {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .banner-icon-box {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        backdrop-filter: blur(5px);
+    }
+
+    .banner-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: 0.5px;
+    }
+
+    .banner-subtitle {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        margin: 4px 0 0 0;
+    }
+
+    /* Report Card Grid */
+    .report-card {
+        border: none !important;
+        border-radius: 18px !important;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        padding: 1.8rem !important;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .report-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: transparent;
+        transition: background 0.3s ease;
+    }
+
+    .report-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .card-bed:hover::before { background: linear-gradient(90deg, #3182ce, #2b6cb0); }
+    .card-admission:hover::before { background: linear-gradient(90deg, #38a169, #2f855a); }
+    .card-appointment:hover::before { background: linear-gradient(90deg, #805ad5, #6b46c1); }
+    .card-prescription:hover::before { background: linear-gradient(90deg, #ed8936, #dd6b20); }
+    .card-bill:hover::before { background: linear-gradient(90deg, #d69e2e, #b7791f); }
+
+    .report-card-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .icon-bed { background: rgba(49, 130, 206, 0.1); color: #3182ce; }
+    .icon-admission { background: rgba(56, 161, 105, 0.1); color: #38a169; }
+    .icon-appointment { background: rgba(128, 90, 213, 0.1); color: #805ad5; }
+    .icon-prescription { background: rgba(237, 137, 54, 0.1); color: #ed8936; }
+    .icon-bill { background: rgba(214, 158, 46, 0.1); color: #d69e2e; }
+
+    .report-card-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .report-card-desc {
+        font-size: 0.88rem;
+        color: #718096;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-report-action {
+        border-radius: 30px !important;
+        padding: 10px 24px !important;
+        font-weight: 700 !important;
+        font-size: 0.88rem !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none !important;
+        transition: all 0.25s ease !important;
+        width: 100%;
+        border: none !alignment;
+    }
+
+    .btn-bed { background: #3182ce !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(49, 130, 206, 0.25); }
+    .btn-bed:hover { background: #2b6cb0 !important; color: #ffffff !important; }
+
+    .btn-admission { background: #38a169 !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(56, 161, 105, 0.25); }
+    .btn-admission:hover { background: #2f855a !important; color: #ffffff !important; }
+
+    .btn-appointment { background: #805ad5 !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(128, 90, 213, 0.25); }
+    .btn-appointment:hover { background: #6b46c1 !important; color: #ffffff !important; }
+
+    .btn-prescription { background: #ed8936 !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(237, 137, 54, 0.25); }
+    .btn-prescription:hover { background: #dd6b20 !important; color: #ffffff !important; }
+
+    .btn-bill { background: #d69e2e !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(214, 158, 46, 0.25); }
+    .btn-bill:hover { background: #b7791f !important; color: #ffffff !important; }
+</style>
+
+<div class="container-fluid reports-hub-container">
+
+    <!-- Banner -->
+    <div class="reports-banner">
+        <div class="banner-title-block">
+            <div class="banner-icon-box">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <div>
+                <h1 class="banner-title">Hospital Analytics & Reports Hub</h1>
+                <p class="banner-subtitle">Generate, filter, and print real-time operational, clinical, and financial intelligence reports.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="row g-4">
+
+        <!-- Ward Bed Status Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="report-card card-bed">
+                <div>
+                    <div class="report-card-icon icon-bed">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <h3 class="report-card-title">Ward & Bed Occupancy</h3>
+                    <p class="report-card-desc">Monitor real-time ward capacities, bed availability status, and patient bed assignments across hospital wards.</p>
+                </div>
+                <div>
+                    <a asp-controller="Report" asp-action="GetWardBedStatus" class="btn btn-report-action btn-bed">
+                        <i class="fas fa-eye me-1"></i> View Bed Report
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admission Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="report-card card-admission">
+                <div>
+                    <div class="report-card-icon icon-admission">
+                        <i class="fas fa-procedures"></i>
+                    </div>
+                    <h3 class="report-card-title">Admission Analytics</h3>
+                    <p class="report-card-desc">Track patient admissions, invoice numbers, doctor assignments, and admission date range trends.</p>
+                </div>
+                <div>
+                    <a asp-controller="Report" asp-action="AdmissionReport" class="btn btn-report-action btn-admission">
+                        <i class="fas fa-chart-bar me-1"></i> View Admission Report
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointment Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="report-card card-appointment">
+                <div>
+                    <div class="report-card-icon icon-appointment">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3 class="report-card-title">Appointment Analytics</h3>
+                    <p class="report-card-desc">Review doctor appointment schedules, patient visit dates, serial numbers, and consultation problems.</p>
+                </div>
+                <div>
+                    <a asp-controller="Report" asp-action="AppointmentReport" class="btn btn-report-action btn-appointment">
+                        <i class="fas fa-calendar-alt me-1"></i> View Appointment Report
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prescription Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="report-card card-prescription">
+                <div>
+                    <div class="report-card-icon icon-prescription">
+                        <i class="fas fa-file-prescription"></i>
+                    </div>
+                    <h3 class="report-card-title">Prescription Medical</h3>
+                    <p class="report-card-desc">Analyze issued medical prescriptions, attending doctors, patient contacts, and scheduled follow-up dates.</p>
+                </div>
+                <div>
+                    <a asp-controller="Report" asp-action="PrescriptionReports" class="btn btn-report-action btn-prescription">
+                        <i class="fas fa-notes-medical me-1"></i> View Prescription Report
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="report-card card-bill">
+                <div>
+                    <div class="report-card-icon icon-bill">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3 class="report-card-title">Billing & Collections</h3>
+                    <p class="report-card-desc">Comprehensive financial overview including total bill amounts, discounts, net revenue, payments, and due collections.</p>
+                </div>
+                <div>
+                    <a asp-controller="Report" asp-action="BillReport" class="btn btn-report-action btn-bill">
+                        <i class="fas fa-coins me-1"></i> View Billing Report
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
