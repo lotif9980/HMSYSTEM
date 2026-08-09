@@ -166,8 +166,7 @@ namespace HMSYSTEM.Controllers
         {
             bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
-            if (ModelState.IsValid)
-            {
+            
                 var existing = _unit.PatienRepo.Edit(model.PatientID);
                 if (existing == null)
                 {
@@ -211,7 +210,7 @@ namespace HMSYSTEM.Controllers
                 TempData["Message"] = "✅ Successfully Updated!";
                 TempData["MessageType"] = "primary";
                 return RedirectToAction("Index");
-            }
+            
 
             if (isAjax)
             {

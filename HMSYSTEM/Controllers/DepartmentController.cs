@@ -49,14 +49,7 @@ namespace HMSYSTEM.Controllers
                 })
                 .ToList();
 
-            return Json(new
-            {
-                issuccess = true,
-                totalPages = totalPages,
-                totalItem = totalItem,
-                currentPage = page,
-                data = data
-            });
+            return Json(new{issuccess = true,totalPages = totalPages,totalItem = totalItem,currentPage = page,data = data});
         }
 
         [HttpGet]
@@ -80,7 +73,8 @@ namespace HMSYSTEM.Controllers
         {
             bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
             if (ModelState.IsValid) 
-            { 
+            {
+                department.Status = true;
                 _unitOf.departmentRepo.Save(department);
                 if (isAjax)
                 {

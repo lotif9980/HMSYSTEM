@@ -335,6 +335,43 @@
         border-color: #edf2f7 !important;
         pointer-events: none;
     }
+
+    /* Toastr Custom Design Overrides to fix white text visibility */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important; /* Solid Premium Green */
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important; /* Solid Premium Red */
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast-info {
+        background-color: #3182ce !important; /* Solid Premium Blue */
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(49, 130, 206, 0.3) !important;
+    }
+    #toast-container > .toast-warning {
+        background-color: #dd6b20 !important; /* Solid Premium Orange */
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(221, 107, 32, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 20px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
 </style>
 
 <div class="container-fluid mt-4">
@@ -537,7 +574,7 @@
             </td>
             <td>
                 <div class="action-btn-group">
-                    <a class="action-btn action-edit edit-designation-btn" href="javascript:void(0);" data-id="${item.designationId}" title="Edit Designation">
+                    <a class="action-btn action-edit edit-designation-btn" data-id="${item.designationId}" title="Edit Designation">
                         <i class="fas fa-edit"></i>
                     </a>
                     <a class="action-btn action-delete delete-designation-btn" href="javascript:void(0);" data-id="${item.designationId}" title="Delete Designation">
@@ -568,11 +605,7 @@
         $.ajax({
             url: "@Url.Action("GetDesignations", "Designation")",
             type: "GET",
-            data: {
-                search: searchQuery,
-                page: currentPage,
-                pageSize: 10
-            },
+            data: {search: searchQuery,page: currentPage,pageSize: 10},
             success: function (response) {
                 if (response.issuccess === true) {
                     $("#dataShow").empty();

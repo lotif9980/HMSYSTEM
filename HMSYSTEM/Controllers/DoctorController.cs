@@ -67,7 +67,7 @@ namespace HMSYSTEM.Controllers
                     id = d.Id,
                     picture = d.Picture,
                     firstName = d.FirstName,
-                    lastName = d.LastName,
+                    nickName = d.LastName,
                     department = d.Department != null ? d.Department.DepartmentName : "N/A",
                     designation = d.Designation != null ? d.Designation.DesignationName : "N/A",
                     emailAddress = d.EmailAddress,
@@ -75,14 +75,7 @@ namespace HMSYSTEM.Controllers
                 })
                 .ToList();
 
-            return Json(new
-            {
-                issuccess = true,
-                totalPages = totalPages,
-                totalItem = totalItem,
-                currentPage = page,
-                data = data
-            });
+            return Json(new{issuccess = true,totalPages = totalPages,totalItem = totalItem,currentPage = page,data = data});
         }
 
         [HttpGet]
@@ -120,6 +113,7 @@ namespace HMSYSTEM.Controllers
 
             if (ModelState.IsValid)
             {
+                doctor.Status = true;
                 _unitOf.doctorRepo.Save(doctor);
                 await _unitOf.Save();
 
@@ -137,7 +131,7 @@ namespace HMSYSTEM.Controllers
 
                 var User = new User
                 {
-                    Name = doctor.FirstName + " " + doctor.LastName,
+                    Name = doctor.FirstName,
                     MobileNo = doctor.PhoneNo,
                     UserName = doctor.EmailAddress,
                     Password = doctor.Password,
@@ -191,7 +185,7 @@ namespace HMSYSTEM.Controllers
                         {
                             string firstName = doctor.FirstName.Replace(" ", "_");
                             string lastName = doctor.LastName.Replace(" ", "_");
-                            string newFileName = $"{doctor.Id}_{firstName}_{lastName}{Path.GetExtension(oldFileName)}";
+                            string newFileName = $"{doctor.Id}_{firstName}{Path.GetExtension(oldFileName)}";
 
                             string imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Doctor");
                             string oldFilePath = Path.Combine(imageFolder, oldFileName);
@@ -214,7 +208,7 @@ namespace HMSYSTEM.Controllers
                 {
                     string firstName = doctor.FirstName.Replace(" ", "_");
                     string lastName = doctor.LastName.Replace(" ", "_");
-                    string newFileName = $"{doctor.Id}_{firstName}_{lastName}{Path.GetExtension(doctor.ImageFile.FileName)}";
+                    string newFileName = $"{doctor.Id}_{firstName}{Path.GetExtension(doctor.ImageFile.FileName)}";
 
                     if (!string.IsNullOrEmpty(oldFileName))
                     {
@@ -236,7 +230,7 @@ namespace HMSYSTEM.Controllers
                 var existingUser = _unitOf.UserRepository.GetAll().FirstOrDefault(u => u.DoctorId == doctor.Id);
                 if (existingUser != null)
                 {
-                    existingUser.Name = doctor.FirstName + " " + doctor.LastName;
+                    existingUser.Name = doctor.FirstName;
                     existingUser.MobileNo = doctor.PhoneNo;
                     existingUser.UserName = doctor.EmailAddress;
                     existingUser.Password = doctor.Password;

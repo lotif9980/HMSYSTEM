@@ -66,8 +66,7 @@
                 </div>
 
                 <div class="card-body table-container">
-                    <table id="completeTable" class="table table-hover">
-                        <thead>
+                    <table id="completeTable" class="table table-hover"                        <thead>
                             <tr>
                                 <th style="width:55px">Sl No</th>
                                 <th>Date</th>
@@ -78,6 +77,7 @@
                                 <th>Department</th>
                                 <th>Doctor</th>
                                 <th>Status</th>
+                                <th style="width:140px; text-align:center">Prescription</th>
                             </tr>
                         </thead>
                         <tbody id="completeTableBody"></tbody>
@@ -115,8 +115,106 @@
     </div>
 </div>
 
+<!-- View Prescription Modal -->
+<div class="modal fade" id="viewPrescriptionModal" tabindex="-1" aria-labelledby="viewPrescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 16px; border: none; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important; padding: 1rem 1.5rem;">
+                <h5 class="modal-title fw-bold" id="viewPrescriptionModalLabel">
+                    <i class="fas fa-prescription-bottle-alt me-2"></i> Prescription Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <div class="modal-body p-4" style="background-color: #ffffff;">
+
+                <!-- Pad Header -->
+                <div class="row pb-3 mb-3 align-items-center" style="border-bottom: 2px solid #3182ce;">
+                    <div class="col-6">
+                        <h4 class="fw-bold text-primary mb-1" id="vDocName">Dr. Doctor Name</h4>
+                        <p class="text-secondary small mb-1 fw-bold" id="vDocSub">Designation</p>
+                        <p class="text-secondary small mb-0"><i class="fas fa-phone-alt me-1 text-primary"></i> <span id="vDocPhone">N/A</span></p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <h5 class="fw-bold text-dark mb-1">Hospital Management System</h5>
+                        <p class="text-muted small mb-0"><i class="fas fa-map-marker-alt me-1 text-danger"></i> Charghat, Rajshahi</p>
+                        <p class="text-muted small mb-0"><i class="fas fa-phone me-1 text-success"></i> Helpline: 01791177192</p>
+                    </div>
+                </div>
+
+                <!-- Patient Bar -->
+                <div class="p-3 mb-3 rounded-3" style="background: #f7fafc; border: 1px solid #e2e8f0; font-size: 0.85rem;">
+                    <div class="row">
+                        <div class="col-6">
+                            <div><span class="fw-bold text-secondary">Patient Name:</span> <strong id="vPatientName" class="text-dark">N/A</strong></div>
+                            <div><span class="fw-bold text-secondary">Phone:</span> <span id="vPatientPhone">N/A</span></div>
+                            <div><span class="fw-bold text-secondary">Address:</span> <span id="vPatientAddress">N/A</span></div>
+                        </div>
+                        <div class="col-6 text-end">
+                            <div><span class="fw-bold text-secondary">Date:</span> <span id="vRxDate">N/A</span></div>
+                            <div><span class="fw-bold text-secondary">Department:</span> <span id="vDepartmentName">N/A</span></div>
+                            <div><span class="fw-bold text-secondary">Next Follow Up:</span> <span class="badge bg-primary" id="vNextFollowUp">N/A</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rx Symbol -->
+                <div class="fw-bold text-primary mb-2" style="font-size: 1.8rem; font-family: Georgia, serif;">R<sub>x</sub></div>
+
+                <!-- Medicines Table -->
+                <div class="table-responsive mb-3">
+                    <table class="table table-bordered align-middle" style="font-size: 0.85rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 40%">Medicine Name</th>
+                                <th style="width: 20%">Dose</th>
+                                <th style="width: 15%">Duration</th>
+                                <th style="width: 20%">Instructions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vRxMedsBody">
+                            <!-- Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Advice Box -->
+                <div id="vAdviceBox" class="p-3 rounded-3 mb-3" style="background: #fffaf0; border-left: 3px solid #ed8936;">
+                    <!-- Advice content -->
+                </div>
+
+                <!-- Footer Signature -->
+                <div class="d-flex justify-content-between align-items-end mt-4 pt-3 border-top">
+                    <small class="text-muted">Generated by HMS | Wish you a speedy recovery!</small>
+                    <div style="border-top: 1.5px solid #a0aec0; width: 160px; text-align: center; font-size: 0.8rem; font-weight: 700; color: #4a5568; padding-top: 4px;">
+                        Doctor's Signature
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer" style="background-color: #f7fafc;">
+                <button type="button" class="btn btn-primary fw-bold" id="btnPrintRxModal" style="border-radius: 25px; padding: 6px 20px;">
+                    <i class="fas fa-print me-1"></i> Print Prescription
+                </button>
+                <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal" style="border-radius: 25px; padding: 6px 20px;">
+                    <i class="fas fa-times me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     var cpCurrentPage = 1, cpTotalPages = 1;
+    var currentPrescriptionId = 0;
+
+    function showSuccess(msg) {
+        if (typeof toastr !== 'undefined') toastr.success(msg); else alert(msg);
+    }
+
+    function showError(msg) {
+        if (typeof toastr !== 'undefined') toastr.error(msg); else alert(msg);
+    }
 
     function createCompleteRow(index, item) {
         return `<tr>
@@ -133,6 +231,11 @@
                     <i class="fas fa-check-double me-1"></i> Completed
                 </span>
             </td>
+            <td style="text-align:center;">
+                <button class="btn btn-sm btn-info view-rx-modal-btn" data-appointmentid="${item.appointmentId}" style="border-radius:20px; font-weight:700; font-size:0.78rem; background:linear-gradient(135deg,#3182ce 0%,#2b6cb0 100%); border:none; color:#ffffff; padding:4px 12px; display:inline-flex; align-items:center; gap:4px;">
+                    <i class="fas fa-eye"></i> Details
+                </button>
+            </td>
         </tr>`;
     }
 
@@ -140,7 +243,7 @@
         cpCurrentPage = page || 1;
         var search = $('#completeSearchBox').val() || '';
 
-        $('#completeTableBody').html(`<tr><td colspan="9" class="text-center py-4">
+        $('#completeTableBody').html(`<tr><td colspan="10" class="text-center py-4">
             <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
             <p class="mt-2 text-muted mb-0">Loading...</p></td></tr>`);
 
@@ -159,11 +262,11 @@
                     if (res.data && res.data.length > 0) {
                         $.each(res.data, function (i, v) { $('#completeTableBody').append(createCompleteRow(((cpCurrentPage - 1) * 10) + i + 1, v)); });
                     } else {
-                        $('#completeTableBody').html(`<tr><td colspan="9" class="text-center py-4 text-muted"><i class="fas fa-info-circle fs-4"></i><p class="mt-2 mb-0">No completed appointments found.</p></td></tr>`);
+                        $('#completeTableBody').html(`<tr><td colspan="10" class="text-center py-4 text-muted"><i class="fas fa-info-circle fs-4"></i><p class="mt-2 mb-0">No completed appointments found.</p></td></tr>`);
                     }
                 }
             },
-            error: function () { $('#completeTableBody').html(`<tr><td colspan="9" class="text-center py-4 text-danger">Failed to load data.</td></tr>`); }
+            error: function () { $('#completeTableBody').html(`<tr><td colspan="10" class="text-center py-4 text-danger">Failed to load data.</td></tr>`); }
         });
     }
 
@@ -173,5 +276,110 @@
         $('#cpBtnNext').on('click', function (e) { e.preventDefault(); if (cpCurrentPage < cpTotalPages) loadComplete(cpCurrentPage + 1); });
         $('#btnCompleteSearch').on('click', function () { loadComplete(1); });
         $('#completeSearchBox').on('keypress', function (e) { if (e.which === 13) { e.preventDefault(); loadComplete(1); } });
+
+        // Open View Prescription Details Modal
+        $(document).on('click', '.view-rx-modal-btn', function () {
+            var apptId = $(this).data('appointmentid');
+            $.ajax({
+                url: '@Url.Action("GetPrescriptionByAppointment", "Prescription")',
+                type: 'GET',
+                data: { appointmentId: apptId },
+                success: function (res) {
+                    if (res.success && res.data) {
+                        var d = res.data;
+                        currentPrescriptionId = d.id;
+
+                        $('#vDocName').text(d.doctorName ? 'Dr. ' + d.doctorName : 'N/A');
+                        $('#vDocSub').text(d.designationName || '');
+                        $('#vDocPhone').text(d.doctorMobile || 'N/A');
+                        $('#vPatientName').text(d.patientName || 'N/A');
+                        $('#vPatientPhone').text(d.patientMobileNo || 'N/A');
+                        $('#vPatientAddress').text(d.patientAddress || 'N/A');
+                        
+                        var rxDate = d.date ? new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
+                        $('#vRxDate').text(rxDate);
+                        $('#vDepartmentName').text(d.departmentName || 'N/A');
+                        
+                        var followUp = d.nextFlowUp ? new Date(d.nextFlowUp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'As Needed';
+                        $('#vNextFollowUp').text(followUp);
+
+                        // Medicines
+                        var $mBody = $('#vRxMedsBody');
+                        $mBody.empty();
+                        if (d.prescriptionDetails && d.prescriptionDetails.length > 0) {
+                            $.each(d.prescriptionDetails, function (i, m) {
+                                var instBadge = m.instructions ? '<span class="badge bg-success-subtle text-success border border-success-subtle">After Meal</span>' : '<span class="badge bg-warning-subtle text-warning border border-warning-subtle">Before Meal</span>';
+                                $mBody.append(`<tr>
+                                    <td>${i + 1}</td>
+                                    <td><strong>${m.medicineName || 'N/A'}</strong> <small class="text-muted d-block">(${m.strength || ''} ${m.form || ''})</small></td>
+                                    <td><span class="badge bg-light text-dark border font-monospace">${m.dose || ''}</span></td>
+                                    <td>${m.duration || ''}</td>
+                                    <td>${instBadge}</td>
+                                </tr>`);
+                            });
+                        } else {
+                            $mBody.append(`<tr><td colspan="5" class="text-center text-muted py-2">No medicines prescribed.</td></tr>`);
+                        }
+
+                        // Advice
+                        var $advBox = $('#vAdviceBox');
+                        if (d.note && d.note.trim().length > 0) {
+                            var lines = d.note.split(/[\.\n]/).filter(x => x.trim().length > 0);
+                            var advHtml = '<div class="fw-bold text-warning-emphasis mb-1" style="font-size:0.85rem;"><i class="fas fa-user-md me-1"></i> Doctor\'s Advice:</div>';
+                            $.each(lines, function (idx, line) {
+                                advHtml += `<div style="font-size:0.85rem; color:#4a5568;"><strong>${idx + 1}.</strong> ${line.trim()}</div>`;
+                            });
+                            $advBox.html(advHtml).show();
+                        } else {
+                            $advBox.hide();
+                        }
+
+                        var modal = new bootstrap.Modal(document.getElementById('viewPrescriptionModal'));
+                        modal.show();
+                    } else {
+                        showError(res.message || 'No prescription found for this appointment.');
+                    }
+                },
+                error: function () {
+                    showError('Failed to fetch prescription details.');
+                }
+            });
+        });
+
+        // Print Prescription from Modal
+        $('#btnPrintRxModal').on('click', function () {
+            if (currentPrescriptionId > 0) {
+                printPrescription(currentPrescriptionId);
+            }
+        });
     });
+
+    function printPrescription(id) {
+        $.ajax({
+            url: '/Prescription/GetPrescriptionPrintPartial/' + id,
+            type: 'GET',
+            success: function (htmlData) {
+                var iframe = document.createElement('iframe');
+                iframe.style.position = 'absolute';
+                iframe.style.width = '0px';
+                iframe.style.height = '0px';
+                iframe.style.border = 'none';
+                document.body.appendChild(iframe);
+
+                var doc = iframe.contentWindow.document;
+                doc.open();
+                doc.write(htmlData);
+                doc.close();
+
+                iframe.contentWindow.focus();
+                setTimeout(function () {
+                    iframe.contentWindow.print();
+                    document.body.removeChild(iframe);
+                }, 400);
+            },
+            error: function () {
+                alert("Failed to load print view.");
+            }
+        });
+    }
 </script>

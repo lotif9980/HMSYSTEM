@@ -199,6 +199,31 @@
         font-weight: 700 !important;
         transition: all 0.25s ease !important;
     }
+
+    /* Toastr Custom Design Overrides */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 20px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
 </style>
 
 <div class="container-fluid mt-4">
@@ -446,6 +471,14 @@
     var sCurrentPage = 1;
     var sTotalPages = 1;
 
+    function showSuccess(msg) {
+        if (typeof toastr !== 'undefined') toastr.success(msg); else alert(msg);
+    }
+
+    function showError(msg) {
+        if (typeof toastr !== 'undefined') toastr.error(msg); else alert(msg);
+    }
+
     var daysMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     function updateDayFromDate(dateElemId, dayElemId) {
@@ -625,12 +658,16 @@
                 data: $(this).serialize(),
                 success: function (res) {
                     if (res.success) {
+                        showSuccess(res.message || '✅ Schedule added successfully!');
                         $('#addScheduleModal').modal('hide');
                         $('#addScheduleForm')[0].reset();
-                        loadSchedules(sCurrentPage);
+                        loadSchedules(1);
                     } else {
-                        alert(res.message || 'Save failed');
+                        showError(res.message || '❌ Save failed');
                     }
+                },
+                error: function (xhr, status, error) {
+                    showError('❌ An error occurred: ' + error);
                 }
             });
         });
@@ -644,11 +681,15 @@
                 data: $(this).serialize(),
                 success: function (res) {
                     if (res.success) {
+                        showSuccess(res.message || '✅ Schedule updated successfully!');
                         $('#editScheduleModal').modal('hide');
                         loadSchedules(sCurrentPage);
                     } else {
-                        alert(res.message || 'Update failed');
+                        showError(res.message || '❌ Update failed');
                     }
+                },
+                error: function (xhr, status, error) {
+                    showError('❌ An error occurred: ' + error);
                 }
             });
         });

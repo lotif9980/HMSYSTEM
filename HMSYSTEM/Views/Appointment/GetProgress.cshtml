@@ -120,8 +120,146 @@
     </div>
 </div>
 
+<!-- Save Prescription Modal -->
+<div class="modal fade" id="savePrescriptionModal" tabindex="-1" aria-labelledby="savePrescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 15px 50px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #38a169 0%, #276749 100%) !important; color: #ffffff !important; padding: 1.25rem 1.75rem;">
+                <h5 class="modal-title fw-bold" id="savePrescriptionModalLabel">
+                    <i class="fas fa-prescription me-2"></i> Issue Patient Prescription
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="Prescription" asp-action="Save" method="post" id="savePrescriptionForm">
+                <input type="hidden" name="AppointmentId" id="modalAppointmentId" value="0" />
+                <div class="modal-body" style="background-color: #f8fafc; padding: 1.5rem 1.75rem;">
+
+                    <!-- Master Metadata -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="modalRxDate" class="form-label fw-bold text-secondary fs-7">Prescription Date</label>
+                                <input type="date" name="Date" id="modalRxDate" class="form-control" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modalPatientId" class="form-label fw-bold text-secondary fs-7">Patient</label>
+                                <select name="PatientId" id="modalPatientId" class="form-select" required>
+                                    <option value="">-- Select Patient --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modalDoctorId" class="form-label fw-bold text-secondary fs-7">Doctor</label>
+                                <select name="DoctorId" id="modalDoctorId" class="form-select" required>
+                                    <option value="">-- Select Doctor --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modalDepartmentId" class="form-label fw-bold text-secondary fs-7">Department</label>
+                                <select name="DepartmentId" id="modalDepartmentId" class="form-select">
+                                    <option value="">-- Select Department --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Medicine Dosage Table -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fas fa-pills me-2 text-success"></i> Prescribed Medicines & Dosage Instructions</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle mb-2" id="modalRxDetailsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="min-width: 220px;">Medicine</th>
+                                        <th style="width: 130px;">Dose (e.g. 1+0+1)</th>
+                                        <th style="width: 130px;">Duration (e.g. 7 Days)</th>
+                                        <th style="width: 140px; text-align: center;">After Meal?</th>
+                                        <th style="width: 60px; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalRxDetailsBody">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="button" id="modalRxAddRowBtn" class="btn btn-sm btn-success" style="border-radius: 20px; padding: 4px 16px; font-weight: 700;">
+                                <i class="fas fa-plus me-1"></i> Add Medicine
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Advice & Follow-Up Card -->
+                    <div class="card p-3 border-0 shadow-sm" style="border-radius: 12px;">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="modalRxNote" class="form-label fw-bold text-secondary fs-7">Medical Advice / Note</label>
+                                <input type="text" name="Note" id="modalRxNote" class="form-control" placeholder="e.g. Drink plenty of water. Take rest. (Use '.' for bullet breaks)" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="modalNextFlowUp" class="form-label fw-bold text-secondary fs-7">Follow-Up Date</label>
+                                <input type="date" name="NextFlowUp" id="modalNextFlowUp" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer d-flex justify-content-center" style="background-color: #f7fafc; padding: 1rem 1.75rem;">
+                    <button type="submit" class="btn btn-success fw-bold px-4" style="border-radius: 30px; background: linear-gradient(135deg, #38a169 0%, #276749 100%) !important; border: none; box-shadow: 0 4px 12px rgba(56,161,105,0.3);">
+                        <i class="fas fa-save me-2"></i> Issue Prescription
+                    </button>
+                    <button type="button" class="btn btn-secondary fw-bold px-4" data-bs-dismiss="modal" style="border-radius: 30px;">
+                        <i class="fas fa-times me-2"></i> Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     var pgCurrentPage = 1, pgTotalPages = 1;
+    var modalMedicinesList = [];
+
+    function showSuccess(msg) {
+        if (typeof toastr !== 'undefined') toastr.success(msg); else alert(msg);
+    }
+
+    function showError(msg) {
+        if (typeof toastr !== 'undefined') toastr.error(msg); else alert(msg);
+    }
+
+    function buildMedOptions() {
+        let html = '<option value="">-- Select Medicine --</option>';
+        if (modalMedicinesList && modalMedicinesList.length > 0) {
+            $.each(modalMedicinesList, function (i, m) {
+                html += `<option value="${m.id}">${m.name}</option>`;
+            });
+        }
+        return html;
+    }
+
+    function addRxRow() {
+        var rowIndex = $('#modalRxDetailsBody tr').length;
+        var medOpts = buildMedOptions();
+
+        var newRow = `<tr>
+            <td>
+                <select name="PrescriptionDetails[${rowIndex}].MedicineId" class="form-select modal-rx-medicine" required>
+                    ${medOpts}
+                </select>
+            </td>
+            <td><input type="text" name="PrescriptionDetails[${rowIndex}].Dose" class="form-control" placeholder="1+0+1" required /></td>
+            <td><input type="text" name="PrescriptionDetails[${rowIndex}].Duration" class="form-control" placeholder="7 Days" required /></td>
+            <td style="text-align: center;">
+                <input type="checkbox" name="PrescriptionDetails[${rowIndex}].Instructions" value="true" class="form-check-input mt-2" style="width: 20px; height: 20px;" />
+            </td>
+            <td style="text-align: center;">
+                <button type="button" class="btn btn-sm btn-danger remove-modal-rx-row-btn"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>`;
+        $('#modalRxDetailsBody').append(newRow);
+    }
 
     function createProgressRow(index, item) {
         return `<tr>
@@ -139,7 +277,7 @@
                 </span>
             </td>
             <td style="text-align:center;">
-                <a class="action-btn-rx" href="/Prescription/Save?appointmentId=${item.appointmentId}">
+                <a class="action-btn-rx open-rx-modal-btn" href="javascript:void(0);" data-appointmentid="${item.appointmentId}">
                     <i class="fas fa-prescription me-1"></i> Prescription
                 </a>
             </td>
@@ -183,5 +321,106 @@
         $('#pgBtnNext').on('click', function (e) { e.preventDefault(); if (pgCurrentPage < pgTotalPages) loadProgress(pgCurrentPage + 1); });
         $('#btnProgressSearch').on('click', function () { loadProgress(1); });
         $('#progressSearchBox').on('keypress', function (e) { if (e.which === 13) { e.preventDefault(); loadProgress(1); } });
+
+        // Open Prescription Modal on Prescription Button Click
+        $(document).on('click', '.open-rx-modal-btn', function () {
+            var apptId = $(this).data('appointmentid');
+            $.ajax({
+                url: '@Url.Action("GetSaveModalData", "Prescription")',
+                type: 'GET',
+                data: { appointmentId: apptId },
+                success: function (res) {
+                    if (res.success) {
+                        modalMedicinesList = res.medicines || [];
+
+                        // Populate Patient Dropdown
+                        var $patSelect = $('#modalPatientId');
+                        $patSelect.empty().append('<option value="">-- Select Patient --</option>');
+                        $.each(res.patients || [], function (i, p) {
+                            $patSelect.append(`<option value="${p.id}">${p.name} (${p.phone || ''})</option>`);
+                        });
+
+                        // Populate Doctor Dropdown
+                        var $docSelect = $('#modalDoctorId');
+                        $docSelect.empty().append('<option value="">-- Select Doctor --</option>');
+                        $.each(res.doctors || [], function (i, d) {
+                            $docSelect.append(`<option value="${d.id}">Dr. ${d.name}</option>`);
+                        });
+
+                        // Populate Department Dropdown
+                        var $deptSelect = $('#modalDepartmentId');
+                        $deptSelect.empty().append('<option value="">-- Select Department --</option>');
+                        $.each(res.departments || [], function (i, dp) {
+                            $deptSelect.append(`<option value="${dp.id}">${dp.name}</option>`);
+                        });
+
+                        // Set Appointment Data
+                        if (res.appointment) {
+                            var a = res.appointment;
+                            $('#modalAppointmentId').val(a.appointmentId);
+                            $patSelect.val(a.patientId);
+                            $docSelect.val(a.doctorId);
+                            $deptSelect.val(a.departmentId);
+                        } else {
+                            $('#modalAppointmentId').val(0);
+                        }
+
+                        // Reset Date & Rows
+                        var today = new Date().toISOString().split('T')[0];
+                        $('#modalRxDate').val(today);
+
+                        var followUp = new Date();
+                        followUp.setDate(followUp.getDate() + 7);
+                        $('#modalNextFlowUp').val(followUp.toISOString().split('T')[0]);
+
+                        $('#modalRxNote').val('');
+                        $('#modalRxDetailsBody').empty();
+                        addRxRow();
+
+                        var modal = new bootstrap.Modal(document.getElementById('savePrescriptionModal'));
+                        modal.show();
+                    } else {
+                        showError("Failed to load prescription form data.");
+                    }
+                },
+                error: function () {
+                    showError("Error connecting to server.");
+                }
+            });
+        });
+
+        // Add Medicine Row in Modal
+        $('#modalRxAddRowBtn').on('click', function () {
+            addRxRow();
+        });
+
+        // Remove Medicine Row in Modal
+        $('#modalRxDetailsTable').on('click', '.remove-modal-rx-row-btn', function () {
+            $(this).closest('tr').remove();
+        });
+
+        // Submit Prescription Form via AJAX
+        $('#savePrescriptionForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (res) {
+                    if (res.success) {
+                        showSuccess(res.message || '✅ Prescription Successfully Saved & Issued!');
+                        $('#savePrescriptionModal').modal('hide');
+                        loadProgress(pgCurrentPage);
+                    } else {
+                        showError(res.message || '❌ Prescription save failed');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError('❌ An error occurred: ' + error);
+                }
+            });
+        });
     });
 </script>

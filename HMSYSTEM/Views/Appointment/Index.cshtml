@@ -182,6 +182,31 @@
         font-weight: 700 !important;
         transition: all 0.25s ease !important;
     }
+
+    /* Toastr Custom Design Overrides */
+    #toast-container > .toast-success {
+        background-color: #2f855a !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(47, 133, 90, 0.3) !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important;
+        color: #ffffff !important;
+        opacity: 1 !important;
+        box-shadow: 0 4px 14px rgba(197, 48, 48, 0.3) !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 20px !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
 </style>
 
 <div class="container-fluid mt-4">
@@ -212,7 +237,6 @@
                                 <i class="fas fa-plus me-1"></i> Create
                             </button>
                         </div>
-                    </div>
                 </div>
 
                 <!-- Tab + Date Filter Row -->
@@ -353,17 +377,6 @@
                             <label class="form-label">Problem</label>
                             <textarea name="Problem" class="form-control" rows="2" placeholder="Patient problem details..."></textarea>
                         </div>
-                        <div class="col-md-12">
-                            <label class="form-label d-block">Status</label>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="Status" value="1" id="appActive" checked />
-                                <label class="form-check-label" for="appActive">Active</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="Status" value="2" id="appInactive" />
-                                <label class="form-check-label" for="appInactive">Inactive</label>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -377,9 +390,95 @@
     </div>
 </div>
 
+<!-- Edit Appointment Modal -->
+<div class="modal fade" id="editAppointmentModal" tabindex="-1" aria-labelledby="editAppointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important; color: #ffffff !important;">
+                <h5 class="modal-title" id="editAppointmentModalLabel">
+                    <i class="fas fa-edit me-2"></i> Edit Appointment Information
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+            <form asp-controller="Appointment" asp-action="Edit" method="post" id="editAppointmentForm">
+                <input type="hidden" name="AppointmentId" id="editAppointmentId" />
+                <input type="hidden" name="PatientID" id="editPatientId" />
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="PatientPhoneNumber" id="editPhone" class="form-control" placeholder="Search Phone Number" required />
+                            <small id="editPhoneStatus" class="form-text"></small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Patient Name</label>
+                            <input type="text" name="PatientName" id="editPatientName" class="form-control" placeholder="Patient Name" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <select name="DepartmentId" id="editApptDepartmentId" class="form-select" required>
+                                <option value="">-- Select Department --</option>
+                                @foreach (var dept in departments)
+                                {
+                                    <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Doctor</label>
+                            <select name="DoctorId" id="editApptDoctorId" class="form-select" required>
+                                <option value="">-- Select Doctor --</option>
+                                @foreach (var doc in doctors)
+                                {
+                                    <option value="@doc.Id">@doc.FirstName @doc.LastName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Appointment Date & Time</label>
+                            <input type="datetime-local" name="AppoinmentDate" id="editAppoinmentDate" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Serial Number</label>
+                            <input type="number" name="SerialNumber" id="editSerialNumber" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select name="Status" id="editStatus" class="form-select" required>
+                                <option value="1">Active</option>
+                                <option value="2">In Progress</option>
+                                <option value="3">Completed</option>
+                                <option value="9">Deleted</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Problem</label>
+                            <textarea name="Problem" id="editProblem" class="form-control" rows="2" placeholder="Patient problem details..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-save" style="background-color: #3182ce !important; box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3) !important;">
+                        <i class="fas fa-save me-1"></i> Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     var aCurrentPage = 1;
     var aTotalPages = 1;
+
+    function showSuccess(msg) {
+        if (typeof toastr !== 'undefined') toastr.success(msg); else alert(msg);
+    }
+
+    function showError(msg) {
+        if (typeof toastr !== 'undefined') toastr.error(msg); else alert(msg);
+    }
 
     var statusLabels = { 1: 'Active', 2: 'In Progress', 3: 'Complete', 9: 'Deleted' };
     var statusStyles = {
@@ -408,11 +507,7 @@
                             <i class="fas fa-spinner text-info me-2"></i> In Progress
                         </a>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="/Appointment/ChangeStatus?id=${item.appointmentId}&status=3&returnAction=Index">
-                            <i class="fas fa-check-double text-success me-2"></i> Completed
-                        </a>
-                    </li>
+                    
                     <li>
                         <a class="dropdown-item text-danger" href="/Appointment/ChangeStatus?id=${item.appointmentId}&status=9&returnAction=Index" onclick="return confirm('Change status to delete?')">
                             <i class="fas fa-trash-alt text-danger me-2"></i> Delete
@@ -434,7 +529,7 @@
             <td>${dropdownMenu}</td>
             <td>
                 <div class="action-btn-group">
-                    <a class="action-btn action-edit" href="/Appointment/Edit/${item.appointmentId}" title="Edit">
+                    <a class="action-btn action-edit edit-appt-btn" href="javascript:void(0);" data-id="${item.appointmentId}" title="Edit Appointment">
                         <i class="fas fa-edit"></i>
                     </a>
                     <a class="action-btn action-delete" href="/Appointment/Delete/${item.appointmentId}"
@@ -554,6 +649,124 @@
                     }
                 });
             }
+        });
+
+        // Open Edit Appointment Modal via AJAX
+        $(document).on('click', '.edit-appt-btn', function () {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '@Url.Action("Edit", "Appointment")',
+                type: 'GET',
+                data: { id: id },
+                success: function (res) {
+                    if (res.success) {
+                        var d = res.data;
+                        $('#editAppointmentId').val(d.appointmentId);
+                        $('#editPatientId').val(d.patientID);
+                        $('#editPhone').val(d.patientPhoneNumber);
+                        $('#editPatientName').val(d.patientName);
+                        $('#editAppoinmentDate').val(d.appoinmentDate);
+                        $('#editSerialNumber').val(d.serialNumber);
+                        $('#editStatus').val(d.status);
+                        $('#editProblem').val(d.problem || '');
+                        $('#editApptDepartmentId').val(d.departmentId);
+
+                        // Load department doctors and select current doctor
+                        if (d.departmentId) {
+                            $.ajax({
+                                url: '@Url.Action("GetDoctorsByDepartment", "Schedule")',
+                                type: 'GET',
+                                data: { departmentId: d.departmentId },
+                                success: function (doctors) {
+                                    var $docSelect = $('#editApptDoctorId');
+                                    $docSelect.empty().append('<option value="">-- Select Doctor --</option>');
+                                    if (doctors && doctors.length > 0) {
+                                        $.each(doctors, function (i, doc) {
+                                            $docSelect.append('<option value="' + doc.id + '">' + doc.name + '</option>');
+                                        });
+                                    }
+                                    $docSelect.val(d.doctorId);
+                                }
+                            });
+                        }
+
+                        var editModal = new bootstrap.Modal(document.getElementById('editAppointmentModal'));
+                        editModal.show();
+                    } else {
+                        showError(res.message || 'Error loading appointment');
+                    }
+                }
+            });
+        });
+
+        // Edit Modal Department change handler
+        $('#editApptDepartmentId').on('change', function () {
+            var deptId = $(this).val();
+            var $docSelect = $('#editApptDoctorId');
+            $docSelect.empty().append('<option value="">-- Select Doctor --</option>');
+
+            if (deptId) {
+                $.ajax({
+                    url: '@Url.Action("GetDoctorsByDepartment", "Schedule")',
+                    type: 'GET',
+                    data: { departmentId: deptId },
+                    success: function (doctors) {
+                        if (doctors && doctors.length > 0) {
+                            $.each(doctors, function (i, d) {
+                                $docSelect.append('<option value="' + d.id + '">' + d.name + '</option>');
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        // Submit Add Form via AJAX
+        $('#addAppointmentForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        showSuccess(res.message || '✅ Appointment successfully added!');
+                        $('#addAppointmentModal').modal('hide');
+                        form[0].reset();
+                        $('#modalPhoneStatus').empty();
+                        loadAppointments(1);
+                    } else {
+                        showError(res.message || '❌ Save failed');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError('❌ An error occurred: ' + error);
+                }
+            });
+        });
+
+        // Submit Edit Form via AJAX
+        $('#editAppointmentForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (res) {
+                    if (res.success) {
+                        showSuccess(res.message || '✅ Appointment successfully updated!');
+                        $('#editAppointmentModal').modal('hide');
+                        loadAppointments(aCurrentPage);
+                    } else {
+                        showError(res.message || '❌ Update failed');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError('❌ An error occurred: ' + error);
+                }
+            });
         });
     });
 </script>

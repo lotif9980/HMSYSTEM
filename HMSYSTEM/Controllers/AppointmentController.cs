@@ -207,7 +207,6 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Save(AppointmentVM appointment)
         {
-
             ViewBag.Department = _unitofWork.departmentRepo.getAll();
             ViewBag.Doctor = _unitofWork.doctorRepo.getAll();
 
@@ -219,12 +218,14 @@ namespace HMSYSTEM.Controllers
             int nextSerial = (lastSerial ?? 0) + 1;
             ViewBag.NextSerial = nextSerial;
 
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
             if (ModelState.IsValid)
             {
-                var patient =GetPatientNameByPhone(appointment.PatientPhoneNumber);
+                var patient = GetPatientNameByPhone(appointment.PatientPhoneNumber);
                 if (patient != null)
                 {
-                    appointment.PatientName = appointment.PatientName ; 
+                    appointment.PatientName = appointment.PatientName; 
                 }
 
                 Appointment appointments = new Appointment
@@ -236,18 +237,27 @@ namespace HMSYSTEM.Controllers
                     AppoinmentDate = appointment.AppoinmentDate.Value,
                     SerialNumber = appointment.SerialNumber,
                     Problem = appointment.Problem,
-                    Status = appointment.Status
+                    Status = AppointmentStatus.Active
                 };
-
 
                 _unitofWork.AppointmentRepository.Save(appointments);
                 TempData["Message"] = "✅ Successfully Added!";
                 TempData["MessageType"] = "primary";
 
+                if (isAjax)
+                {
+                    return Json(new { success = true, message = "✅ Successfully Added!" });
+                }
 
-                return RedirectToAction("Save");
+                return RedirectToAction("Index");
             }
-            return View(appointment);
+
+            if (isAjax)
+            {
+                return Json(new { success = false, message = "❌ Invalid data submitted." });
+            }
+
+            return RedirectToAction("Index");
         }
 
         public IActionResult Delete(int Id)
@@ -417,7 +427,32 @@ namespace HMSYSTEM.Controllers
             var appointment = _unitofWork.AppointmentRepository.GetById(id);
             if (appointment == null)
             {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, message = "Appointment not found." });
+                }
                 return NotFound();
+            }
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        appointmentId = appointment.AppointmentId,
+                        patientID = appointment.PatientID,
+                        patientName = appointment.Patient != null ? (appointment.Patient.FirstName + " " + appointment.Patient.LastName) : "",
+                        patientPhoneNumber = appointment.PatientPhoneNumber,
+                        departmentId = appointment.DepartmentId,
+                        doctorId = appointment.DoctorId,
+                        appoinmentDate = appointment.AppoinmentDate.ToString("yyyy-MM-ddTHH:mm"),
+                        serialNumber = appointment.SerialNumber,
+                        problem = appointment.Problem,
+                        status = (int)appointment.Status
+                    }
+                });
             }
 
             var department = _unitofWork.departmentRepo.getAll()
@@ -450,6 +485,8 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Edit(AppointmentVM model)
         {
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
             if (ModelState.IsValid)
             {
                 var appointment = new Appointment
@@ -469,7 +506,17 @@ namespace HMSYSTEM.Controllers
                 TempData["Message"] = "✅ Successfully Updated!";
                 TempData["MessageType"] = "primary";
 
+                if (isAjax)
+                {
+                    return Json(new { success = true, message = "✅ Successfully Updated!" });
+                }
+
                 return RedirectToAction("Index");
+            }
+
+            if (isAjax)
+            {
+                return Json(new { success = false, message = "❌ Invalid data submitted." });
             }
 
             var department = _unitofWork.departmentRepo.getAll()

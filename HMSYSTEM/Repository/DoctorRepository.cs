@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +20,10 @@ namespace HMSYSTEM.Repository
 
         public List<Doctor> getAll()
         {
-           return _db.Doctors.Include(d=>d.Department).ToList();
+           return _db.Doctors
+               .Include(d => d.Department)
+               .Include(d => d.Designation)
+               .ToList();
         }
 
         public Doctor Details(int id)

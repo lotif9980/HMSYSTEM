@@ -454,6 +454,7 @@
                                 <th style="width:60px">Sl No</th>
                                 <th style="width:80px">Picture</th>
                                 <th>Name</th>
+                                <th>Nick Name</th>
                                 <th>Department</th>
                                 <th>Designation</th>
                                 <th>Email</th>
@@ -534,11 +535,11 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold" style="color:#4a5568;">First Name</label>
+                            <label class="form-label fw-bold" style="color:#4a5568;">Full Name</label>
                             <input name="FirstName" id="addDoctorFirstName" class="form-control" placeholder="Enter first name" required />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold" style="color:#4a5568;">Last Name</label>
+                            <label class="form-label fw-bold" style="color:#4a5568;">Nick Name</label>
                             <input name="LastName" id="addDoctorLastName" class="form-control" placeholder="Enter last name" />
                         </div>
                     </div>
@@ -590,7 +591,7 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Sex</label>
+                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Gender</label>
                             <div class="form-check form-check-inline mt-1">
                                 <input class="form-check-input" type="radio" name="Sex" value="Male" id="addDoctorSexMale" checked />
                                 <label class="form-check-label" for="addDoctorSexMale">Male</label>
@@ -625,17 +626,7 @@
                             <label class="form-label fw-bold" style="color:#4a5568;">Picture</label>
                             <input type="file" name="ImageFile" id="addDoctorPic" class="form-control" accept="image/*" />
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Status</label>
-                            <div class="form-check form-check-inline mt-1">
-                                <input class="form-check-input" type="radio" name="Status" value="true" id="addDoctorStatusActive" checked />
-                                <label class="form-check-label" for="addDoctorStatusActive">Active</label>
-                            </div>
-                            <div class="form-check form-check-inline mt-1">
-                                <input class="form-check-input" type="radio" name="Status" value="false" id="addDoctorStatusInactive" />
-                                <label class="form-check-label" for="addDoctorStatusInactive">Inactive</label>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
@@ -667,11 +658,11 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold" style="color:#4a5568;">First Name</label>
+                            <label class="form-label fw-bold" style="color:#4a5568;">Full Name</label>
                             <input name="FirstName" id="editDoctorFirstName" class="form-control" required />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold" style="color:#4a5568;">Last Name</label>
+                            <label class="form-label fw-bold" style="color:#4a5568;">Nick Name</label>
                             <input name="LastName" id="editDoctorLastName" class="form-control" />
                         </div>
                     </div>
@@ -723,7 +714,7 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Sex</label>
+                            <label class="form-label d-block fw-bold" style="color:#4a5568;">Gender</label>
                             <div class="form-check form-check-inline mt-1">
                                 <input class="form-check-input" type="radio" name="Sex" value="Male" id="editDoctorSexMale" />
                                 <label class="form-check-label" for="editDoctorSexMale">Male</label>
@@ -805,7 +796,7 @@
             ? `/Doctor/${item.picture}`
             : `/images/default.png`;
 
-        var fullName = `${item.firstName || ''} ${item.lastName || ''}`.trim();
+        var fullName = `${item.firstName}`.trim();
 
         return `<tr>
             <td>${index}</td>
@@ -817,6 +808,7 @@
                      style="border-radius:50%; object-fit:cover; border:2px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.08);" />
             </td>
             <td style="font-weight:700; color:#2d3748;">${fullName}</td>
+            <td>${item.nickName || ''}</td>
             <td>${item.department || 'N/A'}</td>
             <td>${item.designation || 'N/A'}</td>
             <td>${item.emailAddress || ''}</td>
@@ -839,7 +831,7 @@
 
         $('#doctorTableBody').html(`
             <tr>
-                <td colspan="8" class="text-center py-4">
+                <td colspan="9" class="text-center py-4">
                     <div class="spinner-border text-success" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -877,7 +869,7 @@
                     } else {
                         $('#doctorTableBody').html(`
                             <tr>
-                                <td colspan="8" class="text-center py-4 text-muted">
+                                <td colspan="9" class="text-center py-4 text-muted">
                                     <i class="fas fa-info-circle fs-4"></i>
                                     <p class="mt-2 mb-0">No doctors found.</p>
                                 </td>
@@ -889,7 +881,7 @@
             error: function (xhr, status, err) {
                 $('#doctorTableBody').html(`
                     <tr>
-                        <td colspan="8" class="text-center py-4 text-danger">
+                        <td colspan="9" class="text-center py-4 text-danger">
                             <i class="fas fa-exclamation-triangle fs-4"></i>
                             <p class="mt-2 mb-0">Failed to load data.</p>
                         </td>

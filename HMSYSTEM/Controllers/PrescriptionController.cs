@@ -315,5 +315,20 @@ namespace HMSYSTEM.Controllers
 
             return Json(result);
         }
+
+        [HttpGet]
+        public IActionResult GetPrescriptionByAppointment(int appointmentId)
+        {
+            var prescription = _unitOfWork.PrescriptioRepository.GetAll()
+                .FirstOrDefault(p => p.AppointmentId == appointmentId);
+
+            if (prescription == null)
+            {
+                return Json(new { success = false, message = "No prescription found for this appointment." });
+            }
+
+            var vm = _unitOfWork.PrescriptioRepository.GetPrescriptionViewModel(prescription.Id);
+            return Json(new { success = true, data = vm });
+        }
     }
 }

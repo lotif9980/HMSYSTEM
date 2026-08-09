@@ -1,4 +1,4 @@
-﻿<style>
+<style>
 
     #saveMessage {
         position: fixed;
@@ -12,14 +12,31 @@
 
 @{
     var message = TempData["Message"] as string;
-    var messageType = TempData["MessageType"] as string ?? "info";
+    var messageType = TempData["MessageType"] as string ?? "success";
+    if (messageType == "primary") { messageType = "success"; }
+    if (messageType == "danger") { messageType = "error"; }
 }
 
-<div class="position-fixed top-0 end-0 m-3" style="z-index: 9999; width:350px">
-    <div id="saveMessage" class="alert alert-@messageType alert-dismissible d-none" role="alert">
-        @message
-    </div>
-</div>
+@if (!string.IsNullOrEmpty(message))
+{
+    <script>
+        $(document).ready(function () {
+            if (typeof toastr !== 'undefined') {
+                var type = '@messageType'.toLowerCase();
+                var msg = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(message));
+                if (type === 'danger' || type === 'error') {
+                    toastr.error(msg);
+                } else if (type === 'warning') {
+                    toastr.warning(msg);
+                } else if (type === 'info') {
+                    toastr.info(msg);
+                } else {
+                    toastr.success(msg);
+                }
+            }
+        });
+    </script>
+}
 
 <script>
     // function showMessage(text, type = "info", duration = 2000) {

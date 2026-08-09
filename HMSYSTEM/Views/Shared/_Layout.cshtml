@@ -126,6 +126,80 @@
     .select2-container--default .select2-selection__rendered {
         line-height: 38px;
     }
+
+    /* Toastr Custom Design Overrides to fix white text visibility bug across all controllers/views */
+    #toast-container {
+        z-index: 999999 !important;
+    }
+    #toast-container > .toast {
+        background-image: none !important;
+        padding: 15px 20px 15px 20px !important;
+        border-radius: 12px !important;
+        border: none !important;
+        opacity: 1 !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+    }
+    #toast-container > .toast-success {
+        background-color: #2f855a !important; /* Solid Premium Green */
+        color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    #toast-container > .toast-error {
+        background-color: #c53030 !important; /* Solid Premium Red */
+        color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    #toast-container > .toast-info {
+        background-color: #3182ce !important; /* Solid Premium Blue */
+        color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    #toast-container > .toast-warning {
+        background-color: #dd6b20 !important; /* Solid Premium Orange */
+        color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    #toast-container .toast-message,
+    #toast-container .toast-title {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+    }
+    #toast-container .toast-close-button {
+        color: #ffffff !important;
+        text-shadow: none !important;
+        opacity: 0.8 !important;
+    }
+    #toast-container .toast-close-button:hover {
+        opacity: 1 !important;
+    }
+
+    /* Bootstrap Alert Styling Fixes */
+    .alert-success {
+        background-color: #d1e7dd !important;
+        color: #0f5132 !important;
+        border-color: #badbcc !important;
+    }
+    .alert-danger {
+        background-color: #f8d7da !important;
+        color: #842029 !important;
+        border-color: #f5c2c7 !important;
+    }
+    .alert-primary {
+        background-color: #cfe2ff !important;
+        color: #084298 !important;
+        border-color: #b6d4fe !important;
+    }
+    .alert-warning {
+        background-color: #fff3cd !important;
+        color: #664d03 !important;
+        border-color: #ffecb5 !important;
+    }
+    .alert-info {
+        background-color: #cff4fc !important;
+        color: #055160 !important;
+        border-color: #b6effb !important;
+    }
 </style>
 <!--end::Head-->
 <!--begin::Body-->
@@ -396,26 +470,34 @@
 
 
     <script>
+        if (typeof toastr !== 'undefined') {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "4000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+        }
 
-        if ($("#saveMessage").text().trim() !== "") {
+        if ($("#saveMessage").length && $("#saveMessage").text().trim() !== "") {
             $("#saveMessage").removeClass("d-none").fadeIn();
-
             setTimeout(() => {
                 $("#saveMessage").fadeOut(function () {
                     $(this).addClass("d-none");
                 });
-            }, 2000);
+            }, 3000);
         }
-
-            $("#removed").removeClass("d-none").fadeIn();
-
-            setTimeout(() => {
-                $("#removed").fadeOut(function () {
-                    $(this).addClass("d-none");
-                });
-            }, 2000);
-
-
     </script>
 
 
