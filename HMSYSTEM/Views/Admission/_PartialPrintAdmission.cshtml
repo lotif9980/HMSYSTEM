@@ -9,7 +9,7 @@
     @@media print {
         @@page {
             size: A4 portrait;
-            margin: 10mm;
+            margin: 6mm 8mm;
         }
 
         body {
@@ -27,10 +27,38 @@
             padding: 0 !important;
             box-shadow: none !important;
             border: none !important;
+            min-height: 265mm !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .print-body {
+            flex: 1 1 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
         }
 
         .no-print {
             display: none !important;
+        }
+
+        .row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+        }
+
+        .col-6, .col-md-6 {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+            width: 50% !important;
+        }
+
+        .print-signature-area {
+            margin-top: auto !important;
+            padding-top: 1.5rem !important;
+            padding-bottom: 0.5rem !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
     }
 
@@ -39,8 +67,8 @@
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: #2d3748;
         background: #ffffff;
-        padding: 1.5rem;
-        border-radius: 16px;
+        padding: 0.5rem;
+        border-radius: 12px;
         max-width: 950px;
         margin: 0 auto;
     }
@@ -48,8 +76,8 @@
     .print-header {
         background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%) !important;
         color: #ffffff !important;
-        padding: 1.5rem 2rem !important;
-        border-radius: 16px 16px 0 0 !important;
+        padding: 1rem 1.5rem !important;
+        border-radius: 12px 12px 0 0 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
@@ -61,23 +89,23 @@
     }
 
     .print-hospital-title {
-        font-size: 1.5rem;
+        font-size: 1.35rem;
         font-weight: 800;
         margin: 0;
         letter-spacing: 0.5px;
     }
 
     .print-hospital-sub {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         opacity: 0.9;
         margin: 2px 0 0 0;
     }
 
     .print-voucher-tag {
         background: rgba(255, 255, 255, 0.2);
-        padding: 6px 16px;
+        padding: 4px 14px;
         border-radius: 20px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: 700;
         backdrop-filter: blur(4px);
     }
@@ -86,7 +114,7 @@
     .print-summary-banner {
         background: #f7fafc !important;
         border-bottom: 1px solid #edf2f7;
-        padding: 1rem 2rem;
+        padding: 0.6rem 1.5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -101,7 +129,7 @@
     }
 
     .print-summary-label {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         text-transform: uppercase;
         letter-spacing: 0.8px;
         color: #718096;
@@ -109,35 +137,35 @@
     }
 
     .print-summary-value {
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         font-weight: 800;
         color: #2d3748;
     }
 
     /* Grid Cards */
     .print-body {
-        padding: 1.5rem !important;
+        padding: 1rem 1.25rem !important;
         border: 1px solid #edf2f7;
         border-top: none;
-        border-radius: 0 0 16px 16px;
+        border-radius: 0 0 12px 12px;
     }
 
     .print-info-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 1.2rem;
-        margin-bottom: 1rem;
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        margin-bottom: 0.5rem;
         height: 100%;
         box-sizing: border-box;
     }
 
     .print-info-title {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 800;
         color: #2b6cb0;
-        margin-bottom: 1rem;
-        padding-bottom: 0.4rem;
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.3rem;
         border-bottom: 2px solid #ebf8ff;
         display: flex;
         align-items: center;
@@ -147,9 +175,9 @@
     .print-detail-row {
         display: flex;
         justify-content: space-between;
-        padding: 6px 0;
+        padding: 4px 0;
         border-bottom: 1px dashed #edf2f7;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
     }
 
     .print-detail-row:last-child {
@@ -172,25 +200,27 @@
         background-color: #ebf8ff !important;
         border-left: 4px solid #3182ce !important;
         border-radius: 8px;
-        padding: 0.8rem 1rem;
+        padding: 0.5rem 0.8rem;
         color: #2b6cb0;
-        font-size: 0.82rem;
+        font-size: 0.78rem;
         font-weight: 600;
-        margin-top: 1.5rem;
+        margin-top: 0.8rem;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
     .print-signature-area {
-        margin-top: 3.5rem;
-        padding-top: 1rem;
+        margin-top: 2rem;
+        padding-top: 0.5rem;
+        page-break-inside: avoid;
+        break-inside: avoid;
     }
 
     .print-sig-line {
         border-top: 1.5px solid #a0aec0;
         text-align: center;
-        padding-top: 6px;
-        font-size: 0.8rem;
+        padding-top: 4px;
+        font-size: 0.78rem;
         font-weight: 700;
         color: #4a5568;
     }
@@ -244,7 +274,7 @@
         <div class="row g-3">
 
             <!-- Admission Info -->
-            <div class="col-md-6">
+            <div class="col-6">
                 <div class="print-info-card">
                     <div class="print-info-title">
                         <i class="fas fa-calendar-check"></i> Admission Information
@@ -273,7 +303,7 @@
             </div>
 
             <!-- Patient Info -->
-            <div class="col-md-6">
+            <div class="col-6">
                 <div class="print-info-card">
                     <div class="print-info-title">
                         <i class="fas fa-user-injured"></i> Patient Profile
@@ -302,7 +332,7 @@
             </div>
 
             <!-- Doctor Info -->
-            <div class="col-md-6">
+            <div class="col-6">
                 <div class="print-info-card">
                     <div class="print-info-title">
                         <i class="fas fa-user-md"></i> Assigned Physician
@@ -323,10 +353,10 @@
             </div>
 
             <!-- Attendant Info -->
-            <div class="col-md-6">
+            <div class="col-6">
                 <div class="print-info-card">
                     <div class="print-info-title">
-                        <i class="fas fa-user-shield"></i> Attendant & Reason
+                        <i class="fas fa-user-shield"></i> Attendant Information
                     </div>
                     <div class="print-detail-row">
                         <span class="print-detail-label">Attendant Name</span>
@@ -340,13 +370,19 @@
                         <span class="print-detail-label">Attendant Phone</span>
                         <span class="print-detail-val">@(Model.AttendentPhone ?? "N/A")</span>
                     </div>
-                    <div class="print-detail-row">
-                        <span class="print-detail-label">Admission Reason</span>
-                        <span class="print-detail-val">@(Model.ForReason ?? "General Treatment")</span>
-                    </div>
                 </div>
             </div>
 
+        </div>
+
+        <!-- Admission Reason Box -->
+        <div class="print-reason-box p-2 mt-2 mb-2 rounded-3" style="background: #fffaf0 !important; border: 1px solid #feebc8; border-left: 4px solid #ed8936 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+            <div class="fw-bold mb-1" style="color: #c05621 !important; font-size: 0.82rem;">
+                <i class="fas fa-notes-medical me-1"></i> Admission Reason / Notes:
+            </div>
+            <div style="font-size: 0.85rem; color: #2d3748; font-weight: 600;">
+                @(Model.ForReason ?? "General Treatment")
+            </div>
         </div>
 
         <!-- Policy Declaration -->

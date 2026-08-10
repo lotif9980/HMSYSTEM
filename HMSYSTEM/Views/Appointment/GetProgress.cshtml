@@ -27,9 +27,9 @@
     .action-btn-rx { background:linear-gradient(135deg,#38a169 0%,#276749 100%); color:#ffffff; border:none; border-radius:20px; padding:5px 14px; font-size:0.8rem; font-weight:700; text-decoration:none !important; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s ease; }
     .action-btn-rx:hover { transform:translateY(-1px); box-shadow:0 4px 10px rgba(56,161,105,0.3); color:#ffffff; }
 
-    .pagination .page-link { box-shadow:none !important; }
+    .pagination .page-link { box-shadow:none !important; color:#4a5568; transition:all 0.2s ease !important; }
     .pagination .page-item:not(.disabled) .page-link:hover { background-color:#3182ce !important; color:#ffffff !important; border-color:#3182ce !important; }
-    .pagination .page-item.disabled .page-link { color:#a0aec0 !important; background-color:#f7fafc !important; border-color:#edf2f7 !important; pointer-events:none; }
+    .pagination .page-item.disabled .page-link { color:#a0aec0 !important; background-color:#f7fafc !important; border-color:#edf2f7 !important; pointer-events:none !important; opacity:0.65; cursor:not-allowed !important; }
 </style>
 
 <div class="container-fluid mt-4">
@@ -103,11 +103,11 @@
                                 <ul class="pagination pagination-sm m-0" style="gap:5px;">
                                     <li class="page-item disabled" id="pgPrevLi">
                                         <a id="pgBtnPrev" class="page-link" href="javascript:void(0);"
-                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">⬅️ Previous</a>
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; border-color:#e2e8f0;">⬅️ Previous</a>
                                     </li>
                                     <li class="page-item disabled" id="pgNextLi">
                                         <a id="pgBtnNext" class="page-link" href="javascript:void(0);"
-                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; color:#4a5568; border-color:#e2e8f0;">Next ➡️</a>
+                                            style="border-radius:30px !important; padding:6px 18px; font-weight:700; border-color:#e2e8f0;">Next ➡️</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -124,7 +124,7 @@
 <div class="modal fade" id="savePrescriptionModal" tabindex="-1" aria-labelledby="savePrescriptionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 15px 50px rgba(0,0,0,0.15);">
-            <div class="modal-header" style="background: linear-gradient(135deg, #38a169 0%, #276749 100%) !important; color: #ffffff !important; padding: 1.25rem 1.75rem;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important; color: #ffffff !important; padding: 1.25rem 1.75rem;">
                 <h5 class="modal-title fw-bold" id="savePrescriptionModalLabel">
                     <i class="fas fa-prescription me-2"></i> Issue Patient Prescription
                 </h5>
@@ -143,19 +143,22 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="modalPatientId" class="form-label fw-bold text-secondary fs-7">Patient</label>
-                                <select name="PatientId" id="modalPatientId" class="form-select" required>
+                                <input type="hidden" name="PatientId" id="hiddenPatientId" value="" />
+                                <select id="modalPatientId" class="form-select" disabled style="background-color: #e9ecef; cursor: not-allowed;">
                                     <option value="">-- Select Patient --</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="modalDoctorId" class="form-label fw-bold text-secondary fs-7">Doctor</label>
-                                <select name="DoctorId" id="modalDoctorId" class="form-select" required>
+                                <input type="hidden" name="DoctorId" id="hiddenDoctorId" value="" />
+                                <select id="modalDoctorId" class="form-select" disabled style="background-color: #e9ecef; cursor: not-allowed;">
                                     <option value="">-- Select Doctor --</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="modalDepartmentId" class="form-label fw-bold text-secondary fs-7">Department</label>
-                                <select name="DepartmentId" id="modalDepartmentId" class="form-select">
+                                <input type="hidden" name="DepartmentId" id="hiddenDepartmentId" value="" />
+                                <select id="modalDepartmentId" class="form-select" disabled style="background-color: #e9ecef; cursor: not-allowed;">
                                     <option value="">-- Select Department --</option>
                                 </select>
                             </div>
@@ -164,7 +167,7 @@
 
                     <!-- Dynamic Medicine Dosage Table -->
                     <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
-                        <h6 class="fw-bold text-dark mb-3"><i class="fas fa-pills me-2 text-success"></i> Prescribed Medicines & Dosage Instructions</h6>
+                        <h6 class="fw-bold text-dark mb-3"><i class="fas fa-pills me-2 text-warning"></i> Prescribed Medicines & Dosage Instructions</h6>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover align-middle mb-2" id="modalRxDetailsTable">
                                 <thead class="table-light">
@@ -182,7 +185,7 @@
                             </table>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <button type="button" id="modalRxAddRowBtn" class="btn btn-sm btn-success" style="border-radius: 20px; padding: 4px 16px; font-weight: 700;">
+                            <button type="button" id="modalRxAddRowBtn" class="btn btn-sm btn-warning text-white" style="border-radius: 20px; padding: 4px 16px; font-weight: 700; background-color: #ed8936; border: none;">
                                 <i class="fas fa-plus me-1"></i> Add Medicine
                             </button>
                         </div>
@@ -205,7 +208,7 @@
                 </div>
 
                 <div class="modal-footer d-flex justify-content-center" style="background-color: #f7fafc; padding: 1rem 1.75rem;">
-                    <button type="submit" class="btn btn-success fw-bold px-4" style="border-radius: 30px; background: linear-gradient(135deg, #38a169 0%, #276749 100%) !important; border: none; box-shadow: 0 4px 12px rgba(56,161,105,0.3);">
+                    <button type="submit" class="btn btn-warning text-white fw-bold px-4" style="border-radius: 30px; background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important; border: none; box-shadow: 0 4px 12px rgba(237,137,54,0.3);">
                         <i class="fas fa-save me-2"></i> Issue Prescription
                     </button>
                     <button type="button" class="btn btn-secondary fw-bold px-4" data-bs-dismiss="modal" style="border-radius: 30px;">
@@ -301,9 +304,10 @@
                 if (res.issuccess) {
                     $('#progressTableBody').empty();
                     pgTotalPages = res.totalPages || 1;
-                    $('#pgCPage').text(pgCurrentPage); $('#pgTPage').text(pgTotalPages); $('#pgTEntries').text(res.totalItem || 0);
+                    var totalItem = res.totalItem || 0;
+                    $('#pgCPage').text(totalItem > 0 ? pgCurrentPage : 0); $('#pgTPage').text(pgTotalPages); $('#pgTEntries').text(totalItem);
                     $('#pgPrevLi').toggleClass('disabled', pgCurrentPage <= 1);
-                    $('#pgNextLi').toggleClass('disabled', pgCurrentPage >= pgTotalPages);
+                    $('#pgNextLi').toggleClass('disabled', pgCurrentPage >= pgTotalPages || totalItem === 0);
                     if (res.data && res.data.length > 0) {
                         $.each(res.data, function (i, v) { $('#progressTableBody').append(createProgressRow(((pgCurrentPage - 1) * 10) + i + 1, v)); });
                     } else {
@@ -317,8 +321,8 @@
 
     $(document).ready(function () {
         loadProgress(1);
-        $('#pgBtnPrev').on('click', function (e) { e.preventDefault(); if (pgCurrentPage > 1) loadProgress(pgCurrentPage - 1); });
-        $('#pgBtnNext').on('click', function (e) { e.preventDefault(); if (pgCurrentPage < pgTotalPages) loadProgress(pgCurrentPage + 1); });
+        $('#pgBtnPrev').on('click', function (e) { e.preventDefault(); if ($('#pgPrevLi').hasClass('disabled')) return; if (pgCurrentPage > 1) loadProgress(pgCurrentPage - 1); });
+        $('#pgBtnNext').on('click', function (e) { e.preventDefault(); if ($('#pgNextLi').hasClass('disabled')) return; if (pgCurrentPage < pgTotalPages) loadProgress(pgCurrentPage + 1); });
         $('#btnProgressSearch').on('click', function () { loadProgress(1); });
         $('#progressSearchBox').on('keypress', function (e) { if (e.which === 13) { e.preventDefault(); loadProgress(1); } });
 
@@ -358,11 +362,19 @@
                         if (res.appointment) {
                             var a = res.appointment;
                             $('#modalAppointmentId').val(a.appointmentId);
-                            $patSelect.val(a.patientId);
-                            $docSelect.val(a.doctorId);
-                            $deptSelect.val(a.departmentId);
+                            $patSelect.val(a.patientId).prop('disabled', true);
+                            $('#hiddenPatientId').val(a.patientId);
+
+                            $docSelect.val(a.doctorId).prop('disabled', true);
+                            $('#hiddenDoctorId').val(a.doctorId);
+
+                            $deptSelect.val(a.departmentId).prop('disabled', true);
+                            $('#hiddenDepartmentId').val(a.departmentId);
                         } else {
                             $('#modalAppointmentId').val(0);
+                            $('#hiddenPatientId').val(0);
+                            $('#hiddenDoctorId').val(0);
+                            $('#hiddenDepartmentId').val(0);
                         }
 
                         // Reset Date & Rows

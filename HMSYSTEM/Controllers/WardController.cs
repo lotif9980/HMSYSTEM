@@ -81,8 +81,7 @@ namespace HMSYSTEM.Controllers
         {
             bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
-            if (ModelState.IsValid)
-            {
+           
                 _unitOfWork.wardRepository.Save(ward);
                 if (isAjax)
                 {
@@ -91,7 +90,7 @@ namespace HMSYSTEM.Controllers
                 TempData["Message"] = "✅ Successfully Added";
                 TempData["MessageType"] = "success";
                 return RedirectToAction("Index");
-            }
+           
 
             if (isAjax)
             {
@@ -125,25 +124,17 @@ namespace HMSYSTEM.Controllers
         [HttpPost]
         public IActionResult Update(Ward ward)
         {
-            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
-            if (ModelState.IsValid)
+            if (!string.IsNullOrEmpty(ward.Name) && ward.TotalBeds > 0)
             {
                 _unitOfWork.wardRepository.Update(ward);
-                if (isAjax)
-                {
-                    return Json(new { success = true, message = "✅ Successfully Updated!" });
-                }
-                TempData["Message"] = "✅ Successfully Updated!";
-                TempData["MessageType"] = "primary";
-                return RedirectToAction("Index");
-            }
 
-            if (isAjax)
-            {
-                return Json(new { success = false, message = "❌ Invalid ward data submitted." });
+                return Json(new { success = true, message = "✅ Successfully Updated!" });
+                
             }
-            return RedirectToAction("Index");
+            
+             return Json(new { success = false, message = "❌ Invalid ward data submitted." });
+           
         }
 
         [HttpPost]
