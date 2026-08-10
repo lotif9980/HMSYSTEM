@@ -89,6 +89,11 @@
 
     .sidebar-wrapper {
         padding-top: 0.25rem;
+        padding-bottom: 2.5rem !important;
+    }
+
+    .sidebar-menu {
+        padding-bottom: 1.5rem !important;
     }
 
     .sidebar-menu .nav-item {
@@ -158,20 +163,6 @@
         font-size: 0.84rem !important;
         padding: 0.5rem 0.75rem !important;
     }
-
-    .sidebar-user-footer {
-        padding: 0.85rem 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        background: rgba(15, 23, 42, 0.5);
-        margin-top: auto;
-    }
-
-    .user-footer-card {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: #ffffff;
-    }
 </style>
 
 
@@ -232,7 +223,6 @@
                         <partial name="Layouts/Menus/_IPDAll" />
                         <partial name="Layouts/Menus/_ServiceItem" />
                         <partial name="Layouts/Menus/_reports" />
-                        <partial name="Layouts/Menus/_User" />
                     }
 
                     @if (roleId == (int)RoleEnum.Manager)
@@ -240,7 +230,6 @@
                         <partial name="Layouts/Menus/_ServiceItem" />
                         <partial name="Layouts/Menus/_IPDAll" />
                         <partial name="Layouts/Menus/_reports" />
-                        <partial name="Layouts/Menus/_User" />
                     }
 
                     @if (roleId == (int)RoleEnum.LocalAdmin)
@@ -255,7 +244,6 @@
                         <partial name="Layouts/Menus/_Prescription" />
                         <partial name="Layouts/Menus/_IPDAll" />
                         <partial name="Layouts/Menus/_ServiceItem" />
-                        <partial name="Layouts/Menus/_User" />
                     }
 
                     @if (roleId == (int)RoleEnum.Doctor)
@@ -264,7 +252,6 @@
                         <partial name="Layouts/Menus/_Appointment" />
                         <partial name="Layouts/Menus/_Prescription" />
                         <partial name="Layouts/Menus/_IPDAll" />
-                        <partial name="Layouts/Menus/_User" />
                     }
 
                 </ul>
@@ -272,22 +259,6 @@
             </nav>
         </div>
         <!--end::Sidebar Wrapper-->
-
-        <!-- Sidebar Bottom User Bar -->
-        <div class="sidebar-user-footer">
-            <div class="user-footer-card">
-                <div class="d-flex align-items-center gap-2">
-                    <img src="/assets/img/avatar5.png" class="rounded-circle border border-primary" width="32" height="32" alt="User" />
-                    <div style="line-height: 1.2;">
-                        <span class="d-block fw-bold fs-7 text-white">@fullName</span>
-                        <small class="text-info fs-8 font-weight-bold">Online &bull; Logged In</small>
-                    </div>
-                </div>
-                <a asp-controller="Account" asp-action="Logout" class="btn btn-sm btn-outline-danger border-0 p-1" title="Sign Out">
-                    <i class="bi bi-box-arrow-right fs-6"></i>
-                </a>
-            </div>
-        </div>
     </aside>
 
     <script>

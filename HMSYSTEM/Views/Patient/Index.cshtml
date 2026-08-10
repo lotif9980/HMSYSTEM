@@ -170,11 +170,35 @@
         background-color: #f7fafc !important;
     }
 
+    /* Single line Name cell */
+    .cell-name {
+        white-space: nowrap !important;
+        font-weight: 700 !important;
+        color: #2d3748 !important;
+    }
+
+    /* Multi-line (2 lines) Email cell */
+    .cell-email {
+        max-width: 180px !important;
+        word-break: break-word !important;
+        white-space: normal !important;
+        line-height: 1.35 !important;
+    }
+
     /* Action Buttons Group */
     .action-btn-group {
         display: flex;
         justify-content: center;
-        gap: 8px;
+        align-items: center;
+        gap: 6px;
+    }
+
+    #patientTable th:last-child,
+    #patientTable td:last-child {
+        padding-left: 15px !important;
+        padding-right: 45px !important;
+        text-align: center !important;
+        min-width: 160px;
     }
 
     .action-btn {
@@ -207,6 +231,7 @@
         background-color: #fff5f5;
         color: #e53e3e;
         border-color: #fed7d7;
+        margin-right: 25px;
     }
 
     .action-delete:hover {
@@ -802,8 +827,8 @@
                      data-name="${fullName}"
                      style="border-radius:50%; object-fit:cover; border:2px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.08);" />
             </td>
-            <td style="font-weight: 700; color: #2d3748;">${item.firstName}</td>
-            <td>${item.email || ''}</td>
+            <td class="cell-name">${fullName || item.firstName || ''}</td>
+            <td class="cell-email">${item.email || ''}</td>
             <td>${item.address || ''}</td>
             <td>${item.phone || ''}</td>
             <td>${item.bloodGroup || 'N/A'}</td>
@@ -828,7 +853,7 @@
 
         $("#tableBoady").html(`
             <tr>
-                <td colspan="9" class="text-center py-4">
+                <td colspan="10" class="text-center py-4">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -883,7 +908,7 @@
                     } else {
                         $("#tableBoady").html(`
                             <tr>
-                                <td colspan="9" class="text-center py-4 text-muted">
+                                <td colspan="10" class="text-center py-4 text-muted">
                                     <i class="fas fa-info-circle fs-4"></i>
                                     <p class="mt-2 mb-0">No patients found.</p>
                                 </td>
@@ -893,7 +918,7 @@
                 } else {
                     $("#tableBoady").html(`
                         <tr>
-                            <td colspan="9" class="text-center py-4 text-danger">
+                            <td colspan="10" class="text-center py-4 text-danger">
                                 <i class="fas fa-exclamation-triangle fs-4"></i>
                                 <p class="mt-2 mb-0">Failed to load data.</p>
                             </td>
