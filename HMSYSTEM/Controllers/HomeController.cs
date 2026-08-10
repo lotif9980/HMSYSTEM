@@ -30,7 +30,7 @@ public class HomeController : Controller
         var totalPatient = _unitOfWork.PatienRepo.CountPatinet();
         var totalPrescription = _unitOfWork.PrescriptioRepository.GetCountPrescription();
         var totalAppointment=_unitOfWork.AppointmentRepository.GetAppointmentsCount();
-
+        var totalDoctor = _unitOfWork.doctorRepo.getAll()?.Count ?? 0;
 
         var data = new HomeViewModel
         {
@@ -41,6 +41,7 @@ public class HomeController : Controller
             TotalPatient= totalPatient,
             TotalPrescription= totalPrescription,
             TotalAppointment= totalAppointment,
+            TotalDoctor = totalDoctor,
         };
 
 

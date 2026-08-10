@@ -1,46 +1,223 @@
-﻿@using HMSYSTEM.Enum
+@using HMSYSTEM.Enum
 
 <style>
-    .sidebarUser{
-    background-color: #042a4a;
-    color: #fff;
+    .sidebarUser {
+        background: linear-gradient(180deg, #091322 0%, #0f172a 50%, #1e293b 100%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .sidebar-brand {
+        background: rgba(15, 23, 42, 0.75) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding: 1rem 1.15rem !important;
+        height: auto !important;
+    }
+
+    .brand-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none !important;
+        color: #ffffff !important;
+    }
+
+    .brand-logo-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 1.35rem;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .brand-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .brand-sub {
+        font-size: 0.72rem;
+        color: #38bdf8;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .sidebar-search-container {
+        padding: 0.75rem 0.85rem 0.25rem 0.85rem;
+    }
+
+    .sidebar-search-input {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        color: #ffffff;
+        font-size: 0.825rem;
+        padding: 0.45rem 0.75rem;
+        width: 100%;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-search-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.12);
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+
+    .sidebar-search-input::placeholder {
+        color: #64748b;
+    }
+
+    .sidebar-header-label {
+        padding: 0.85rem 1.15rem 0.35rem 1.15rem;
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .sidebar-wrapper {
+        padding-top: 0.25rem;
+    }
+
+    .sidebar-menu .nav-item {
+        margin-bottom: 2px;
+    }
+
+    /* Complete override of AdminLTE white background on active/focused/hovered sidebar items */
+    .app-sidebar .nav-link,
+    .sidebar-menu .nav-link,
+    .app-sidebar .nav-link.active,
+    .sidebar-menu .nav-link.active,
+    .app-sidebar .nav-item.menu-open > .nav-link,
+    .sidebar-menu .nav-item.menu-open > .nav-link,
+    .app-sidebar .nav-link:focus,
+    .sidebar-menu .nav-link:focus {
+        background-color: transparent !important;
+        background-image: none !important;
+    }
+
+    .sidebar-menu .nav-link {
+        color: #94a3b8 !important;
+        border-radius: 10px !important;
+        margin: 2px 10px !important;
+        padding: 0.65rem 0.85rem !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar-menu .nav-link:hover {
+        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        transform: translateX(4px);
+    }
+
+    .sidebar-menu .nav-link.active,
+    .sidebar-menu .nav-item.menu-open > .nav-link,
+    .app-sidebar .nav-link.active {
+        color: #ffffff !important;
+        background: linear-gradient(90deg, rgba(59, 130, 246, 0.28) 0%, rgba(59, 130, 246, 0.06) 100%) !important;
+        border-left: 3.5px solid #3b82f6 !important;
+        font-weight: 700 !important;
+    }
+
+    .sidebar-menu .nav-icon {
+        font-size: 1.05rem;
+        width: 26px;
+        margin-right: 8px;
+        color: #38bdf8;
+        transition: transform 0.2s ease;
+    }
+
+    .sidebar-menu .nav-link:hover .nav-icon,
+    .sidebar-menu .nav-link.active .nav-icon {
+        transform: scale(1.15);
+        color: #60a5fa;
+    }
+
+    .sidebar-menu .nav-treeview {
+        padding-left: 0.5rem;
+        background: transparent !important;
+    }
+
+    .sidebar-menu .nav-treeview .nav-link {
+        font-size: 0.84rem !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    .sidebar-user-footer {
+        padding: 0.85rem 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(15, 23, 42, 0.5);
+        margin-top: auto;
+    }
+
+    .user-footer-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #ffffff;
     }
 </style>
+
 
 @{
     var roleClaim = User.Claims.FirstOrDefault(c => c.Type == "RoleId");
     var roleId = roleClaim != null ? int.Parse(roleClaim.Value) : 0;
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "User";
 }
 
-
 <!--begin::Sidebar-->
-@if (User.Identity != null && User.Identity.IsAuthenticated){
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
     <aside class="app-sidebar sidebarUser shadow" data-bs-theme="dark">
-    <!--begin::Sidebar Brand-->
-    <div class="sidebar-brand">
-        <!--begin::Brand Link-->
-        
-        <a href="/Home/Index" class="brand-link">
-            <!--begin::Brand Image-->
-                <img src="~/assets/img/MainLogo.png"
-                 alt="Hospital"
-                 class="brand-image opacity-75 shadow" /> 
-                <span class="brand-text fw-light">Hospital Management</span>
-        </a>
-      
-        <!--end::Brand Link-->
-    </div>
-    <!--end::Sidebar Brand-->
-    <!--begin::Sidebar Wrapper-->
-    <div class="sidebar-wrapper">
-        <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul class="nav sidebar-menu flex-column"
-                data-lte-toggle="treeview"
-                role="menu"
-                data-accordion="false">
-                    
-                
+        <!--begin::Sidebar Brand-->
+        <div class="sidebar-brand">
+            <a href="/Home/Index" class="brand-link">
+                <div class="brand-logo-icon">
+                    <i class="bi bi-hospital"></i>
+                </div>
+                <div>
+                    <h5 class="brand-title">CarePulse</h5>
+                    <div class="brand-sub">Hospital Management</div>
+                </div>
+            </a>
+        </div>
+        <!--end::Sidebar Brand-->
+
+        <!-- Live Menu Search Box -->
+        <div class="sidebar-search-container">
+            <div class="position-relative">
+                <input type="text" id="sidebarSearch" class="sidebar-search-input" placeholder="🔍 Search menu items..." onkeyup="filterSidebarMenu()" />
+            </div>
+        </div>
+
+        <!--begin::Sidebar Wrapper-->
+        <div class="sidebar-wrapper">
+            <nav class="mt-1">
+                <!--begin::Sidebar Menu-->
+                <ul class="nav sidebar-menu flex-column"
+                    id="mainSidebarMenuList"
+                    data-lte-toggle="treeview"
+                    role="menu"
+                    data-accordion="false">
+
+                    <li class="sidebar-header-label">Main Navigation</li>
+
                     @if (roleId == (int)RoleEnum.Admin)
                     {
                         <partial name="Layouts/Menus/_Settings" />
@@ -64,7 +241,6 @@
                         <partial name="Layouts/Menus/_IPDAll" />
                         <partial name="Layouts/Menus/_reports" />
                         <partial name="Layouts/Menus/_User" />
-                        
                     }
 
                     @if (roleId == (int)RoleEnum.LocalAdmin)
@@ -91,12 +267,47 @@
                         <partial name="Layouts/Menus/_User" />
                     }
 
-            </ul>
-            <!--end::Sidebar Menu-->
-        </nav>
-    </div>
-    <!--end::Sidebar Wrapper-->
-</aside>
-<!--end::Sidebar-->
+                </ul>
+                <!--end::Sidebar Menu-->
+            </nav>
+        </div>
+        <!--end::Sidebar Wrapper-->
 
+        <!-- Sidebar Bottom User Bar -->
+        <div class="sidebar-user-footer">
+            <div class="user-footer-card">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="/assets/img/avatar5.png" class="rounded-circle border border-primary" width="32" height="32" alt="User" />
+                    <div style="line-height: 1.2;">
+                        <span class="d-block fw-bold fs-7 text-white">@fullName</span>
+                        <small class="text-info fs-8 font-weight-bold">Online &bull; Logged In</small>
+                    </div>
+                </div>
+                <a asp-controller="Account" asp-action="Logout" class="btn btn-sm btn-outline-danger border-0 p-1" title="Sign Out">
+                    <i class="bi bi-box-arrow-right fs-6"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <script>
+        function filterSidebarMenu() {
+            var input = document.getElementById('sidebarSearch');
+            var filter = input.value.toLowerCase();
+            var menuList = document.getElementById('mainSidebarMenuList');
+            var items = menuList.getElementsByTagName('li');
+
+            for (var i = 0; i < items.length; i++) {
+                var text = items[i].textContent || items[i].innerText;
+                if (items[i].classList.contains('sidebar-header-label')) continue;
+
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    items[i].style.display = "";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 }
+

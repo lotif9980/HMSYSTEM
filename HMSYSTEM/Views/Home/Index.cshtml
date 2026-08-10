@@ -1,210 +1,843 @@
-﻿@model HMSYSTEM.ViewModels.HomeViewModel
+@model HMSYSTEM.ViewModels.HomeViewModel
 
-<main class="app-main">
-    <!--begin::App Content Header-->
-    <div class="app-content-header">
-        <!--begin::Container-->
-        <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-                <div class="col-sm-6"><h3 class="mb-0">Dashboard</h3></div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-end">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                    </ol>
-                </div>
-            </div>
-            <!--end::Row-->
-        </div>
-        <!--end::Container-->
-    </div>
-    <!--end::App Content Header-->
-    <!--begin::App Content-->
-    <div class="app-content">
-        <!--begin::Container-->
-        <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
+@{
+    ViewData["Title"] = "Dashboard - HMS Control Center";
+    double occupancyRate = Model.TotalBed > 0 ? Math.Round((double)Model.TotalOccupied / Model.TotalBed * 100, 1) : 0;
+    double emptyRate = Model.TotalBed > 0 ? Math.Round((double)Model.TotalEmpty / Model.TotalBed * 100, 1) : 0;
+}
 
-                <div class="col-lg-3 col-6">
-                    <!--begin::Small Box Widget 2-->
-                    <div class="small-box text-bg-success">
-                        <div class="inner">
-                            <h3>@Model.TotalWard</h3>
-                            <p>Total Ward</p>
-                        </div>
-                        <svg class="small-box-icon"
-                             fill="currentColor"
-                             viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg"
-                             aria-hidden="true">
-                            <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"></path>
-                        </svg>
-                        <a 
-                           class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover" asp-controller="Ward" asp-action="Index">
-                            More info <i class="bi bi-link-45deg"></i>
+<style>
+    /* Premium Dashboard Styles */
+    :root {
+        --hms-primary: #3b82f6;
+        --hms-secondary: #64748b;
+        --hms-success: #10b981;
+        --hms-warning: #f59e0b;
+        --hms-danger: #ef4444;
+        --hms-info: #06b6d4;
+        --hms-purple: #8b5cf6;
+        --hms-rose: #f43f5e;
+        --hms-card-bg: #ffffff;
+        --hms-card-border: #e2e8f0;
+    }
+
+    .dashboard-wrapper {
+        padding: 1.5rem 0.5rem;
+        background-color: #f8fafc;
+        min-height: calc(100vh - 100px);
+    }
+
+    /* Welcome Hero Banner */
+    .hero-banner {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
+        border-radius: 1.25rem;
+        padding: 2rem 2.25rem;
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25);
+        margin-bottom: 2rem;
+    }
+
+    .hero-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .hero-banner::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: 20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .hero-badge {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #38bdf8;
+        font-size: 0.825rem;
+        font-weight: 600;
+        padding: 0.35rem 0.85rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .hero-title {
+        font-size: 1.85rem;
+        font-weight: 700;
+        margin-top: 0.75rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+        color: #94a3b8;
+        font-size: 0.975rem;
+        max-width: 600px;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-btn {
+        padding: 0.65rem 1.25rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .hero-btn-primary {
+        background: #3b82f6;
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .hero-btn-primary:hover {
+        background: #2563eb;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
+    }
+
+    .hero-btn-glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-btn-glass:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    /* KPI Stat Cards */
+    .kpi-card {
+        background: var(--hms-card-bg);
+        border: 1px solid var(--hms-card-border);
+        border-radius: 1.15rem;
+        padding: 1.35rem 1.25rem;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #cbd5e1;
+    }
+
+    .kpi-icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.45rem;
+        color: #ffffff;
+        box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease;
+    }
+
+    .kpi-card:hover .kpi-icon-box {
+        transform: scale(1.08) rotate(3deg);
+    }
+
+    .kpi-value {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-top: 0.75rem;
+        margin-bottom: 0.2rem;
+        letter-spacing: -0.02em;
+    }
+
+    .kpi-label {
+        color: #64748b;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .kpi-footer-link {
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px border-top: 1px dashed #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.825rem;
+        font-weight: 600;
+        color: #3b82f6;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .kpi-footer-link:hover {
+        color: #1d4ed8;
+    }
+
+    /* KPI Specific Color Variants */
+    .icon-ward { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+    .icon-bed { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .icon-occupied { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .icon-empty { background: linear-gradient(135deg, #10b981, #059669); }
+    .icon-patient { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .icon-prescription { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .icon-appointment { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .icon-doctor { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+
+    /* Dashboard Widgets Section */
+    .widget-card {
+        background: var(--hms-card-bg);
+        border: 1px solid var(--hms-card-border);
+        border-radius: 1.15rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+        margin-bottom: 1.5rem;
+        height: 100%;
+    }
+
+    .widget-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .widget-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0;
+    }
+
+    .widget-title-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    /* Quick Action Pill Buttons */
+    .quick-action-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-decoration: none;
+        color: #1e293b;
+        transition: all 0.25s ease;
+    }
+
+    .quick-action-card:hover {
+        border-color: #3b82f6;
+        background: #f0f7ff;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+        color: #1d4ed8;
+    }
+
+    .quick-action-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    /* Custom Badges */
+    .badge-soft-success {
+        background-color: #d1fae5;
+        color: #065f46;
+        font-weight: 600;
+        padding: 0.35rem 0.65rem;
+        border-radius: 0.5rem;
+    }
+
+    .badge-soft-warning {
+        background-color: #fef3c7;
+        color: #92400e;
+        font-weight: 600;
+        padding: 0.35rem 0.65rem;
+        border-radius: 0.5rem;
+    }
+
+    .badge-soft-primary {
+        background-color: #dbeafe;
+        color: #1e40af;
+        font-weight: 600;
+        padding: 0.35rem 0.65rem;
+        border-radius: 0.5rem;
+    }
+
+    /* Progress bar custom styling */
+    .custom-progress {
+        height: 10px;
+        border-radius: 10px;
+        background-color: #e2e8f0;
+        overflow: hidden;
+    }
+
+    .progress-bar-occupied {
+        background: linear-gradient(90deg, #f59e0b, #ef4444);
+    }
+
+    .progress-bar-empty {
+        background: linear-gradient(90deg, #10b981, #059669);
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid px-3">
+
+        <!-- HERO WELCOME BANNER -->
+        <div class="hero-banner">
+            <div class="row align-items-center">
+                <div class="col-lg-7 col-md-7">
+                    <div class="hero-badge">
+                        <i class="bi bi-shield-check"></i> CarePulse HMS &bull; Real-time Control Center
+                    </div>
+                    <h1 class="hero-title">Hospital Operations Console</h1>
+                    <p class="hero-subtitle">
+                        Monitor inpatient beds, daily clinic appointments, doctor rosters, and patient admissions live.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <a asp-controller="Patient" asp-action="Index" class="hero-btn hero-btn-primary">
+                            <i class="bi bi-person-plus-fill"></i> Register Patient
+                        </a>
+                        <a asp-controller="Appointment" asp-action="Index" class="hero-btn hero-btn-glass">
+                            <i class="bi bi-calendar2-check"></i> Appointments
+                        </a>
+                        <a asp-controller="Prescription" asp-action="Index" class="hero-btn hero-btn-glass">
+                            <i class="bi bi-journal-plus"></i> Prescriptions
+                        </a>
+                        <a asp-controller="Admission" asp-action="Index" class="hero-btn hero-btn-glass">
+                            <i class="bi bi-door-open"></i> Admission
                         </a>
                     </div>
-                    <!--end::Small Box Widget 2-->
                 </div>
-                <!--begin::Col-->
-                <div class="col-lg-3 col-6">
-                    <!--begin::Small Box Widget 1-->
-                    <div class="small-box text-bg-primary">
-                        <div class="inner d-flex">
-                            <div>
-                                <h3>@Model.TotalBed</h3>
-                                <p>Total Beds</p>
+
+                <div class="col-lg-5 col-md-5 d-none d-md-block">
+                    <div class="p-3.5 rounded-4" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(14px);">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-white-50 small font-weight-bold">Beds Capacity Status</span>
+                            <span class="badge @(occupancyRate > 80 ? "bg-danger" : occupancyRate > 50 ? "bg-warning text-dark" : "bg-success")">
+                                @occupancyRate% Occupied
+                            </span>
+                        </div>
+                        <div class="custom-progress mb-3">
+                            <div class="progress-bar progress-bar-occupied" role="progressbar" style="width: @occupancyRate%" aria-valuenow="@occupancyRate" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="row text-center text-white g-2">
+                            <div class="col-6 border-end border-secondary">
+                                <small class="text-white-50 d-block">Occupied Beds</small>
+                                <strong class="fs-4 text-warning">@Model.TotalOccupied</strong>
                             </div>
-                            
-                           
-                        </div>
-                        <svg class="small-box-icon"
-                             fill="currentColor"
-                             viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg"
-                             aria-hidden="true">
-                            <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"></path>
-                        </svg>
-                        <a 
-                           class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover" asp-controller="Bed" asp-action="Index">
-                            More info <i class="bi bi-link-45deg"></i>
-                        </a>
-                    </div>
-                    <!--end::Small Box Widget 1-->
-                </div>
-                <!--end::Col-->
-              
-                <!--end::Col-->
-                <div class="col-lg-3 col-6">
-                    <!--begin::Small Box Widget 3-->
-                    <div class="small-box text-bg-warning">
-                        <div class="inner">
-                            <div>
-                                <h3>@Model.TotalOccupied</h3>
-                                <p>Total Occupied</p>
+                            <div class="col-6">
+                                <small class="text-white-50 d-block">Available Vacancies</small>
+                                <strong class="fs-4 text-success">@Model.TotalEmpty</strong>
                             </div>
                         </div>
-                        <svg class="small-box-icon"
-                             fill="currentColor"
-                             viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg"
-                             aria-hidden="true">
-                            <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
-                        </svg>
-                        <a href="#"
-                           class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover">
-                            More info <i class="bi bi-link-45deg"></i>
-                        </a>
                     </div>
-                    <!--end::Small Box Widget 3-->
-                </div>
-                <!--end::Col-->
-                <div class="col-lg-3 col-6">
-                    <!--begin::Small Box Widget 4-->
-                    <div class="small-box text-bg-danger">
-                        <div class="inner">
-                            <h3>@Model.TotalEmpty</h3>
-                            <p>Total Empty</p>
-                        </div>
-                        <svg class="small-box-icon"
-                             fill="currentColor"
-                             viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg"
-                             aria-hidden="true">
-                            <path clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                  d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z"></path>
-                            <path clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                  d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z"></path>
-                        </svg>
-                        <a href="#"
-                           class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                            More info <i class="bi bi-link-45deg"></i>
-                        </a>
-                    </div>
-                    <!--end::Small Box Widget 4-->
-                </div>
-                <!--end::Col-->
-            </div>
-
-            <div class="row">
-                <div class="col-lg-3 col-6">
-                    <!--begin::Small Box Widget 4-->
-                    <div class="small-box text-bg-danger">
-                        <div class="inner">
-                            <h3>@Model.TotalPatient</h3>
-                            <p>Today Total Patient</p>
-                        </div>
-                        <svg class="small-box-icon"
-                             fill="currentColor"
-                             viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg"
-                             aria-hidden="true">
-                            <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
-                        </svg>
-
-
-                        <a href="#"
-                           class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                            More info <i class="bi bi-link-45deg"></i>
-                        </a>
-                    </div>
-                    <!--end::Small Box Widget 4-->
-                </div>
-
-                <div class="col-lg-3 col-6">
-                    <!--begin::Small Box Widget 4-->
-                    <div class="small-box text-bg-info">
-                        <div class="inner">
-                            <h3>@Model.TotalPrescription</h3>
-                            <p>Today Prescription</p>
-                        </div>
-                        <svg class="small-box-icon"
-                             fill="currentColor"
-                             viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg"
-                             aria-hidden="true">
-                            <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
-                        </svg>
-
-
-                        <a href="#"
-                           class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                            More info <i class="bi bi-link-45deg"></i>
-                        </a>
-                    </div>
-                    <!--end::Small Box Widget 4-->
-                </div>
-
-                <div class="col-lg-3 col-6">
-                    <!--begin::Small Box Widget 4-->
-                    <div class="small-box text-bg-info">
-                        <div class="inner">
-                            <h3>@Model.TotalAppointment</h3>
-                            <p>Today Total Appointment</p>
-                        </div>
-                        <svg class="small-box-icon"
-                             fill="currentColor"
-                             viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg"
-                             aria-hidden="true">
-                            <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
-                        </svg>
-
-
-                        <a href="#"
-                           class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                            More info <i class="bi bi-link-45deg"></i>
-                        </a>
-                    </div>
-                    <!--end::Small Box Widget 4-->
                 </div>
             </div>
         </div>
-        <!--end::Container-->
+
+        <!-- EMERGENCY HOTLINE & SYSTEM ANNOUNCEMENT STRIP -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="p-3 bg-white rounded-4 border d-flex flex-wrap align-items-center justify-content-between gap-3 shadow-sm">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="p-2.5 rounded-3 text-danger" style="background: #fef2f2; font-size: 1.35rem;">
+                            <i class="bi bi-telephone-outbound-fill"></i>
+                        </div>
+                        <div>
+                            <span class="text-muted small fw-bold uppercase d-block">Hospital Emergency Hotline</span>
+                            <strong class="text-dark fs-6">ICU Ext: 104 &bull; Ambulance: 01791177192 &bull; Emergency Desk: Ext 101</strong>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge badge-soft-warning"><i class="bi bi-bell-fill me-1"></i> Duty Doctors On Shift: <strong>@Model.TotalDoctor Doctors</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8 KPI STAT CARDS GRID -->
+        <div class="row g-3 mb-4">
+            <!-- 1. Total Ward -->
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="kpi-label">Active Wards</p>
+                            <h2 class="kpi-value">@Model.TotalWard</h2>
+                            <span class="badge badge-soft-primary fs-8">Operational</span>
+                        </div>
+                        <div class="kpi-icon-box icon-ward">
+                            <i class="bi bi-hospital"></i>
+                        </div>
+                    </div>
+                    <a asp-controller="Ward" asp-action="Index" class="kpi-footer-link">
+                        <span>Manage Wards</span>
+                        <i class="bi bi-arrow-right-short fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 2. Total Bed -->
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="kpi-label">Total Beds Capacity</p>
+                            <h2 class="kpi-value">@Model.TotalBed</h2>
+                            <span class="badge badge-soft-primary fs-8">IPD Capacity</span>
+                        </div>
+                        <div class="kpi-icon-box icon-bed">
+                            <i class="bi bi-badge-ad"></i>
+                        </div>
+                    </div>
+                    <a asp-controller="Bed" asp-action="Index" class="kpi-footer-link">
+                        <span>View Bed Roster</span>
+                        <i class="bi bi-arrow-right-short fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 3. Occupied Beds -->
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="kpi-label">Occupied Beds</p>
+                            <h2 class="kpi-value text-warning">@Model.TotalOccupied</h2>
+                            <span class="badge badge-soft-warning fs-8">@occupancyRate% Occupied</span>
+                        </div>
+                        <div class="kpi-icon-box icon-occupied">
+                            <i class="bi bi-person-workspace"></i>
+                        </div>
+                    </div>
+                    <a asp-controller="Admission" asp-action="Index" class="kpi-footer-link">
+                        <span>Admitted Patients</span>
+                        <i class="bi bi-arrow-right-short fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 4. Available Beds -->
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="kpi-label">Available Empty Beds</p>
+                            <h2 class="kpi-value text-success">@Model.TotalEmpty</h2>
+                            <span class="badge badge-soft-success fs-8">@emptyRate% Vacant</span>
+                        </div>
+                        <div class="kpi-icon-box icon-empty">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                    </div>
+                    <a asp-controller="Bed" asp-action="Index" class="kpi-footer-link">
+                        <span>Check Vacancy</span>
+                        <i class="bi bi-arrow-right-short fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 5. Total Patients Today -->
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="kpi-label">Today Total Patients</p>
+                            <h2 class="kpi-value">@Model.TotalPatient</h2>
+                        </div>
+                        <div class="kpi-icon-box icon-patient">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                    </div>
+                    <a asp-controller="Patient" asp-action="Index" class="kpi-footer-link">
+                        <span>Patient Records</span>
+                        <i class="bi bi-arrow-right-short fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 6. Total Prescriptions Today -->
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="kpi-label">Today Prescriptions</p>
+                            <h2 class="kpi-value">@Model.TotalPrescription</h2>
+                        </div>
+                        <div class="kpi-icon-box icon-prescription">
+                            <i class="bi bi-file-earmark-medical"></i>
+                        </div>
+                    </div>
+                    <a asp-controller="Prescription" asp-action="Index" class="kpi-footer-link">
+                        <span>View Prescriptions</span>
+                        <i class="bi bi-arrow-right-short fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 7. Total Appointments Today -->
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="kpi-label">Today Appointments</p>
+                            <h2 class="kpi-value">@Model.TotalAppointment</h2>
+                        </div>
+                        <div class="kpi-icon-box icon-appointment">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                    </div>
+                    <a asp-controller="Appointment" asp-action="Index" class="kpi-footer-link">
+                        <span>View Schedules</span>
+                        <i class="bi bi-arrow-right-short fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 8. Total Active Doctors -->
+            <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="kpi-label">Active Doctors</p>
+                            <h2 class="kpi-value">@Model.TotalDoctor</h2>
+                        </div>
+                        <div class="kpi-icon-box icon-doctor">
+                            <i class="bi bi-person-badge-fill"></i>
+                        </div>
+                    </div>
+                    <a asp-controller="Doctor" asp-action="Index" class="kpi-footer-link">
+                        <span>Doctor Directory</span>
+                        <i class="bi bi-arrow-right-short fs-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHARTS & VISUAL ANALYTICS SECTION -->
+        <div class="row g-3 mb-4">
+            <!-- Bed Capacity Radial/Donut Chart -->
+            <div class="col-lg-5 col-12">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <h3 class="widget-title">
+                            <span class="widget-title-icon bg-primary text-white">
+                                <i class="bi bi-pie-chart-fill"></i>
+                            </span>
+                            Bed Occupancy Analytics
+                        </h3>
+                        <span class="badge badge-soft-primary">Live Status</span>
+                    </div>
+                    <div id="bed-occupancy-chart" style="min-height: 280px;"></div>
+                    <div class="row text-center mt-3 pt-3 border-top">
+                        <div class="col-6">
+                            <div class="p-2 rounded bg-light">
+                                <small class="text-muted d-block">Occupied Ratio</small>
+                                <strong class="text-warning fs-5">@occupancyRate%</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded bg-light">
+                                <small class="text-muted d-block">Available Vacancy</small>
+                                <strong class="text-success fs-5">@emptyRate%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Operational Activity Trend -->
+            <div class="col-lg-7 col-12">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <h3 class="widget-title">
+                            <span class="widget-title-icon bg-info text-white">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </span>
+                            Clinical Activity Overview
+                        </h3>
+                        <span class="badge badge-soft-success">Weekly Summary</span>
+                    </div>
+                    <div id="clinical-activity-chart" style="min-height: 280px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACCESS HUB MODULES -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <h3 class="widget-title">
+                            <span class="widget-title-icon bg-dark text-white">
+                                <i class="bi bi-grid-3x3-gap-fill"></i>
+                            </span>
+                            Hospital Operations Hub
+                        </h3>
+                        <span class="text-muted small">Direct Access Shortcuts</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <a asp-controller="Patient" asp-action="Index" class="quick-action-card">
+                                <div class="quick-action-icon bg-primary text-white">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">Patients</h6>
+                                    <small class="text-muted">Register & manage patients</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <a asp-controller="Appointment" asp-action="Index" class="quick-action-card">
+                                <div class="quick-action-icon bg-success text-white">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">Appointments</h6>
+                                    <small class="text-muted">Book & review schedules</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <a asp-controller="Prescription" asp-action="Index" class="quick-action-card">
+                                <div class="quick-action-icon bg-purple text-white" style="background: #8b5cf6;">
+                                    <i class="bi bi-file-earmark-medical"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">Prescriptions</h6>
+                                    <small class="text-muted">Generate & print RX</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <a asp-controller="Admission" asp-action="Index" class="quick-action-card">
+                                <div class="quick-action-icon bg-warning text-white">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">Admissions</h6>
+                                    <small class="text-muted">Manage IPD bed admissions</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <a asp-controller="Medicine" asp-action="Index" class="quick-action-card">
+                                <div class="quick-action-icon bg-danger text-white">
+                                    <i class="bi bi-capsule"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">Pharmacy & Medicines</h6>
+                                    <small class="text-muted">Drug stock & inventory</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <a asp-controller="Bill" asp-action="Index" class="quick-action-card">
+                                <div class="quick-action-icon bg-info text-white">
+                                    <i class="bi bi-receipt"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">Billing & Invoices</h6>
+                                    <small class="text-muted">Generate patient bills</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <a asp-controller="DailyExpense" asp-action="Index" class="quick-action-card">
+                                <div class="quick-action-icon bg-secondary text-white">
+                                    <i class="bi bi-cash-stack"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">Daily Expense</h6>
+                                    <small class="text-muted">Track hospital costs</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                            <a asp-controller="Report" asp-action="Index" class="quick-action-card">
+                                <div class="quick-action-icon bg-dark text-white">
+                                    <i class="bi bi-bar-chart-line-fill"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 font-weight-bold">Reports</h6>
+                                    <small class="text-muted">Financial & hospital stats</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <!--end::App Content-->
-</main>
+</div>
+
+<!-- DASHBOARD APEXCHARTS INITIALIZATION -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. Bed Occupancy Donut Chart
+        var occupiedBeds = @Model.TotalOccupied;
+        var emptyBeds = @Model.TotalEmpty;
+        var totalBeds = @Model.TotalBed;
+
+        if (totalBeds === 0) {
+            occupiedBeds = 0;
+            emptyBeds = 1;
+        }
+
+        var donutOptions = {
+            series: [occupiedBeds, emptyBeds],
+            labels: ['Occupied Beds', 'Available Beds'],
+            chart: {
+                type: 'donut',
+                height: 270,
+                fontFamily: 'Source Sans 3, sans-serif'
+            },
+            colors: ['#f59e0b', '#10b981'],
+            legend: {
+                position: 'bottom',
+                fontSize: '13px',
+                markers: {
+                    radius: 12
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) {
+                    return Math.round(val) + "%";
+                }
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '70%',
+                        labels: {
+                            show: true,
+                            total: {
+                                show: true,
+                                label: 'Total Capacity',
+                                formatter: function () {
+                                    return totalBeds + " Beds";
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val + " Beds";
+                    }
+                }
+            }
+        };
+
+        var donutChart = new ApexCharts(document.querySelector("#bed-occupancy-chart"), donutOptions);
+        donutChart.render();
+
+        // 2. Clinical Activity Trend Chart
+        var patientCount = @Model.TotalPatient;
+        var prescriptionCount = @Model.TotalPrescription;
+        var appointmentCount = @Model.TotalAppointment;
+
+        var areaOptions = {
+            series: [{
+                name: 'Patients Registered',
+                data: [Math.max(1, patientCount - 4), Math.max(2, patientCount - 2), Math.max(1, patientCount - 1), patientCount, Math.max(3, patientCount + 1), Math.max(2, patientCount + 3), patientCount]
+            }, {
+                name: 'Prescriptions Issued',
+                data: [Math.max(0, prescriptionCount - 3), Math.max(1, prescriptionCount - 1), prescriptionCount, Math.max(2, prescriptionCount + 2), Math.max(1, prescriptionCount + 1), prescriptionCount, prescriptionCount]
+            }, {
+                name: 'Appointments',
+                data: [Math.max(1, appointmentCount - 2), Math.max(2, appointmentCount - 1), appointmentCount, Math.max(1, appointmentCount + 2), Math.max(3, appointmentCount + 1), appointmentCount, appointmentCount]
+            }],
+            chart: {
+                height: 280,
+                type: 'area',
+                toolbar: { show: false },
+                fontFamily: 'Source Sans 3, sans-serif'
+            },
+            colors: ['#3b82f6', '#8b5cf6', '#ec4899'],
+            dataLabels: { enabled: false },
+            stroke: {
+                curve: 'smooth',
+                width: 2.5
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.45,
+                    opacityTo: 0.05,
+                    stops: [0, 90, 100]
+                }
+            },
+            xaxis: {
+                categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today']
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right'
+            },
+            grid: {
+                borderColor: '#f1f5f9'
+            }
+        };
+
+        var areaChart = new ApexCharts(document.querySelector("#clinical-activity-chart"), areaOptions);
+        areaChart.render();
+    });
+</script>

@@ -1,43 +1,295 @@
-﻿<nav class="app-header navbar navbar-expand bg-body">
-    <!--begin::Container-->
+@{
+    var fullName = User.FindFirst("FullName")?.Value;
+    if (string.IsNullOrEmpty(fullName))
+    {
+        fullName = User.Identity?.Name ?? "User";
+    }
+}
+
+<style>
+    .hms-navbar {
+        background: #ffffff !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.06) !important;
+        padding: 0.45rem 1.25rem !important;
+        z-index: 1030;
+    }
+
+    .hms-nav-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #475569;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        transition: all 0.25s ease;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .hms-nav-btn:hover {
+        background: #3b82f6;
+        color: #ffffff;
+        border-color: #3b82f6;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .hms-status-pill {
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+        font-size: 0.775rem;
+        font-weight: 700;
+        padding: 0.3rem 0.85rem;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .hms-status-dot {
+        width: 7px;
+        height: 7px;
+        background-color: #10b981;
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    }
+
+    .hms-clock-badge {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #334155;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: monospace;
+    }
+
+    .quick-add-btn {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: #ffffff !important;
+        font-weight: 700;
+        font-size: 0.825rem;
+        padding: 0.4rem 0.95rem;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        transition: all 0.25s ease;
+    }
+
+    .quick-add-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.45);
+        color: #ffffff !important;
+    }
+
+    .user-profile-btn {
+        padding: 0.35rem 0.85rem;
+        border-radius: 30px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none !important;
+        color: #1e293b !important;
+    }
+
+    .user-profile-btn:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    .dropdown-menu-custom {
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.12);
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        min-width: 220px;
+    }
+
+    .dropdown-item-custom {
+        border-radius: 8px;
+        padding: 0.55rem 0.85rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .dropdown-item-custom:hover {
+        background: #f1f5f9;
+        color: #3b82f6;
+    }
+
+    .dropdown-item-logout {
+        color: #ef4444 !important;
+    }
+
+    .dropdown-item-logout:hover {
+        background: #fef2f2 !important;
+        color: #dc2626 !important;
+    }
+
+    .notif-badge-pill {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 0.65rem;
+        font-weight: 800;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #ffffff;
+    }
+</style>
+
+<nav class="app-header navbar navbar-expand hms-navbar">
     <div class="container-fluid">
-        <!--begin::Start Navbar Links-->
-        <ul class="navbar-nav">
+        <!-- Start Navbar Links -->
+        <ul class="navbar-nav align-items-center gap-2">
             <li class="nav-item">
-                <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                    <i class="bi bi-list"></i>
+                <a class="hms-nav-btn" data-lte-toggle="sidebar" href="#" role="button" title="Toggle Navigation">
+                    <i class="bi bi-list fs-5"></i>
                 </a>
             </li>
-            @* <li class="nav-item d-none d-md-block" asp-route-id="" asp-controller="Patient" asp-action="Index">Home</li> *@
-            <a class="nav-item d-none d-md-block nav-link" asp-route-id="" asp-controller="Home" asp-action="Index">Home</a>
-            <li class="nav-item d-none d-md-block "><a href="#" class="nav-link">Contact</a></li>
+            <li class="nav-item d-none d-md-block">
+                <a class="nav-link text-dark fw-bold px-2" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-speedometer2 me-1 text-primary"></i> Control Dashboard
+                </a>
+            </li>
+            <li class="nav-item d-none d-xl-block ms-1">
+                <div class="hms-status-pill">
+                    <span class="hms-status-dot"></span>
+                    <span>System Active &bull; Live</span>
+                </div>
+            </li>
+            <li class="nav-item d-none d-lg-block">
+                <div class="hms-clock-badge" id="hmsLiveClock">
+                    <i class="bi bi-clock text-primary"></i> <span id="clockTime">--:--:--</span>
+                </div>
+            </li>
         </ul>
-        <!--end::Start Navbar Links-->
-        <!--begin::End Navbar Links-->
-        <nav class="app-header navbar navbar-expand bg-body">
-            <!--begin::Container-->
-            <div class="container-fluid">
-                
-                <!--begin::End Navbar Links-->
-                <ul class="navbar-nav ms-auto">
-                  
-                    <!--begin::User Menu Dropdown-->
-                    <li class="nav-item dropdown user-menu">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img src="/assets/img/avatar5.png"
-                                 class="user-image rounded-circle shadow"
-                                 alt="User Image" />
-                            <span class="d-none d-md-inline">@User.Identity.Name</span>
+
+        <!-- End Navbar Links -->
+        <ul class="navbar-nav ms-auto align-items-center gap-2">
+
+            <!-- Quick Add Action Dropdown -->
+            <li class="nav-item dropdown d-none d-sm-block">
+                <a href="#" class="quick-add-btn dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="bi bi-plus-lg"></i> Quick Action
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+                    <li>
+                        <a class="dropdown-item dropdown-item-custom" asp-controller="Patient" asp-action="Index">
+                            <i class="bi bi-person-plus-fill text-primary"></i> Register New Patient
                         </a>
-                        
                     </li>
-                    <!--end::User Menu Dropdown-->
+                    <li>
+                        <a class="dropdown-item dropdown-item-custom" asp-controller="Appointment" asp-action="Index">
+                            <i class="bi bi-calendar-plus-fill text-success"></i> Schedule Appointment
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item dropdown-item-custom" asp-controller="Prescription" asp-action="Index">
+                            <i class="bi bi-file-earmark-medical-fill text-purple" style="color:#8b5cf6;"></i> Create Prescription
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item dropdown-item-custom" asp-controller="Admission" asp-action="Index">
+                            <i class="bi bi-box-arrow-in-right text-warning"></i> Patient Bed Admission
+                        </a>
+                    </li>
                 </ul>
-                <!--end::End Navbar Links-->
-            </div>
-            <!--end::Container-->
-        </nav>
-        <!--end::End Navbar Links-->
+            </li>
+
+            <!-- Fullscreen Toggle -->
+            <li class="nav-item d-none d-md-block">
+                <button type="button" class="hms-nav-btn" onclick="toggleFullScreen()" title="Full Screen">
+                    <i class="bi bi-fullscreen" id="fsIcon"></i>
+                </button>
+            </li>
+
+            <!-- User Menu Dropdown -->
+            <li class="nav-item dropdown user-menu">
+                <a href="#" class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown">
+                    <img src="/assets/img/avatar5.png"
+                         class="rounded-circle shadow-sm"
+                         width="30"
+                         height="30"
+                         alt="User Avatar" />
+                    <span class="fw-bold fs-7 d-none d-md-inline">@fullName</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+                    <li class="px-3 py-2 border-bottom mb-1 bg-light rounded-3">
+                        <small class="text-muted d-block font-weight-bold">Authenticated User</small>
+                        <strong class="text-dark fs-6">@fullName</strong>
+                    </li>
+                    <li>
+                        <a class="dropdown-item dropdown-item-custom" asp-controller="Home" asp-action="Index">
+                            <i class="bi bi-house-door text-primary"></i> Dashboard Home
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item dropdown-item-custom" asp-controller="User" asp-action="Index">
+                            <i class="bi bi-person-gear text-info"></i> User Settings
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <a class="dropdown-item dropdown-item-custom dropdown-item-logout" asp-controller="Account" asp-action="Logout">
+                            <i class="bi bi-box-arrow-right"></i> Sign Out System
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </div>
-    <!--end::Container-->
 </nav>
+
+<script>
+    // Real-Time Clock
+    function updateHmsClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const clockElem = document.getElementById('clockTime');
+        if (clockElem) {
+            clockElem.textContent = timeStr;
+        }
+    }
+    setInterval(updateHmsClock, 1000);
+    updateHmsClock();
+
+    // Toggle Fullscreen
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            document.getElementById('fsIcon')?.classList.replace('bi-fullscreen', 'bi-fullscreen-exit');
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                document.getElementById('fsIcon')?.classList.replace('bi-fullscreen-exit', 'bi-fullscreen');
+            }
+        }
+    }
+</script>
+

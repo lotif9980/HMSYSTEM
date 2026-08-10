@@ -20,6 +20,23 @@ namespace HMSYSTEM.Controllers
             _unitofWork = unitofWork;
         }
 
+        private int CalculateNextSerial()
+        {
+            var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
+                            .OrderByDescending(a => a.SerialNumber)
+                            .Select(a => a.SerialNumber)
+                            .FirstOrDefault();
+
+            return (lastSerial == null || lastSerial == 0) ? 1001 : (lastSerial.Value + 1);
+        }
+
+        [HttpGet]
+        public IActionResult GetNextSerial()
+        {
+            int nextSerial = CalculateNextSerial();
+            return Json(new { nextSerial = nextSerial });
+        }
+
         [Authorize]
         [HttpGet]
         public IActionResult Index()
@@ -33,13 +50,7 @@ namespace HMSYSTEM.Controllers
             ViewBag.Department = _unitofWork.departmentRepo.getAll().Where(c => c.Status == true).ToList();
             ViewBag.Doctor = _unitofWork.doctorRepo.getAll().Where(c => c.Status == true).ToList();
 
-            var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
-                            .OrderByDescending(a => a.SerialNumber)
-                            .Select(a => a.SerialNumber)
-                            .FirstOrDefault();
-
-            int nextSerial = (lastSerial ?? 0) + 1001; 
-            ViewBag.NextSerial = nextSerial;
+            ViewBag.NextSerial = CalculateNextSerial();
 
             return View();
         }
@@ -153,15 +164,7 @@ namespace HMSYSTEM.Controllers
 
             ViewBag.Department = department;
             ViewBag.Doctor = doctor;
-
-
-            var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
-            .OrderByDescending(a => a.SerialNumber)
-            .Select(a => a.SerialNumber)
-            .FirstOrDefault();
-
-            int nextSerial = (lastSerial ?? 0) + 1001; 
-            ViewBag.NextSerial = nextSerial;
+            ViewBag.NextSerial = CalculateNextSerial();
 
             return View();
         }
@@ -209,14 +212,7 @@ namespace HMSYSTEM.Controllers
         {
             ViewBag.Department = _unitofWork.departmentRepo.getAll();
             ViewBag.Doctor = _unitofWork.doctorRepo.getAll();
-
-            var lastSerial = _unitofWork.AppointmentRepository.GetSerial()
-                            .OrderByDescending(a => a.SerialNumber)
-                            .Select(a => a.SerialNumber)
-                            .FirstOrDefault();
-
-            int nextSerial = (lastSerial ?? 0) + 1;
-            ViewBag.NextSerial = nextSerial;
+            ViewBag.NextSerial = CalculateNextSerial();
 
             bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
@@ -235,7 +231,7 @@ namespace HMSYSTEM.Controllers
                     DepartmentId = appointment.DepartmentId,
                     DoctorId = appointment.DoctorId,
                     AppoinmentDate = appointment.AppoinmentDate.Value,
-                    SerialNumber = appointment.SerialNumber,
+                    SerialNumber = appointment.SerialNumber > 0 ? appointment.SerialNumber : CalculateNextSerial(),
                     Problem = appointment.Problem,
                     Status = AppointmentStatus.Active
                 };

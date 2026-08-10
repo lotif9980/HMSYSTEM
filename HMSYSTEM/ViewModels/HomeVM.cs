@@ -1,4 +1,4 @@
-﻿namespace HMSYSTEM.ViewModels
+namespace HMSYSTEM.ViewModels
 {
     public class HomeViewModel
     {
@@ -9,5 +9,7 @@
         public int TotalPatient { get; set; }
         public int TotalPrescription { get; set; }
         public int TotalAppointment { get; set; }
+        public int TotalDoctor { get; set; }
     }
 }
+

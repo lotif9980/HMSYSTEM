@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Repository;
+using HMSYSTEM.Repository;
 using HMSYSTEM.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,8 +33,10 @@ namespace HMSYSTEM.Controllers
                         }).ToList();
 
             ViewBag.Ward = wards;
+            ViewBag.SelectedWardId = null;
 
-            return View(new List<WardBedViewModel>()); 
+            var data = _unitOfWork.reportRepository.GetWardBedStatus(null);
+            return View(data); 
         }
 
         [HttpPost]
@@ -44,13 +46,22 @@ namespace HMSYSTEM.Controllers
                         .Select(w => new SelectListItem
                         {
                             Value = w.Id.ToString(),
-                            Text = w.Name
+                            Text = w.Name,
+                            Selected = wardId.HasValue && w.Id == wardId.Value
                         }).ToList();
 
             ViewBag.Ward = wards;
+            ViewBag.SelectedWardId = wardId;
 
             var data = _unitOfWork.reportRepository.GetWardBedStatus(wardId);
             return View(data);
+        }
+
+        [HttpGet]
+        public IActionResult GetWardBedStatusPrint(int? wardId)
+        {
+            var data = _unitOfWork.reportRepository.GetWardBedStatus(wardId);
+            return PartialView("_WardBedPrintPartial", data);
         }
 
         #region Admission Report

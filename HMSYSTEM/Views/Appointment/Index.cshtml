@@ -371,7 +371,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Serial Number</label>
-                            <input type="number" name="SerialNumber" class="form-control" value="@ViewBag.NextSerial" readonly />
+                            <input type="number" name="SerialNumber" id="modalSerialNumber" class="form-control" value="@ViewBag.NextSerial" readonly />
                         </div>
                         <div class="col-md-12">
                             <label class="form-label">Problem</label>
@@ -591,6 +591,20 @@
 
     $(document).ready(function () {
         loadAppointments(1);
+
+        // Fetch fresh Next Serial Number when opening modal
+        $('#addAppointmentModal').on('show.bs.modal', function () {
+            $.ajax({
+                url: '@Url.Action("GetNextSerial", "Appointment")',
+                type: 'GET',
+                cache: false,
+                success: function (res) {
+                    if (res && res.nextSerial) {
+                        $('#modalSerialNumber').val(res.nextSerial);
+                    }
+                }
+            });
+        });
 
         $('#aBtnPrev').on('click', function (e) { e.preventDefault(); if (aCurrentPage > 1) loadAppointments(aCurrentPage - 1); });
         $('#aBtnNext').on('click', function (e) { e.preventDefault(); if (aCurrentPage < aTotalPages) loadAppointments(aCurrentPage + 1); });
