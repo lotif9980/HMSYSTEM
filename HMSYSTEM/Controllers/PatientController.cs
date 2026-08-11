@@ -42,7 +42,6 @@ namespace HMSYSTEM.Controllers
                 search = search.Trim().ToLower();
                 query = query.Where(p => 
                     (!string.IsNullOrEmpty(p.FirstName) && p.FirstName.ToLower().Contains(search)) ||
-                    (!string.IsNullOrEmpty(p.LastName) && p.LastName.ToLower().Contains(search)) ||
                     (!string.IsNullOrEmpty(p.Phone) && p.Phone.Contains(search)) ||
                     (!string.IsNullOrEmpty(p.Email) && p.Email.ToLower().Contains(search))
                 );
@@ -271,15 +270,11 @@ namespace HMSYSTEM.Controllers
             name = (name ?? "").Trim().ToLower();
 
             var result = _unit.PatienRepo.getAll()
-                  .Where(p =>
-                    ((p.FirstName ?? "").Trim().ToLower().Contains(name)) ||
-                    ((p.LastName ?? "").Trim().ToLower().Contains(name)) ||
-                    (((p.FirstName ?? "") + " " + (p.LastName ?? "")).Trim().ToLower().Contains(name))
-                  )
+                  .Where(p => (p.FirstName ?? "").Trim().ToLower().Contains(name))
                 .Select(p => new
                 {
                     p.PatientID,
-                    name=  p.FirstName +" "+ p.LastName,
+                    name = p.FirstName,
                     p.DateOfBirth,
                     p.Email,
                     p.Phone,

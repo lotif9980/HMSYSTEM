@@ -1,4 +1,4 @@
-﻿using AspNetCoreGeneratedDocument;
+using AspNetCoreGeneratedDocument;
 using HMSYSTEM.Data;
 using HMSYSTEM.Enum;
 using HMSYSTEM.Models;
@@ -44,9 +44,9 @@ namespace HMSYSTEM.Repository
                            && a.AdmitDate <= toDate
                              select new AdmissionViewModel
                              {
-                                 PatientName = p.FirstName + " " + p.LastName,
+                                 PatientName = p.FirstName,
                                  PatientPhoneNumber=p.Phone,
-                                 DoctorName = d.FirstName + " " + d.LastName,
+                                 DoctorName = d.FirstName,
                                  BedName = b.BedNumber,
                                  AdmitDate = a.AdmitDate,
                                  InvoiceNo = a.InvoiceNo,
@@ -64,7 +64,7 @@ namespace HMSYSTEM.Repository
                          where  a.AppoinmentDate >=formDate && a.AppoinmentDate <= toDate
                          select new AppointmentVM 
                          { 
-                             PatientName=p.FirstName + " " + p.LastName,
+                             PatientName=p.FirstName,
                              PatientPhoneNumber=p.Phone,
                              Problem=a.Problem,
                              SerialNumber=a.SerialNumber,
@@ -81,9 +81,9 @@ namespace HMSYSTEM.Repository
                              where p.Date>=formDate && p.Date<=toDate
                              select new PrescriptionViewModel
                              {
-                                 PatientName=pat.FirstName + " " + pat.LastName,
+                                 PatientName=pat.FirstName,
                                  PatientMobileNo=pat.Phone,
-                                 DoctorName=doc.FirstName +""+ doc.LastName,
+                                 DoctorName=doc.FirstName,
                                  Date=p.Date,
                                  NextFlowUp=p.NextFlowUp
                              }).ToList();
@@ -100,7 +100,7 @@ namespace HMSYSTEM.Repository
                           {
                               BillNo=b.BillNo,
                               BillDate=b.BillDate,
-                              PatientName=p.FirstName+""+p.LastName,
+                              PatientName=p.FirstName,
                               TotalAmount=b.TotalAmount,
                               Discount=b.Discount,
                               NetAmount=b.NetAmount,

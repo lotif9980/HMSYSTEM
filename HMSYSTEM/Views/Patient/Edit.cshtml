@@ -1,4 +1,4 @@
-﻿@model Patient
+@model Patient
 @{
     ViewData["Title"] = "Patient Edit";
 }
@@ -25,11 +25,11 @@
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label asp-for="FirstName" class="form-label">First Name</label>
+                                    <label asp-for="FirstName" class="form-label">Full Name</label>
                                     <input asp-for="FirstName" class="form-control" value="@Model.FirstName" />
                                 </div>
                                 <div class="col-md-6">
-                                    <label asp-for="LastName" class="form-label">Last Name</label>
+                                    <label asp-for="LastName" class="form-label">Nick Name</label>
                                     <input asp-for="LastName" class="form-control" value="@Model.LastName" />
                                 </div>
                             </div>

@@ -57,14 +57,8 @@ namespace HMSYSTEM.Controllers
             {
                 search = search.Trim().ToLower();
                 query = query.Where(p =>
-                    (p.Patient != null && (
-                        (!string.IsNullOrEmpty(p.Patient.FirstName) && p.Patient.FirstName.ToLower().Contains(search)) ||
-                        (!string.IsNullOrEmpty(p.Patient.LastName) && p.Patient.LastName.ToLower().Contains(search))
-                    )) ||
-                    (p.Doctor != null && (
-                        (!string.IsNullOrEmpty(p.Doctor.FirstName) && p.Doctor.FirstName.ToLower().Contains(search)) ||
-                        (!string.IsNullOrEmpty(p.Doctor.LastName) && p.Doctor.LastName.ToLower().Contains(search))
-                    )) ||
+                    (p.Patient != null && (!string.IsNullOrEmpty(p.Patient.FirstName) && p.Patient.FirstName.ToLower().Contains(search))) ||
+                    (p.Doctor != null && (!string.IsNullOrEmpty(p.Doctor.FirstName) && p.Doctor.FirstName.ToLower().Contains(search))) ||
                     (p.Department != null && !string.IsNullOrEmpty(p.Department.DepartmentName) && p.Department.DepartmentName.ToLower().Contains(search))
                 );
             }
@@ -79,8 +73,8 @@ namespace HMSYSTEM.Controllers
                 {
                     id = p.Id,
                     date = p.Date != null ? p.Date.Value.ToString("dd-MM-yyyy") : "N/A",
-                    patientName = p.Patient != null ? (p.Patient.FirstName + " " + p.Patient.LastName) : "N/A",
-                    doctorName = p.Doctor != null ? (p.Doctor.FirstName + " " + p.Doctor.LastName) : "N/A",
+                    patientName = p.Patient != null ? p.Patient.FirstName : "N/A",
+                    doctorName = p.Doctor != null ? p.Doctor.FirstName : "N/A",
                     departmentName = p.Department != null ? p.Department.DepartmentName : "N/A",
                     status = p.Status
                 })
@@ -104,11 +98,11 @@ namespace HMSYSTEM.Controllers
                 .ToList();
 
             var patients = _unitOfWork.PatienRepo.getAll()
-                .Select(p => new { id = p.PatientID, name = (p.FirstName + " " + p.LastName).Trim(), phone = p.Phone })
+                .Select(p => new { id = p.PatientID, name = p.FirstName, phone = p.Phone })
                 .ToList();
 
             var doctors = _unitOfWork.doctorRepo.getAll()
-                .Select(d => new { id = d.Id, name = (d.FirstName + " " + d.LastName).Trim() })
+                .Select(d => new { id = d.Id, name = d.FirstName })
                 .ToList();
 
             var departments = _unitOfWork.departmentRepo.getAll()
@@ -127,10 +121,10 @@ namespace HMSYSTEM.Controllers
                     {
                         appointmentId = app.AppointmentId,
                         patientId = app.PatientID,
-                        patientName = (app.Patient?.FirstName + " " + app.Patient?.LastName).Trim(),
+                        patientName = app.Patient?.FirstName,
                         patientPhone = app.Patient?.Phone,
                         doctorId = app.DoctorId,
-                        doctorName = (app.Doctor?.FirstName + " " + app.Doctor?.LastName).Trim(),
+                        doctorName = app.Doctor?.FirstName,
                         departmentId = app.DepartmentId,
                         departmentName = app.Department?.DepartmentName
                     };
@@ -161,12 +155,12 @@ namespace HMSYSTEM.Controllers
             {
                 AppointmentId = appointment.AppointmentId,
                 PatientId = appointment.PatientID,
-                PatientName = appointment.Patient.FirstName + " " + appointment.Patient.LastName,
+                PatientName = appointment.Patient.FirstName,
                 PatientMobileNo = appointment.Patient.Phone,
                 DepartmentId = appointment.DepartmentId ?? 0,
                 DepartmentName = appointment.Department?.DepartmentName,
                 DoctorId = appointment.DoctorId ?? 0,
-                DoctorName = appointment.Doctor?.FirstName + " " + appointment.Doctor?.LastName,
+                DoctorName = appointment.Doctor?.FirstName,
                 DesignationId = appointment.Doctor?.DesignationId ?? 0,
                 DesignationName = appointment.Doctor?.Designation?.DesignationName,
                 Date = DateTime.Now
@@ -299,17 +293,13 @@ namespace HMSYSTEM.Controllers
             name = name?.Trim().ToLower() ?? "";
 
             var result = _unitOfWork.PrescriptioRepository.GetAll()
-                 .Where(p =>
-                    ((p.Patient.FirstName ?? "").Trim().ToLower().Contains(name)) ||
-                    ((p.Patient.LastName ?? "").Trim().ToLower().Contains(name)) ||
-                    (((p.Patient.FirstName ?? "") + " " + (p.Patient.LastName ?? "")).Trim().ToLower().Contains(name))
-                  )
+                 .Where(p => (p.Patient.FirstName ?? "").Trim().ToLower().Contains(name))
                 .Select(p => new
                 {
                     Id = p.Id,
                     Date = p.Date,
-                    PatientName = p.Patient.FirstName + " " + p.Patient.LastName,
-                    DoctorName = p.Doctor.FirstName + " " + p.Doctor.LastName,
+                    PatientName = p.Patient.FirstName,
+                    DoctorName = p.Doctor.FirstName,
                     DepartmentName = p.Department.DepartmentName,
                 }).ToList();
 

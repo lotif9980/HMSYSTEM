@@ -71,8 +71,6 @@ namespace HMSYSTEM.Controllers
                 search = search.Trim().ToLower();
                 query = query.Where(b => (b.Patient != null && (
                                             (!string.IsNullOrEmpty(b.Patient.FirstName) && b.Patient.FirstName.ToLower().Contains(search)) ||
-                                            (!string.IsNullOrEmpty(b.Patient.LastName) && b.Patient.LastName.ToLower().Contains(search)) ||
-                                            ((b.Patient.FirstName + " " + b.Patient.LastName).ToLower().Contains(search)) ||
                                             (!string.IsNullOrEmpty(b.Patient.Phone) && b.Patient.Phone.ToLower().Contains(search))
                                          )) ||
                                          (!string.IsNullOrEmpty(b.BillNo) && b.BillNo.ToLower().Contains(search)) ||
@@ -90,7 +88,7 @@ namespace HMSYSTEM.Controllers
                 billDate = b.BillDate.ToString("dd-MM-yyyy"),
                 billNo = b.BillNo,
                 patientId = b.PatientId,
-                patientName = b.Patient != null ? (b.Patient.FirstName + " " + b.Patient.LastName).Trim() : "",
+                patientName = b.Patient != null ? b.Patient.FirstName : "",
                 patientPhone = b.Patient != null ? b.Patient.Phone : "",
                 totalAmount = b.TotalAmount,
                 discount = b.Discount,

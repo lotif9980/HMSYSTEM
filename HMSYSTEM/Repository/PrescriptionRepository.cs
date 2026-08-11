@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using HMSYSTEM.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -190,12 +190,12 @@ namespace HMSYSTEM.Repository
                 Id = prescriptionQuery.Prescription.Id,
                 Date = prescriptionQuery.Prescription.Date,
                 PatientId = prescriptionQuery.Patient.PatientID,
-                PatientName = prescriptionQuery.Patient.FirstName + " " + prescriptionQuery.Patient.LastName,
+                PatientName = prescriptionQuery.Patient.FirstName,
                 PatientMobileNo= prescriptionQuery.Patient.Phone,
                 PatientAddress=prescriptionQuery.Patient.Address,
                
                 DoctorId = prescriptionQuery.Prescription.DoctorId,
-                DoctorName = prescriptionQuery.Doctor != null ? prescriptionQuery.Doctor.FirstName + " " + prescriptionQuery.Doctor.LastName : null,
+                DoctorName = prescriptionQuery.Doctor != null ? prescriptionQuery.Doctor.FirstName : null,
                 DoctorMobile=prescriptionQuery.Doctor.PhoneNo,
                 DesignationName=prescriptionQuery.Designation.DesignationName,
                 DepartmentId = prescriptionQuery.Department != null ? prescriptionQuery.Department.DepartmentId : 0,

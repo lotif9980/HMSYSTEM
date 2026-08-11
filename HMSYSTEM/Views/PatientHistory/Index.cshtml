@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PatientHistory>
+@model IEnumerable<PatientHistory>
 
 @* @foreach(Patient patient in Model)
 {
@@ -37,9 +37,9 @@
                             {
                                 <tr>
                                     <td>@count</td>
-                                    <td>@item.Patient.FirstName @item.Patient.LastName</td>
+                                    <td>@item.Patient.FirstName</td>
                                     <td>@item.Patient.Phone</td>
-                                    <td>@item.Doctor.FirstName @item.Doctor.LastName</td>
+                                    <td>@item.Doctor.FirstName</td>
                                     <td>@item.Description</td>
                                     
                                     <td>

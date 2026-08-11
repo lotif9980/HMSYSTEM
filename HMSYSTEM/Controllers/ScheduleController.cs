@@ -65,7 +65,7 @@ namespace HMSYSTEM.Controllers
                 {
                     scheduleId = s.ScheduleId,
                     date = s.Date != null ? s.Date.Value.ToString("dd-MM-yyyy") : "N/A",
-                    doctorName = (s.Doctor != null ? (s.Doctor.FirstName + " " + s.Doctor.LastName) : "N/A"),
+                    doctorName = (s.Doctor != null ? (s.Doctor.FirstName) : "N/A"),
                     departmentName = s.Department != null ? s.Department.DepartmentName : "N/A",
                     dayOfWeek = s.DayOfWeek,
                     startTime = s.StartTime.HasValue ? DateTime.Today.Add(s.StartTime.Value).ToString("hh:mm tt") : "N/A",
@@ -199,7 +199,7 @@ namespace HMSYSTEM.Controllers
         {
             var doctors = _unitofWork.doctorRepo.getAll()
                 .Where(d => d.DepartmentId == departmentId && d.Status == true)
-                .Select(d => new { id = d.Id, name = d.FirstName + " " + d.LastName })
+                .Select(d => new { id = d.Id, name = d.FirstName})
                 .ToList();
             return Json(doctors);
         }

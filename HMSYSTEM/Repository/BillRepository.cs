@@ -1,4 +1,4 @@
-﻿using HMSYSTEM.Data;
+using HMSYSTEM.Data;
 using HMSYSTEM.Models;
 using HMSYSTEM.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -302,7 +302,7 @@ namespace HMSYSTEM.Repository
                                  Id=b.Id,
                                  PatientId=b.PatientId,
                                  //PatientName=b.Patient.FirstName +""+b.Patient.LastName,
-                                 PatientName = p != null ? p.FirstName + " " + p.LastName : null,
+                                 PatientName = p != null ? p.FirstName : null,
                                  PatientPhoneNumber =b.Patient.Phone,
                                  Address=p.Address,
                                  BillDate=b.BillDate,

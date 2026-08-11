@@ -50,7 +50,6 @@ namespace HMSYSTEM.Controllers
                 search = search.Trim().ToLower();
                 query = query.Where(d =>
                     (!string.IsNullOrEmpty(d.FirstName) && d.FirstName.ToLower().Contains(search)) ||
-                    (!string.IsNullOrEmpty(d.LastName) && d.LastName.ToLower().Contains(search)) ||
                     (!string.IsNullOrEmpty(d.EmailAddress) && d.EmailAddress.ToLower().Contains(search)) ||
                     (d.Department != null && !string.IsNullOrEmpty(d.Department.DepartmentName) && d.Department.DepartmentName.ToLower().Contains(search))
                 );
@@ -67,7 +66,7 @@ namespace HMSYSTEM.Controllers
                     id = d.Id,
                     picture = d.Picture,
                     firstName = d.FirstName,
-                    nickName = d.LastName,
+                    lastName = d.LastName,
                     department = d.Department != null ? d.Department.DepartmentName : "N/A",
                     designation = d.Designation != null ? d.Designation.DesignationName : "N/A",
                     emailAddress = d.EmailAddress,
@@ -179,12 +178,11 @@ namespace HMSYSTEM.Controllers
                 {
                     doctor.Picture = existingDoctor.Picture;
 
-                    if (doctor.FirstName != existingDoctor.FirstName || doctor.LastName != existingDoctor.LastName)
+                    if (doctor.FirstName != existingDoctor.FirstName)
                     {
                         if (!string.IsNullOrEmpty(oldFileName))
                         {
                             string firstName = doctor.FirstName.Replace(" ", "_");
-                            string lastName = doctor.LastName.Replace(" ", "_");
                             string newFileName = $"{doctor.Id}_{firstName}{Path.GetExtension(oldFileName)}";
 
                             string imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Doctor");
@@ -207,8 +205,7 @@ namespace HMSYSTEM.Controllers
                 if (doctor.ImageFile != null)
                 {
                     string firstName = doctor.FirstName.Replace(" ", "_");
-                    string lastName = doctor.LastName.Replace(" ", "_");
-                    string newFileName = $"{doctor.Id}_{firstName}{Path.GetExtension(doctor.ImageFile.FileName)}";
+                    string newFileName = $"{doctor.Id}_{firstName}_{DateTime.Now.Ticks}{Path.GetExtension(doctor.ImageFile.FileName)}";
 
                     if (!string.IsNullOrEmpty(oldFileName))
                     {
@@ -338,14 +335,11 @@ namespace HMSYSTEM.Controllers
             name = (name ?? "").Trim().ToLower();
 
             var result = _unitOf.doctorRepo.getAll()
-               .Where(d =>
-                    ((d.FirstName ?? "").Trim().ToLower().Contains(name)) ||
-                    ((d.LastName ?? "").Trim().ToLower().Contains(name)) ||
-                    (((d.FirstName ?? "") + " " + (d.LastName ?? "")).Trim().ToLower().Contains(name))
-               ).Select(p => new
+               .Where(d => (d.FirstName ?? "").Trim().ToLower().Contains(name))
+               .Select(p => new
                {
                    p.Id,
-                   Name = p.FirstName + " " + p.LastName,
+                   Name = p.FirstName,
                    Department = p.Department != null ? p.Department.DepartmentName : "N/A",
                    p.Picture,
                    p.EmailAddress,

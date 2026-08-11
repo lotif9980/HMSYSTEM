@@ -173,7 +173,8 @@
     .action-btn-group {
         display: flex;
         justify-content: center;
-        gap: 8px;
+        align-items: center;
+        gap: 0px;
     }
 
     .action-btn {
@@ -206,6 +207,7 @@
         background-color: #fff5f5;
         color: #e53e3e;
         border-color: #fed7d7;
+        margin: 0 !important;
     }
 
     .action-delete:hover {
@@ -454,7 +456,6 @@
                                 <th style="width:60px">Sl No</th>
                                 <th style="width:80px">Picture</th>
                                 <th>Name</th>
-                                <th>Nick Name</th>
                                 <th>Department</th>
                                 <th>Designation</th>
                                 <th>Email</th>
@@ -748,6 +749,9 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold" style="color:#4a5568;">Change Picture</label>
                             <input type="file" name="ImageFile" id="editDoctorPic" class="form-control" accept="image/*" />
+                            <div class="mt-2 text-center">
+                                <img id="editDoctorPicPreview" src="/images/default.png" alt="Current Picture" class="img-thumbnail rounded" style="max-height: 80px; object-fit: cover; border: 2px solid #cbd5e0;" />
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label d-block fw-bold" style="color:#4a5568;">Status</label>
@@ -793,7 +797,7 @@
             : `<span class="badge-status status-inactive"><i class="fas fa-times-circle me-2"></i>Inactive</span>`;
 
         var picSrc = (item.picture && item.picture.trim() !== '')
-            ? `/Doctor/${item.picture}`
+            ? `/Doctor/${item.picture}?v=${new Date().getTime()}`
             : `/images/default.png`;
 
         var fullName = `${item.firstName}`.trim();
@@ -808,7 +812,6 @@
                      style="border-radius:50%; object-fit:cover; border:2px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.08);" />
             </td>
             <td style="font-weight:700; color:#2d3748;">${fullName}</td>
-            <td>${item.nickName || ''}</td>
             <td>${item.department || 'N/A'}</td>
             <td>${item.designation || 'N/A'}</td>
             <td>${item.emailAddress || ''}</td>
@@ -831,7 +834,7 @@
 
         $('#doctorTableBody').html(`
             <tr>
-                <td colspan="9" class="text-center py-4">
+                <td colspan="8" class="text-center py-4">
                     <div class="spinner-border text-success" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -869,7 +872,7 @@
                     } else {
                         $('#doctorTableBody').html(`
                             <tr>
-                                <td colspan="9" class="text-center py-4 text-muted">
+                                <td colspan="8" class="text-center py-4 text-muted">
                                     <i class="fas fa-info-circle fs-4"></i>
                                     <p class="mt-2 mb-0">No doctors found.</p>
                                 </td>
@@ -881,7 +884,7 @@
             error: function (xhr, status, err) {
                 $('#doctorTableBody').html(`
                     <tr>
-                        <td colspan="9" class="text-center py-4 text-danger">
+                        <td colspan="8" class="text-center py-4 text-danger">
                             <i class="fas fa-exclamation-triangle fs-4"></i>
                             <p class="mt-2 mb-0">Failed to load data.</p>
                         </td>
@@ -949,6 +952,7 @@
         // Edit button — fetch data and populate modal
         $(document).on('click', '.edit-doctor-btn', function () {
             var id = $(this).data('id');
+            $('#editDoctorPic').val(''); // Clear any previous file selection
             $.getJSON('@Url.Action("GetDoctorById", "Doctor")', { id: id }, function (d) {
                 $('#editDoctorId').val(d.id);
                 $('#editDoctorFirstName').val(d.firstName);
@@ -975,8 +979,32 @@
                     $('#editDoctorStatusInactive').prop('checked', true);
                 }
 
+                var picSrc = (d.picture && d.picture.trim() !== '')
+                    ? `/Doctor/${d.picture}`
+                    : `/images/default.png`;
+                $('#editDoctorPicPreview').attr('src', picSrc);
+
                 $('#editDoctorModal').modal('show');
             }).fail(function () { showError("Error loading doctor data."); });
+        });
+
+        // Live preview when selecting a new picture in edit modal
+        $('#editDoctorPic').on('change', function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#editDoctorPicPreview').attr('src', e.target.result);
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Reset file inputs when modal is hidden
+        $('#editDoctorModal').on('hidden.bs.modal', function () {
+            $('#editDoctorPic').val('');
+        });
+        $('#addDoctorModal').on('hidden.bs.modal', function () {
+            $('#addDoctorForm')[0].reset();
         });
 
         // Edit Doctor AJAX submit
@@ -993,6 +1021,7 @@
                     if (res.success) {
                         showSuccess(res.message);
                         $('#editDoctorModal').modal('hide');
+                        $('#editDoctorPic').val('');
                         loadDoctors(dCurrentPage);
                     } else {
                         showError(res.message);

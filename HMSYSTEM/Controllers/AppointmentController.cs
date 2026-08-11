@@ -105,10 +105,10 @@ namespace HMSYSTEM.Controllers
                     date = a.AppoinmentDate.ToString("dd-MM-yyyy"),
                     time = a.AppoinmentDate.ToString("hh:mm tt"),
                     serialNumber = a.SerialNumber,
-                    patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName) : "N/A",
+                    patientName = a.Patient != null ? (a.Patient.FirstName) : "N/A",
                     phone = a.PatientPhoneNumber,
                     department = a.Department != null ? a.Department.DepartmentName : "N/A",
-                    doctor = a.Doctor != null ? a.Doctor.FirstName + " " + a.Doctor.LastName : "N/A",
+                    doctor = a.Doctor != null ? a.Doctor.FirstName: "N/A",
                     status = (int)a.Status
                 })
                 .ToList();
@@ -303,10 +303,10 @@ namespace HMSYSTEM.Controllers
                     date = a.AppoinmentDate.ToString("dd-MM-yyyy"),
                     time = a.AppoinmentDate.ToString("hh:mm tt"),
                     serialNumber = a.SerialNumber,
-                    patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName) : "N/A",
+                    patientName = a.Patient != null ? (a.Patient.FirstName ) : "N/A",
                     phone = a.PatientPhoneNumber,
                     department = a.Department != null ? a.Department.DepartmentName : "N/A",
-                    doctor = a.Doctor != null ? (a.Doctor.FirstName + " " + a.Doctor.LastName) : "N/A",
+                    doctor = a.Doctor != null ? (a.Doctor.FirstName) : "N/A",
                     status = (int)a.Status
                 }).ToList();
 
@@ -352,7 +352,7 @@ namespace HMSYSTEM.Controllers
                     date = a.AppoinmentDate.ToString("dd-MM-yyyy"),
                     time = a.AppoinmentDate.ToString("hh:mm tt"),
                     serialNumber = a.SerialNumber,
-                    patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName) : "N/A",
+                    patientName = a.Patient != null ? (a.Patient.FirstName ) : "N/A",
                     phone = a.PatientPhoneNumber,
                     department = a.Department != null ? a.Department.DepartmentName : "N/A",
                     doctor = a.Doctor != null ? (a.Doctor.FirstName + " " + a.Doctor.LastName) : "N/A",
@@ -401,7 +401,7 @@ namespace HMSYSTEM.Controllers
                     date = a.AppoinmentDate.ToString("dd-MM-yyyy"),
                     time = a.AppoinmentDate.ToString("hh:mm tt"),
                     serialNumber = a.SerialNumber,
-                    patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName) : "N/A",
+                    patientName = a.Patient != null ? (a.Patient.FirstName ) : "N/A",
                     phone = a.PatientPhoneNumber,
                     department = a.Department != null ? a.Department.DepartmentName : "N/A",
                     doctor = a.Doctor != null ? (a.Doctor.FirstName + " " + a.Doctor.LastName) : "N/A",
@@ -439,7 +439,7 @@ namespace HMSYSTEM.Controllers
                     {
                         appointmentId = appointment.AppointmentId,
                         patientID = appointment.PatientID,
-                        patientName = appointment.Patient != null ? (appointment.Patient.FirstName + " " + appointment.Patient.LastName) : "",
+                        patientName = appointment.Patient != null ? (appointment.Patient.FirstName) : "",
                         patientPhoneNumber = appointment.PatientPhoneNumber,
                         departmentId = appointment.DepartmentId,
                         doctorId = appointment.DoctorId,

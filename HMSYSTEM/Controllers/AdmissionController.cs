@@ -42,8 +42,6 @@ namespace HMSYSTEM.Controllers
                 search = search.Trim().ToLower();
                 query = query.Where(a => (a.Patient != null && (
                                             (!string.IsNullOrEmpty(a.Patient.FirstName) && a.Patient.FirstName.ToLower().Contains(search)) ||
-                                            (!string.IsNullOrEmpty(a.Patient.LastName) && a.Patient.LastName.ToLower().Contains(search)) ||
-                                            ((a.Patient.FirstName + " " + a.Patient.LastName).ToLower().Contains(search)) ||
                                             (!string.IsNullOrEmpty(a.Patient.Phone) && a.Patient.Phone.ToLower().Contains(search))
                                          )) ||
                                          a.InvoiceNo.ToString().Contains(search) ||
@@ -52,8 +50,7 @@ namespace HMSYSTEM.Controllers
                                             (a.Bed.Ward != null && !string.IsNullOrEmpty(a.Bed.Ward.Name) && a.Bed.Ward.Name.ToLower().Contains(search))
                                          )) ||
                                          (a.Doctor != null && (
-                                            (!string.IsNullOrEmpty(a.Doctor.FirstName) && a.Doctor.FirstName.ToLower().Contains(search)) ||
-                                            (!string.IsNullOrEmpty(a.Doctor.LastName) && a.Doctor.LastName.ToLower().Contains(search))
+                                            (!string.IsNullOrEmpty(a.Doctor.FirstName) && a.Doctor.FirstName.ToLower().Contains(search))
                                          )));
             }
 
@@ -66,10 +63,10 @@ namespace HMSYSTEM.Controllers
                 admitDate = a.AdmitDate.HasValue ? a.AdmitDate.Value.ToString("dd-MM-yyyy") : "",
                 invoiceNo = a.InvoiceNo,
                 patientId = a.PatientId,
-                patientName = a.Patient != null ? (a.Patient.FirstName + " " + a.Patient.LastName).Trim() : "",
+                patientName = a.Patient != null ? a.Patient.FirstName : "",
                 patientPhone = a.Patient != null ? a.Patient.Phone : "",
                 doctorId = a.DoctorId,
-                doctorName = a.Doctor != null ? (a.Doctor.FirstName + " " + a.Doctor.LastName).Trim() : "",
+                doctorName = a.Doctor != null ? a.Doctor.FirstName : "",
                 bedId = a.BedId,
                 bedNumber = a.Bed != null ? a.Bed.BedNumber : "",
                 wardName = a.Bed != null && a.Bed.Ward != null ? a.Bed.Ward.Name : "",
